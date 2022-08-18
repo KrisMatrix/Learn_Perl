@@ -10,7 +10,7 @@ installed, and the ability to remove them at will.
 Enter Carton.
 
 You can install carton with cpanm:
-```
+```bash
 $ cpanm Carton
 ```
 
@@ -19,8 +19,8 @@ $ cpanm Carton
 The benefit of Carton is the ability to install only the modules that you need
 for a project. You create a file titled ```cpanfile```. 
 
-```
-touch cpanfile
+```bash
+$ touch cpanfile
 ```
 
 In cpanfile, enter the modules you want to use as follows:
@@ -43,8 +43,8 @@ an older version that still functions with you code.
 Once you have created your ```cpanfile```, save the file and return to the
 command line. To install the modules, run:
 
-```
-carton install
+```bash
+$ carton install
 ```
 
 This will create:
@@ -79,26 +79,26 @@ want the JSON module. The first project doesn't need the JSON module and the
 second project doesn't need XML::LibXML module. Here is what you do:
 
 1. Create two directories. One for each project.
-```
+```bash
 $ mkdir project1 project2
 ```
 
 2. In project1 and project2 directories, create a file called ```cpanfile```.
 
-```
+```bash
 $ touch project1/cpanfile
 $ touch project2/cpanfile
 ```
 
 3. Enter the modules you want for each project.
 
-```
+```bash
 $ echo "requires 'XML::LibML'; > project1/cpanfile
 $ echo "requires 'JSON'; > project2/cpanfile
 ```
 
 4. Go to each directory and install the modules.
-```
+```bash
 $ cd project1
 project1$ carton install
 
@@ -114,7 +114,7 @@ local/ directory will contain the module that you wanted installed.
 call the script project1/ test1.pl and the script in project2/ test2.pl. Here
 is sample code:
 
-```
+```perl
 #!/usr/bin/perl
 use warnings;
 use strict;
@@ -126,7 +126,7 @@ __END__
 test1.pl
 ```
 
-```
+```perl
 #!/usr/bin/perl
 use warnings;
 use strict;

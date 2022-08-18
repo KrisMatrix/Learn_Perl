@@ -11,7 +11,7 @@ very likely use system perl.
 ### Installation
 You can install perlbrew in ubuntu with:
 
-```
+```bash
 $ sudo apt install perlbrew
 ```
 
@@ -19,7 +19,7 @@ $ sudo apt install perlbrew
 perlbrew can install any version of perl that is available. You can find out 
 which versions are available by:
 
-```
+```bash
 $ perlbrew available
 
    perl-5.35.3
@@ -47,7 +47,7 @@ $ perlbrew available
 Before you can install for the first time, you need to initalize perlbrew, 
 which you can do by:
 
-```
+```bash
 $ perlbrew init
 
 perlbrew root (~/perl5/perlbrew) is initialized.
@@ -66,7 +66,7 @@ Happy brewing!
 
 You can install the version you want. You can do this by:
 
-```
+```bash
 $ perlbrew install perl-5.34.0
 $ perlbrew install perl-5.28.0
 ```
@@ -74,13 +74,13 @@ $ perlbrew install perl-5.28.0
 You have just installed two versions of perl. Version 5.34 and 5.28. You can
 select version 5.34 by:
 
-```
+```bash
 $ perlbrew switch perl-5.34.0
 ```
 
 If you want to switch to perl-5.28.0 then:
 
-```
+```bash
 $ perlbrew switch perl-5.28.0
 
 ```
@@ -94,7 +94,7 @@ Say, you have multiple perl versions installed. In this instance, perl
 version 5.34 and 5.28. You have set the perlbrew to 5.34 as default, but
 wish to use version 5.28 for this session. Then you can do:
 
-```
+```bash
 $ perlbrew use perl-5.28.0
 ```
 
@@ -107,62 +107,62 @@ You can test your script on all perl versions that you have installed with
 perlbrew by running the following command:
 
 
-```
+```bash
 $ perlbrew exec perl myprogram.pl
 ```
 
 If you want to use system perl for a particular session, you can do:
 
-```
+```bash
 $ perlbrew off
 ```
 
 You are now in system perl for this session. If you want to switch off
 perlbrew completely and switch to system perl, then do:
 
-```
+```bash
 $ perlbrew switch-off
 ```
 
 You can switch on perlbrew by simply typing:
-```
+```bash
 $ perlbrew switch [perlversion]
 ```
 
 If you want to see the perl versions that you have installed (by perlbrew), 
 you can do the following:
 
-```
+```bash
 $ perlbrew list
 ```
 
 perlbrew allows you to easily uninstall the perl versions that you installed
 and clean the tarbals and build directories with:
 
-```
+```bash
 $ perlbrew uninstall [perlversion]
 ```
 
-```
+```bash
 $ perlbrew clean
 ```
 
 Now you will probably want to install cpan modules and for this you may need
 cpanm.
 
-```
+```bash
 $ perlbrew install-cpanm
 ```
 
 Now you can install cpan modules with cpanm:
-```
+```bash
 $ cpanm XML::Twig
 ```
 
 This command will install cpan modules for the currently selected perl install.
 If you want to clone the modules to other versions, you can:
 
-```
+```bash
 $ perlbrew clone-modules
 ```
 

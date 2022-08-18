@@ -5,7 +5,7 @@ The popular linux operating systems such as Ubuntu, Debian, Centos, Fedora, all
 come with perl pre-installed. This perl is called the system perl. You can
 check which version of system perl you have by running:
 
-```
+```bash
 $ perl -v
 
 This is perl 5, version 30, subversion 0 (v5.30.0) built for 

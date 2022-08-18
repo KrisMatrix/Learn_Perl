@@ -4,8 +4,8 @@
 
 1. Hello World
   - Perl Basic
-2. Carton
-3. Perlbrew
+2. Carton --> Done.
+3. Perlbrew --> Done.
 4. Cpan
 5. Cpanm
 6. use warnings and use strict
@@ -32,3 +32,4 @@
 25. FFMPEG
 26. BioPerl
 27. MxNet
+28. corelist
