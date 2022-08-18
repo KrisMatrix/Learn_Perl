@@ -3,17 +3,19 @@
 **perlbrew** is a tool to manage multiple perl installations in your $HOME 
 directory (or wherever you specify). They are completely isolated perl 
 universes, and has no relationship with system perl (this is the perl that
-is installed in your operating system). 
+is installed in your operating system).
 
 If you have never used perlbrew before, but use perl regularly, then you
 very likely use system perl. 
 
+### Installation
 You can install perlbrew in ubuntu with:
 
 ```
 $ sudo apt install perlbrew
 ```
 
+### Versions of Perl available with Perlbrew
 perlbrew can install any version of perl that is available. You can find out 
 which versions are available by:
 
@@ -39,6 +41,8 @@ $ perlbrew available
   perl5.005_03
   perl5.004_05
 ```
+
+### Install and Switch between multiple Perl versions with Perlbrew
 
 Before you can install for the first time, you need to initalize perlbrew, 
 which you can do by:
@@ -177,3 +181,6 @@ This approach has many benefits:
 * Hacking perl internals.
 * Just to keep up with fashion. 
 
+**Did you know?** Those familiar with the Node.js programming language will 
+recognize that the Node Version Manager (nvm) similarly allows user to 
+install and manage multiple node versions.
