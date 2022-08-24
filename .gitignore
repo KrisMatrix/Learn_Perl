@@ -1,0 +1,2 @@
+# Ignore local/ directory where perl modules are installed
+local/

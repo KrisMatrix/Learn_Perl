@@ -1,0 +1,18 @@
+# carton snapshot format: version 1.0
+DISTRIBUTIONS
+  App-FatPacker-0.010008
+    pathname: M/MS/MSTROUT/App-FatPacker-0.010008.tar.gz
+    provides:
+      App::FatPacker 0.010008
+      App::FatPacker::Trace undef
+    requirements:
+      B 1.01
+      Cwd 0
+      ExtUtils::MakeMaker 0
+      File::Copy 0
+      File::Find 0
+      File::Path 0
+      File::Spec::Functions 0
+      File::Spec::Unix 0
+      Getopt::Long 0
+      perl 5.008000
