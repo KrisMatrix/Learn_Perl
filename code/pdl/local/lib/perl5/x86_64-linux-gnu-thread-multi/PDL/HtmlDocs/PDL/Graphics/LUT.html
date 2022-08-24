@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Graphics::LUT - provides access to a number of look-up tables</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#lut_names">lut_names()</a></li>
+      <li><a href="#lut_ramps">lut_ramps()</a></li>
+      <li><a href="#lut_data">lut_data()</a></li>
+    </ul>
+  </li>
+  <li><a href="#VARIABLES">VARIABLES</a>
+    <ul>
+      <li><a href="#tabledir">$tabledir</a></li>
+      <li><a href="#rampdir">$rampdir</a></li>
+      <li><a href="#suffix">$suffix</a></li>
+    </ul>
+  </li>
+  <li><a href="#FURTHER-INFORMATION">FURTHER INFORMATION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Graphics::LUT - provides access to a number of look-up tables</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use PDL::Graphics::PGPLOT;
+ use PDL::Graphics::LUT;
+
+ # what tables are available
+ my @tables = lut_names();
+
+ # get the reversed colour table &#39;smooth&#39;,
+ # with the gamma intensity ramp
+ my ( $l, $r, $g, $b ) = lut_data( &#39;smooth&#39;, 1, &#39;gamma&#39; );
+
+ # use the table idl5 in ctab
+ ctab( lut_data(&#39;idl5&#39;) );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>PDL::Graphics::LUT contains a number of colour look-up tables (in rgb format) and intensity ramps, and provides routines to access this data. The format of the data is suitable for use by <a href="PGPLOT/Window.html#ctab">ctab</a>.</p>
+
+<p>Unlike the initial release of the package, the data tables are now stored within the PDL distribution as FITS files (see <a href="#tabledir">&quot;$tabledir&quot;</a> and <a href="#rampdir">&quot;$rampdir&quot;</a>), rather than in the module itself. Changes to these directories will be picked up on the next call to one of the package functions.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="lut_names">lut_names()</h2>
+
+<p>Return, as a list, the names of the available colour tables.</p>
+
+<pre><code> @tables = lut_names();</code></pre>
+
+<h2 id="lut_ramps">lut_ramps()</h2>
+
+<p>Return, as a list, the names of the available intensity ramps.</p>
+
+<pre><code> @ramps = lut_ramps();</code></pre>
+
+<h2 id="lut_data">lut_data()</h2>
+
+<p>Load in the requested colour table and intensity ramp.</p>
+
+<pre><code> my ( $l, $r, $g, $b ) = lut_data( $table, [ $reverse, [ $ramp ] ] );</code></pre>
+
+<p>Returns the levels and r, g, b components of the colour table <code>$table</code>. If <code>$reverse</code> is 1 (defaults to <b>0</b> if not supplied), then the r, g, and b components are reversed before being returned. If not supplied, <code>$ramp</code> defaults to <b>&quot;ramp&quot;</b> (this is a linear intensity ramp).</p>
+
+<p>The returned values are ndarrays containing values in the range 0 to 1 inclusive, and are floats.</p>
+
+<h1 id="VARIABLES">VARIABLES</h1>
+
+<h2 id="tabledir">$tabledir</h2>
+
+<p>The directory in which the colour tables (in rgb format) are stored.</p>
+
+<h2 id="rampdir">$rampdir</h2>
+
+<p>The directory in which the intensity ramps are stored.</p>
+
+<h2 id="suffix">$suffix</h2>
+
+<p>The suffix for the data files in <code>$tabledir</code> and <code>$rampdir</code>.</p>
+
+<h1 id="FURTHER-INFORMATION">FURTHER INFORMATION</h1>
+
+<p>The colour tables were taken from the STARLINK GAIA package, and are provided under the GNU copyleft. See http://star-www.rl.ac.uk/ and http://star-www.dur.ac.uk/~pdraper/ for more details.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Doug Burke (djburke@cpan.org), with thanks to Peter Draper/STARLINK for providing the colour-table data, and Christian Soeller and Karl Glazebrook for their help.</p>
+
+<p>All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+
+</body>
+
+</html>
+
+

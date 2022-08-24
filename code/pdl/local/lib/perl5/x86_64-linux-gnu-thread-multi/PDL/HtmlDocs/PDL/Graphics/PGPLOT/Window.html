@@ -1,0 +1,1997 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Graphics::PGPLOT::Window - A OO interface to PGPLOT windows</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Variable-passing-and-extensions">Variable passing and extensions</a></li>
+      <li><a href="#Setting-options">Setting options</a></li>
+      <li><a href="#Alphabetical-listing-of-standard-options">Alphabetical listing of standard options</a></li>
+    </ul>
+  </li>
+  <li><a href="#OBJECT-ORIENTED-INTERFACE">OBJECT-ORIENTED INTERFACE</a></li>
+  <li><a href="#STATE-and-RECORDING">STATE and RECORDING</a>
+    <ul>
+      <li><a href="#Use-of-recording">Use of recording</a></li>
+      <li><a href="#Controlling-the-recording">Controlling the recording</a></li>
+      <li><a href="#Tips-and-Gotchas">Tips and Gotchas!</a></li>
+    </ul>
+  </li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#Window-control-functions">Window control functions.</a></li>
+      <li><a href="#pgwin">pgwin</a></li>
+      <li><a href="#new">new</a></li>
+      <li><a href="#close">close</a></li>
+      <li><a href="#held">held</a></li>
+      <li><a href="#hold">hold</a></li>
+      <li><a href="#panel">panel</a></li>
+      <li><a href="#release">release</a></li>
+      <li><a href="#erase">erase</a></li>
+      <li><a href="#Plotting-functions">Plotting functions</a></li>
+      <li><a href="#env">env</a></li>
+      <li><a href="#label_axes">label_axes</a></li>
+      <li><a href="#imag">imag</a></li>
+      <li><a href="#imag1">imag1</a></li>
+      <li><a href="#rgbi">rgbi</a></li>
+      <li><a href="#fits_imag">fits_imag</a></li>
+      <li><a href="#fits_rgbi">fits_rgbi</a></li>
+      <li><a href="#fits_cont">fits_cont</a></li>
+      <li><a href="#draw_wedge">draw_wedge</a></li>
+      <li><a href="#ctab">ctab</a></li>
+      <li><a href="#ctab_info">ctab_info</a></li>
+      <li><a href="#autolog">autolog</a></li>
+      <li><a href="#line">line</a></li>
+      <li><a href="#lines">lines</a></li>
+      <li><a href="#points">points</a></li>
+      <li><a href="#errb">errb</a></li>
+      <li><a href="#cont">cont</a></li>
+      <li><a href="#bin">bin</a></li>
+      <li><a href="#hi2d">hi2d</a></li>
+      <li><a href="#arrow1">arrow</a></li>
+      <li><a href="#rect">rect</a></li>
+      <li><a href="#poly">poly</a></li>
+      <li><a href="#circle">circle</a></li>
+      <li><a href="#ellipse">ellipse</a></li>
+      <li><a href="#rectangle">rectangle</a></li>
+      <li><a href="#vect">vect</a></li>
+      <li><a href="#fits_vect">fits_vect</a></li>
+      <li><a href="#transform">transform</a></li>
+      <li><a href="#tline">tline</a></li>
+      <li><a href="#tpoints">tpoints</a></li>
+      <li><a href="#tcircle">tcircle</a></li>
+      <li><a href="#Text-routines">Text routines</a></li>
+      <li><a href="#text">text</a></li>
+      <li><a href="#legend">legend</a></li>
+      <li><a href="#Cursor-routines">Cursor routines</a></li>
+      <li><a href="#cursor">cursor</a></li>
+    </ul>
+  </li>
+  <li><a href="#Internal-routines">Internal routines</a>
+    <ul>
+      <li><a href="#catch_signals">catch_signals</a></li>
+      <li><a href="#open_new_window">_open_new_window</a></li>
+      <li><a href="#setup_window">_setup_window</a></li>
+      <li><a href="#status">_status</a></li>
+      <li><a href="#reopen">_reopen</a></li>
+      <li><a href="#advance_panel">_advance_panel</a></li>
+      <li><a href="#check_move_or_erase">_check_move_or_erase</a></li>
+      <li><a href="#broadcast_options">_broadcast_options</a></li>
+      <li><a href="#options">options</a></li>
+      <li><a href="#id">id</a></li>
+      <li><a href="#device">device</a></li>
+      <li><a href="#name">name</a></li>
+      <li><a href="#focus">focus</a></li>
+      <li><a href="#info">info</a></li>
+      <li><a href="#extract_hash">_extract_hash</a></li>
+      <li><a href="#parse_unit">_parse_unit</a></li>
+      <li><a href="#parse_options">_parse_options</a></li>
+      <li><a href="#save_status">_save_status</a></li>
+      <li><a href="#restore_status">_restore_status</a></li>
+      <li><a href="#checkarg">_checkarg</a></li>
+      <li><a href="#set_colour">_set_colour</a></li>
+      <li><a href="#standard_options_parser">_standard_options_parser</a></li>
+      <li><a href="#image_xyrange">_image_xyrange</a></li>
+      <li><a href="#FITS_tr">_FITS_tr</a></li>
+    </ul>
+  </li>
+  <li><a href="#INTERNAL">INTERNAL</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Graphics::PGPLOT::Window - A OO interface to PGPLOT windows</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> pdl&gt; use PDL::Graphics::PGPLOT::Window
+ pdl&gt; $win = pgwin(Device =&gt; &#39;/xs&#39;);
+ pdl&gt; $x = pdl [1..100]
+ pdl&gt; $y = sqrt($x)
+ pdl&gt; $win-&gt;line($y)
+ pdl&gt; $win-&gt;hold()
+ pdl&gt; $c = sin($x/10)*2 + 4
+ pdl&gt; $win-&gt;line($c)</code></pre>
+
+<p>In the following documentation the commands are not shown in their OO versions. This is for historical reasons and should not cause too much trouble.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This package offers a OO interface to the PGPLOT plotting package. This is intended to replace the traditional interface in <a href="../PGPLOT.html">PDL::Graphics::PGPLOT</a> and contains interfaces to a large number of PGPLOT routines. Below the usage examples for each function tend to be given in the non-OO version for historical reasons. This will slowly be changed, but in the meantime refer to the section on OO-interface below to see how to convert the usage information below to OO usage (it is totally trivial).</p>
+
+<p>PDL::Graphics::PGPLOT::Window is an interface to the PGPLOT graphical libraries. It currently supports PGPLOT-5.2 and PGPLOT-5.2-cd2. The -cd2 version includes RGB output and anti-aliasing.</p>
+
+<p>High-level plotting commands:</p>
+
+<pre><code> imag       -  Display an image (uses pgimag/pggray/pgrgbi as appropriate)
+ fits_imag  -  Display a FITS image in scientific coordinates
+ cont       -  Display image as contour map
+ fits_cont  -  Display a FITS image in scientific coordinates as a contour map
+ vect       -  Display 2 images as a vector field
+ fits_vect  -  Display 2 FITS images in sci. coordinates as a vector field
+ ctab       -  Load an image colour table
+ ctab_info  -  Get information about currently loaded colour table
+ line       -  Plot vector as connected points
+ tline      -  Plot a collection of vectors as lines
+ lines      -  Plot a polyline, multicolor vector [broadcastable]
+ points     -  Plot vector as points
+ tpoints    -  Plot a collection of vectors as points [broadcastable]
+ errb       -  Plot error bars
+ bin        -  Plot vector as histogram (e.g. bin(hist($data)) )
+ hi2d       -  Plot image as 2d histogram (not very good IMHO...)
+ tcircle    -  Plot vectors as circles [broadcastable]
+ label_axes -  Print axis titles
+ legend     -  Create a legend with different texts, linestyles etc.</code></pre>
+
+<p>Low-level plotting commands:</p>
+
+<pre><code> arrow      -  Draw an arrow
+ poly       -  Draw a polygon
+ rectangle  -  Draw a rectangle
+ text       -  Write text in the plot area
+ cursor     -  Interactively read cursor positions.
+ circle     -  Draw a circle
+ ellipse    -  Draw an ellipse.</code></pre>
+
+<p>Device manipulation commands:</p>
+
+<pre><code> new           -  Construct a new output device
+ pgwin         -  Exported hook to new()
+ close         -  Close a PGPLOT output device.
+ hold          -  Hold current plot window range - allows overlays etc.
+ release       -  Release back to freshly autoscaling for each command.
+ held          -  Indicates whether the current window is held.
+ focus         -  Set focus to the given device.
+ erase         -  Erase the current window (or panel).
+ options       -  Get the options set for the present output device.
+ id            -  The ID for the device.
+ device        -  The device type.
+ name          -  The window name.</code></pre>
+
+<p>Notes: <code>$transform</code> for image/cont etc. is used in the same way as the <code>TR()</code> array in the underlying PGPLOT FORTRAN routine but is, fortunately, zero-offset. The <a href="#transform">transform()</a> routine can be used to create this ndarray.</p>
+
+<p>For completeness: The transformation array connect the pixel index to a world coordinate such that:</p>
+
+<pre><code> X = tr[0] + tr[1]*i + tr[2]*j
+ Y = tr[3] + tr[4]*i + tr[5]*j</code></pre>
+
+<h2 id="Variable-passing-and-extensions">Variable passing and extensions</h2>
+
+<p>In general variables are passed to the pgplot routines by using <code>get_dataref</code> to get the reference to the values. Before passing to pgplot routines however, the data are checked to see if they are in accordance with the format (typically dimensionality) required by the PGPLOT routines. This is done using the routine <code>checkarg</code> (internal to PGPLOT). This routine checks the dimensionality of the input data. If there are superfluous dimensions of size 1 they will be trimmed away until the dimensionality is correct. Example:</p>
+
+<p>Assume an ndarray with dimensions (1,100,1,1) is passed to <code>line</code>, which expects its inputs to be vectors. <code>checkarg</code> will then return an ndarray with dimensions (100). If instead the same ndarray was passed to <code>imag</code>, which requires 2D ndarrays as output, <code>checkarg</code> would return an ndarray with dimensionality (100, 1) (Dimensions are removed from the <i>start</i>)</p>
+
+<p>Thus, if you want to provide support for another PGPLOT function, the structure currently look like this (there are plans to use the Options package to simplify the options parsing):</p>
+
+<pre><code> # Extract the hash(es) on the commandline
+ ($arg, $opt)=_extract_hash(@_);
+ &lt;Check the number of input parameters&gt;
+ &lt;deal with $arg&gt;
+ checkarg($x, 3); # For a hypothetical 3D routine.
+ catch_signals {
+   ...
+   pgcube($n, $x-&gt;get_dataref);
+ };
+ 1;</code></pre>
+
+<p>(the catch_signals block prevents problems with the perl-PGPLOT interface if the user hits Ctrl-C during an operation).</p>
+
+<h2 id="Setting-options">Setting options</h2>
+
+<p>All routines in this package take a hash with options as an optional input. This options hash can be used to set parameters for the subsequent plotting without going via the PGPLOT commands.</p>
+
+<p>This is implemented such that the plotting settings (such as line width, line style etc.) are affected only for that plot, any global changes made, say, with <code>pgslw()</code> are preserved. Some modifications apply when using the OO interface, see below.</p>
+
+<h2 id="Alphabetical-listing-of-standard-options">Alphabetical listing of standard options</h2>
+
+<p>The following options are always parsed. Whether they have any importance depend on the routine invoked - e.g. line style is irrelevant for <code>imag</code>, or the <code>justify</code> option is irrelevant if the display is on &#39;hold&#39;. This is indicated in the help text for the commands below.</p>
+
+<p>The options are not case sensitive and will match for unique substrings, but this is not encouraged as obscure options might invalidate what you thought was a unique substring.</p>
+
+<p>In the listing below examples are given of each option. The actual option can then be used in a plot command by specifying it as an argument to the function wanted (it can be placed anywhere in the command list).</p>
+
+<p>E.g:</p>
+
+<pre><code> $opt={COLOR=&gt;2};
+ line $x, $y, $opt; # This will plot a line with red color</code></pre>
+
+<p>If you are plotting to a hardcopy device then a number of options use a different name:</p>
+
+<pre><code>  HardLW   instead of LineWidth
+  HardCH   instead of CharSize
+  HardFont instead of Font
+
+  HardAxisColour instead of AxisColour
+  HardColour     instead of Colour</code></pre>
+
+<p>[although I&#39;m not sure when HardColour is actually used]</p>
+
+<dl>
+
+<dt id="align">align</dt>
+<dd>
+
+<p>If <code>pix</code> is set, then images and plots are not stretched to fill the plot area. the <code>align</code> string tells how to align them within the available area. &#39;L&#39; and &#39;R&#39; shove the plot against the left and right edges, respectively; &#39;B&#39; and &#39;T&#39; shove the plot against the bottom and top edges. The default is to center the image. e.g. &#39;BL&#39; puts the image on the bottom left corner, while &#39;CT&#39; centers the image horizontally while placing it at the top of the available plot area. This defaults to &#39;BT&#39; for non-justified images, to &#39;CC&#39; for justified images.</p>
+
+</dd>
+<dt id="arrow">arrow</dt>
+<dd>
+
+<p>This options allows you to set the arrow shape, and optionally size for arrows for the vect routine. The arrow shape is specified as a hash with the key FS to set fill style, ANGLE to set the opening angle of the arrow head, VENT to set how much of the arrow head is cut out and SIZE to set the arrowsize.</p>
+
+<p>The following</p>
+
+<pre><code> $opt = {ARROW =&gt; {FS=&gt;1, ANGLE=&gt;60, VENT=&gt;0.3, SIZE=&gt;5}};</code></pre>
+
+<p>will make a broad arrow of five times the normal size.</p>
+
+<p>Alternatively the arrow can be specified as a set of numbers corresponding to an extension to the syntax for pgsah. The equivalent to the above is</p>
+
+<pre><code> $opt = {ARROW =&gt; pdl([1, 60, 0.3, 5})};</code></pre>
+
+<p>For the latter the arguments must be in the given order, and if any are not given the default values of 1, 45, 0.3 and 1.0 respectively will be used.</p>
+
+</dd>
+<dt id="arrowsize">arrowsize</dt>
+<dd>
+
+<p>The arrowsize can be specified separately using this option to the options hash. It is useful if an arrowstyle has been set up and one wants to plot the same arrow with several sizes. Please note that it is <b>not</b> possible to set arrowsize and character size in the same call to a plotting function. This should not be a problem in most cases.</p>
+
+<pre><code> $opt = {ARROWSIZE =&gt; 2.5};</code></pre>
+
+</dd>
+<dt id="axis">axis</dt>
+<dd>
+
+<p>Set the axis value (see <a href="#env">&quot;env&quot;</a>). If you pass in a scalar you set the axis for the whole plot. You can also pass in an array ref for finer control of the axes.</p>
+
+<p>If you set the option to a scalar value, you get one of a few standard layouts. You can specify them by name or by number:</p>
+
+<pre><code> EMPTY  (-2) draw no box, axes or labels
+ BOX    (-1) draw box only
+ NORMAL (0)  draw box and label it with coordinates
+ AXES   (1)  same as NORMAL, but also draw (X=0,Y=0) axes
+ GRID   (2)  same as AXES, but also draw grid lines
+ LOGX   (10) draw box and label X-axis logarithmically
+ LOGY   (20) draw box and label Y-axis logarithmically
+ LOGXY  (30) draw box and label both axes logarithmically</code></pre>
+
+<p>When using logarithmic axes (<code>LOGX</code>, <code>LOGY</code> and <code>LOGXY</code>) you normally need to log the data yourself, e.g.</p>
+
+<pre><code>  line $x-&gt;log10, $y, {axis=&gt;&#39;LOGX&#39;};</code></pre>
+
+<p>For your convenience you can put PDL::Graphics::PGPLOT into autolog mode. In this mode a call to <code>line</code> or <code>points</code> will log the data for you and you can pass in the unmodified data, e.g.</p>
+
+<pre><code>  autolog(1); # enable automatic logarithm calculation
+  line $x, $y, {axis=&gt;&#39;LOGX&#39;}; # automatically displays logged x data</code></pre>
+
+<p>You can use the function interface to enable autologging:</p>
+
+<pre><code>  autolog(1);</code></pre>
+
+<p>or use it with a window reference (mode switching on a per window basis)</p>
+
+<pre><code>  $win-&gt;autolog(1);</code></pre>
+
+<p><code>autolog</code> without arguments returns the current autolog setting (0=off, 1=on).</p>
+
+<p>If you set the <code>AXIS</code> option to an array ref, then you can specify the box/axis options separately for the horizontal (ordinate; X coordinate; 0th element) and vertical (abscissa; Y coordinate; 1st element)) axes. Each element of the array ref should contain a PGPLOT format string. Presence or absence of specific characters flags particular options. For normal numeric labels, the options are:</p>
+
+<pre><code>  A : draw axis for this dimension.
+  B : draw bottom (X) or left (Y) edge of frame.
+  C : draw top (X) or right (Y) edge of frame.
+  G : draw Grid of vertical (X) or horizontal (Y) lines.
+  I : Invert ticks: draw them outside the plot rather than inside.
+  L : Label the axis Logarithmically.
+  P : Extend (&quot;Project&quot;) major tick marks outside the box.
+  M : Numeric labels go in the alternate place above (X) or to the
+           right (Y) of the viewport.
+  N : Numeric labels go in the usual location below (X) or to the
+           left  (Y) of the viewport
+  T : Draw major tick marks at the major coordinate interval.
+  S : Draw minor tick marks (subticks).
+  V : Orient numeric labels Vertically.  Only applicable to Y.
+           (The default is to write them parallel to the axis.)
+  1 : Force decimal labelling, instead of automatic choice
+  2 : Force exponential labeling, instead of automatic.</code></pre>
+
+<p>If you don&#39;t specify any axis value at all, the default is [&#39;BCNST&#39;,&#39;BCNST&#39;] for plots and [&#39;BCINST&#39;,&#39;BCINST&#39;] for images. (These list ref elements are handed on directly to the low-level PGPLOT routines).</p>
+
+<p>In addition, you can specify that your axis labels should be printed as days, hours, minutes, and seconds (ideal for julian dates and delta-t, or for angular quantities). You do that by setting additional character flags on the affected axis:</p>
+
+<pre><code>  X : Use HH MM SS.S time labeling rather than conventional numeric
+      labels.  The ordinate is in secsonds. Hours roll over at 24.
+  Y : Like &#39;X&#39; but the hour field runs past 24 if necessary.
+  Z : Like &#39;X&#39; but with a days field too (only shown where nonzero).
+  H : Label the numbers with superscript d, h, m, and s symbols.
+  D : Label the numbers with superscript o, &#39;, and &#39;&#39; symbols.
+  F : Omit first (lowest/leftmost) label; useful for tight layouts.
+  O : Omit leading zeroes in numbers under 10 (e.g. &quot; 3h 3m 1.2s&quot;
+      rather than &quot;03h 03m 01.2s&quot;).</code></pre>
+
+<p>For example, to plot a numeric quantity versus Julian day of the year in a standard boxed plot with tick marks, you can use [&quot;BNCSTZHO&quot;,&quot;BCNST&quot;].</p>
+
+</dd>
+<dt id="border">border</dt>
+<dd>
+
+<p>Normally the limits are chosen so that the plot just fits; with this option you can increase (or decrease) the limits by either a relative (ie a fraction of the original axis width) or an absolute amount. Either specify a hash array, where the keys are <code>TYPE</code> (set to &#39;relative&#39; or &#39;absolute&#39;) and <code>VALUE</code> (the amount to change the limits by), or set to 1, which is equivalent to</p>
+
+<pre><code> BORDER =&gt; { TYPE =&gt; &#39;rel&#39;, VALUE =&gt; 0.05 }</code></pre>
+
+</dd>
+<dt id="charsize">charsize</dt>
+<dd>
+
+<p>Set the character/symbol size as a multiple of the standard size.</p>
+
+<pre><code> $opt = {CHARSIZE =&gt; 1.5}</code></pre>
+
+<p>The HardCH option should be used if you are plotting to a hardcopy device.</p>
+
+</dd>
+<dt id="colour-or-color">colour (or color)</dt>
+<dd>
+
+<p>Set the colour to be used for the subsequent plotting. This can be specified as a number, and the most used colours can also be specified with name, according to the following table (note that this only works for the default colour map):</p>
+
+<pre><code>  0 - WHITE    1 - BLACK     2 - RED      3 - GREEN    4 - BLUE
+  5 - CYAN     6 - MAGENTA   7 - YELLOW   8 - ORANGE  14 - DARKGRAY
+ 16 - LIGHTGRAY</code></pre>
+
+<p>However there is a much more flexible mechanism to deal with colour. The colour can be set as a 3 or 4 element anonymous array (or ndarray) which gives the RGB colours. If the array has four elements the first element is taken to be the colour index to change. For normal work you might want to simply use a 3 element array with R, G and B values and let the package deal with the details. The R,G and B values go from 0 to 1.</p>
+
+<p>In addition the package will also try to interpret non-recognised colour names using the default X11 lookup table, normally using the <code>rgb.txt</code> that came with PGPLOT.</p>
+
+<p>For more details on the handling of colour it is best that the user consults the PGPLOT documentation. Further details on the handling of colour can be found in the documentation for the internal routine <a href="#set_colour">&quot;_set_colour&quot;</a>.</p>
+
+<p>The HardColour option should be used if you are plotting to a hardcopy device [this may be untrue?].</p>
+
+</dd>
+<dt id="diraxis">diraxis</dt>
+<dd>
+
+<p>This sets the direction of the axes of a plot or image, when you don&#39;t explicitly set them with the XRange and YRange options. It&#39;s particularly useful when you want (for example) to put long wavelengths (larger numbers) on the left hand side of your plot, or when you want to plot an image in (RA,dec) coordinates.</p>
+
+<p>You can use either a scalar or a two-element perl array. If you set it to 0 (the default) then PDL will guess which direction you want to go. If you set it to a positive number, the axis will always increase to the right. If you set it to a negative number, the axis will always increase to the left.</p>
+
+<p>For example, [0,0] is the default, which is usually right. [1,1] tells PGPLOT to always increase the axis values up and to the right. For a plot of intensity (y-axis) versus wavelength (x-axis) you could say [-1,1].</p>
+
+<p>This option is really only useful if you want to allow autoranging but need to set the direction that the axis goes. If you use the ranging options (<code>XRange</code> and <code>YRange</code>), you can change the direction by changing the order of the maximum and minimum values. That direction will override <code>DirAxis</code>.</p>
+
+</dd>
+<dt id="filltype">filltype</dt>
+<dd>
+
+<p>Set the fill type to be used by <a href="#poly">&quot;poly&quot;</a>, <a href="#circle">&quot;circle&quot;</a>, <a href="#ellipse">&quot;ellipse&quot;</a>, and <a href="#rectangle">&quot;rectangle&quot;</a> The fill can either be specified using numbers or name, according to the following table, where the recognised name is shown in capitals - it is case-insensitive, but the whole name must be specified.</p>
+
+<pre><code> 1 - SOLID
+ 2 - OUTLINE
+ 3 - HATCHED
+ 4 - CROSS_HATCHED
+
+ $opt = {FILLTYPE =&gt; &#39;SOLID&#39;};</code></pre>
+
+<p>(see below for an example of hatched fill)</p>
+
+</dd>
+<dt id="font">font</dt>
+<dd>
+
+<p>Set the character font. This can either be specified as a number following the PGPLOT numbering or name as follows (name in capitals):</p>
+
+<pre><code> 1 - NORMAL
+ 2 - ROMAN
+ 3 - ITALIC
+ 4 - SCRIPT</code></pre>
+
+<p>(Note that in a string, the font can be changed using the escape sequences <code>\fn</code>, <code>\fr</code>, <code>\fi</code> and <code>\fs</code> respectively)</p>
+
+<pre><code> $opt = {FONT =&gt; &#39;ROMAN&#39;};</code></pre>
+
+<p>gives the same result as</p>
+
+<pre><code> $opt = {FONT =&gt; 2};</code></pre>
+
+<p>The HardFont option should be used if you are plotting to a hardcopy device.</p>
+
+</dd>
+<dt id="hatching">hatching</dt>
+<dd>
+
+<p>Set the hatching to be used if either fillstyle 3 or 4 is selected (see above) The specification is similar to the one for specifying arrows. The arguments for the hatching is either given using a hash with the key ANGLE to set the angle that the hatch lines will make with the horizontal, SEPARATION to set the spacing of the hatch lines in units of 1% of <code>min(height, width)</code> of the view surface, and PHASE to set the offset the hatching. Alternatively this can be specified as a 1x3 ndarray <code>$hatch=pdl[$angle, $sep, $phase]</code>.</p>
+
+<pre><code> $opt = {FILLTYPE =&gt; &#39;HATCHED&#39;,
+         HATCHING =&gt; {ANGLE=&gt;30, SEPARATION=&gt;4}};</code></pre>
+
+<p>Can also be specified as</p>
+
+<pre><code> $opt = {FILL=&gt; &#39;HATCHED&#39;, HATCH =&gt; pdl [30,4,0.0]};</code></pre>
+
+<p>For another example of hatching, see <a href="#poly">&quot;poly&quot;</a>.</p>
+
+</dd>
+<dt id="justify">justify</dt>
+<dd>
+
+<p>If <code>justify</code> is set true, then the plot axes are shrunk to fit the plot or image and it specifies the aspect ratio of pixel coordinates in the plot or image. Setting justify=&gt;1 will produce a correct-aspect-ratio, shrink-wrapped image or plot; setting justify=&gt;0.5 will do the same thing but with a short and fat plot. The difference between <code>justify</code> and <code>pix</code> is that <code>pix</code> does not affect the shape of the axes themselves.</p>
+
+</dd>
+<dt id="linestyle">linestyle</dt>
+<dd>
+
+<p>Set the line style. This can either be specified as a number following the PGPLOT numbering:</p>
+
+<pre><code> 1 - SOLID line
+ 2 - DASHED
+ 3 - DOT-DASH-dot-dash
+ 4 - DOTTED
+ 5 - DASH-DOT-DOT-dot</code></pre>
+
+<p>or using name (as given in capitals above). Thus the following two specifications both specify the line to be dotted:</p>
+
+<pre><code> $opt = {LINESTYLE =&gt; 4};
+ $varopt = {LINESTYLE =&gt; &#39;DOTTED&#39;};</code></pre>
+
+<p>The names are not case sensitive, but the full name is required.</p>
+
+</dd>
+<dt id="linewidth">linewidth</dt>
+<dd>
+
+<p>Set the line width. It is specified as a integer multiple of 0.13 mm.</p>
+
+<pre><code> $opt = {LINEWIDTH =&gt; 10}; # A rather fat line</code></pre>
+
+<p>The HardLW option should be used if you are plotting to a hardcopy device.</p>
+
+</dd>
+<dt id="pitch">pitch</dt>
+<dd>
+
+<p>Sets the number of data pixels per inch on the output device. You can set the <code>unit</code> (see below) to change this to any other PGPLOT unit (millimeters, pixels, etc.). Pitch is device independent, so an image should appear exactly the same size (e.g. <code>Pitch=&gt;100</code> is 100 dpi) regardless of output device.</p>
+
+</dd>
+<dt id="pix">pix</dt>
+<dd>
+
+<p>Sets the pixel aspect ratio height/width. The height is adjusted to the correct ratio, while maintaining any otherwise-set pitch or scale in the horizontal direction. Larger numbers yield tall, skinny pixels; smaller numbers yield short, fat pixels.</p>
+
+</dd>
+<dt id="scale">scale</dt>
+<dd>
+
+<p>Sets the number of output display pixels per data pixel. You can set the <code>unit</code> (see below) to change this to number of PGPLOT units (inches, millimeters, etc.) per data pixel. <code>scale</code> is deprecated, as it is not device-independent; but it does come in handy for quick work on digital displays, where aliasing might otherwise interfere with image interpretation. For example, <code>scale=&gt;1</code> displays images at their native resolution.</p>
+
+</dd>
+<dt id="Panel">Panel</dt>
+<dd>
+
+<p>It is possible to define multiple plot ``panels&#39;&#39; with in a single window (see the <a href="#new">NXPanel and NYPanel options in the constructor</a>). You can explicitly set in which panel most plotting commands occur, by passing either a scalar or an array ref into the <code>Panel</code> option. There is also a <a href="../PGPLOT.html#panel">panel</a> method, but its use is deprecated because of a wart with the PGPLOT interface.</p>
+
+</dd>
+<dt id="plotting-imaging-range">plotting &amp; imaging range</dt>
+<dd>
+
+<p>Explicitly set the plot range in x and y. X-range and Y-range are set separately via the aptly named options <code>XRange</code> and <code>YRange</code>. If omitted PGPLOT selects appropriate defaults (minimum and maximum of the data range in general). These options are ignored if the window is on hold.</p>
+
+<pre><code>  line $x, $y, {xr =&gt; [0,5]}; # y-range uses default
+  line $x, $y, {XRange =&gt; [0,5], YRange =&gt; [-1,3]}; # fully specified range
+  imag $im, {XRange =&gt; [30,50], YRange=&gt;[-10,30]};
+  fits_imag $im, {XRange=&gt;[-2,2], YRange=&gt;[0,1]};</code></pre>
+
+<p>Imaging requires some thought if you don&#39;t want to lose a pixel off the edge of the image. Pixels are value-centered (they are centered on the coordinate whose value they represent), so the appropriate range to plot the entirety of a 100x100 pixel image is <code>[-0.5,99.5]</code> on each axis.</p>
+
+</dd>
+</dl>
+
+<h1 id="OBJECT-ORIENTED-INTERFACE">OBJECT-ORIENTED INTERFACE</h1>
+
+<p>This section will briefly describe how the PDL::Graphics::PGPLOT::Window package can be used in an object-oriented (OO) approach and what the advantages of this would be. We will start with the latter</p>
+
+<dl>
+
+<dt id="Multiple-windows">Multiple windows.</dt>
+<dd>
+
+<p>For the common user it is probably most interesting to use the OO interface when handling several open devices at the same time. If you have one variable for each plot device it is easier to distribute commands to the right device at the right time. This is the angle we will take in the rest of this description.</p>
+
+</dd>
+<dt id="Coding-and-abstraction">Coding and abstraction</dt>
+<dd>
+
+<p>At a more fundamental level it is desirable to approach a situation where it is possible to have a generic plotting interface which gives access to several plotting libraries, much as PGPLOT gives access to different output devices. Thus in such a hypothetical package one would say:</p>
+
+<pre><code>  my $win1 = Graphics::new(&#39;PGPLOT&#39;, {Device =&gt; &#39;/xs&#39;});
+  my $win2 = Graphics::new(&#39;gnuplot&#39;, {Background =&gt; &#39;Gray&#39;};</code></pre>
+
+<p>From a more practical point of view such abstraction also comes in handy when you write a large program package and you do not want to import routines nilly-willy in which case an OO approach with method calls is a lot cleaner.</p>
+
+<p>The pgwin exported constructor, arguably, breaks this philosophy; hopefully it will ``wither away&#39;&#39; when other compatible modules are available.</p>
+
+</dd>
+</dl>
+
+<p>Anyway, enough philosophizing, let us get down to Earth and give some examples of the use of OO PGPLOT. As an example we will take Odd (which happens to be a common Norwegian name) who is monitoring the birth of rabbits in O&#39;Fib-o-nachy&#39;s farm (alternatively they can of course be monitoring processes or do something entirely different). Odd wants the user to be able to monitor both the birth rates and accumulated number of rabbits and the spatial distribution of the births. Since these are logically different they chooses to have two windows open:</p>
+
+<pre><code>  $rate_win = PDL::Graphics::PGPLOT::Window-&gt;new(Device =&gt; &#39;/xw&#39;,
+              Aspect =&gt; 1, WindowWidth =&gt; 5, NXPanel =&gt; 2);
+
+  $area_win = PDL::Graphics::PGPLOT::Window-&gt;new(Device =&gt; &#39;/xw&#39;,
+              Aspect =&gt; 1, WindowWidth =&gt; 5);</code></pre>
+
+<p>See the documentation for <a href="#new">&quot;new&quot;</a> below for a full overview of the options you can pass to the constructor.</p>
+
+<p>Next, Odd wants to create plotting areas for subsequent plots and maybe show the expected theoretical trends</p>
+
+<pre><code>  $rate_win-&gt;env(0, 10, 0, 1000, {XTitle =&gt; &#39;Days&#39;, YTitle =&gt; &#39;#Rabbits&#39;});
+  $rate_win-&gt;env(0, 10, 0, 100, {Xtitle=&gt;&#39;Days&#39;, Ytitle =&gt; &#39;Rabbits/day&#39;});
+
+  $area_win-&gt;env(0, 1, 0, 1, {XTitle =&gt; &#39;Km&#39;, Ytitle =&gt; &#39;Km&#39;});
+  # And theoretical prediction.
+  $rate_win-&gt;line(sequence(10), fibonacci(10), {Panel =&gt; [1, 1]});</code></pre>
+
+<p>That is basically it. The commands should automatically focus the relevant window. Due to the limitations of PGPLOT this might however lead you to plot in the wrong panel... The package tries to be smart and do this correctly, but might get it wrong at times.</p>
+
+<h1 id="STATE-and-RECORDING">STATE and RECORDING</h1>
+
+<p>A new addition to the graphics interface is the ability to record plot commands. This can be useful when you create a nice-looking plot on the screen that you want to re-create on paper for instance. Or if you want to redo it with slightly changed variables for instance. This is still under development and views on the interface are welcome.</p>
+
+<p>The functionality is somewhat detached from the plotting functions described below so I will discuss them and their use here.</p>
+
+<p>Recording is off by default. To turn it on when you create a new device you can set the <code>Recording</code> option to true, or you can set the <code>$PDL::Graphics::PGPLOT::RECORDING</code> variable to 1. I recommend doing the latter in your <code>.perldlrc</code> file at least since you will often have use for recording in the perldl or pdl2 script.</p>
+
+<h2 id="Use-of-recording">Use of recording</h2>
+
+<p>The recording is meant to help you recreate a plot with new data or to a different device. The most typical situation is that you have created a beautiful plot on screen and want to have a Postscript file with it. In the dreary old world you needed to go back and execute all commands manually, but with this wonderful new contraption, the recorder, you can just replay your commands:</p>
+
+<pre><code>  dev &#39;/xs&#39;, {Recording =&gt; 1}
+  $x = sequence(10)
+  line $x, $x**2, {Linestyle =&gt; &#39;Dashed&#39;}
+  $s = retrieve_state() # Get the current tape out of the recorder.
+  dev &#39;/cps&#39;
+  replay $s</code></pre>
+
+<p>This should result in a <code>pgplot.ps</code> file with a parabola drawn with a dashed line. Note the command <code>retrieve_state</code> which retrieves the current state of the recorder and return an object (of type PDL::Graphics::State) that is used to replay commands later.</p>
+
+<h2 id="Controlling-the-recording">Controlling the recording</h2>
+
+<p>Like any self-respecting recorder you can turn the recorder on and off using the <code>turn_on_recording</code> and <code>turn_off_recording</code> respectively. Likewise you can clear the state using the <code>clear_state</code> command.</p>
+
+<pre><code>  $w=PDL::Graphics::PGPLOT::Window-&gt;new(Device =&gt; &#39;/xs&#39;);
+  $w-&gt;turn_on_recording;
+  $x=sequence(10); $y=$x*$x;
+  $w-&gt;line($x, $y);
+  $w-&gt;turn_off_recording;
+  $w-&gt;line($y, $x);
+  $w-&gt;turn_on_recording;
+  $w-&gt;line($x, $y*$x);
+  $state = $w-&gt;retrieve_state();</code></pre>
+
+<p>We can then replay <code>$state</code> and get a parabola and a cubic plot.</p>
+
+<pre><code>  $w-&gt;replay($state);</code></pre>
+
+<h2 id="Tips-and-Gotchas">Tips and Gotchas!</h2>
+
+<p>The data are stored in the state object as references to the real data. This leads to one good and one potentially bad consequence:</p>
+
+<dl>
+
+<dt id="The-good-is-that-you-can-create-the-plot-and-then-subsequently-redo-the-same-plot-using-a-different-set-of-data.-This-is-best-explained-by-an-example.-Let-us-first-create-a-simple-gradient-image-and-get-a-copy-of-the-recording">The good is that you can create the plot and then subsequently redo the same plot using a different set of data. This is best explained by an example. Let us first create a simple gradient image and get a copy of the recording:</dt>
+<dd>
+
+<pre><code>  $im = sequence(10,10)
+  imag $im
+  $s=retrieve_state</code></pre>
+
+<p>Now this was a rather dull plot, and in reality we wanted to show an image using <code>rvals</code>. Instead of re-creating the plot (which of course here would be the simplest option) we just change <code>$im</code>:</p>
+
+<pre><code>  $im -= sequence(10,10)
+  $im += rvals(10,10)</code></pre>
+
+<p>Now replay the commands</p>
+
+<pre><code>  replay $s</code></pre>
+
+<p>And hey presto! A totally different plot. Note however the trickery required to avoid losing reference to <code>$im</code></p>
+
+</dd>
+<dt id="This-takes-us-immediately-to-the-major-problem-with-the-recording-though.-Memory-leakage-Since-the-recording-keeps-references-to-the-data-it-can-keep-data-from-being-freed-zero-reference-count-when-you-expect-it-to-be.-For-instance-in-this-example-we-lose-totally-track-of-the-original-im-variable-but-since-there-is-a-reference-to-it-in-the-state-it-will-not-be-freed">This takes us immediately to the major problem with the recording though. Memory leakage! Since the recording keeps references to the data it can keep data from being freed (zero reference count) when you expect it to be. For instance, in this example, we lose totally track of the original $im variable, but since there is a reference to it in the state it will not be freed</dt>
+<dd>
+
+<pre><code>  $im = sequence(1000,1000)
+  imag $im
+  $s = retrieve_state
+  $im = rvals(10,10)</code></pre>
+
+<p>Thus after the execution of these commands we still have a reference to a 1000x1000 array which takes up a lot of memory...</p>
+
+<p>The solution is to call <code>clear</code> on the state variable:</p>
+
+<pre><code>  $s-&gt;clear()</code></pre>
+
+<p>(This is done automatically if the variable goes out of scope). I forsee this problem to most acute when working on the <code>perldl</code> or <code>pdl2</code> command line, but since this is exactly where the recording is most useful the best advice is just to be careful and call clear on state variables.</p>
+
+<p>If you are working with scripts and use large images for instance I would instead recommend that you do not turn on recording unless you need it.</p>
+
+</dd>
+</dl>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>A more detailed listing of the functions and their usage follows. For all functions we specify which options take effect and what other options exist for the given function. The function descriptions below are all given for the non-OO usage for historical reasons, but since the conversion to an OO method is trivial there is no major need for concern. Whenever you see a function example of the form</p>
+
+<pre><code>  Usage: a_simple_function($x, $y, $z [, $opt]);</code></pre>
+
+<p>and you wish to use the OO version, just let your mind read the above line as:</p>
+
+<pre><code>  Usage: $win-&gt;a_simple_function($x, $y, $z [, $opt]);</code></pre>
+
+<p>where <code>$win</code> is a PDL::Graphics::PGPLOT::Window object. That is all.</p>
+
+<h2 id="Window-control-functions">Window control functions.</h2>
+
+<h2 id="pgwin">pgwin</h2>
+
+<p>Exported constructor for PGPLOT object/device/plot window.</p>
+
+<pre><code> Usage: pgwin($opt);
+ Usage: pgwin($option-&gt;$value,...);
+ Usage: pgwin($device);</code></pre>
+
+<p>Parameters are passed on to new() and can either be specified by hash reference or as a list.</p>
+
+<p>See the documentation fo PDL::Graphics::PGPLOT::Window::new for details.</p>
+
+<p>Because pgwin is a convenience function, you can specify the device by passing in a single non-ref parameter. For even further convenience, you can even omit the &#39;/&#39; in the device specifier, so these two lines deliver the same result:</p>
+
+<pre><code>    $win = pgwin(gif);
+    $win = new PDL::Graphics::PGPLOT::Window({Dev=&gt;&#39;/gif&#39;});</code></pre>
+
+<h2 id="new">new</h2>
+
+<p>Constructor for PGPLOT object/device/plot window.</p>
+
+<pre><code>  Usage: PDL::Graphics::PGPLOT::Window-&gt;new($opt);
+  Usage: PDL::Graphics::PGPLOT::Window-&gt;new($option=&gt;$value,...);</code></pre>
+
+<p>Options to new() can either be specified via a reference to a hash</p>
+
+<pre><code>  $win = PDL::Graphics::PGPLOT::Window-&gt;new({Dev=&gt;&#39;/xserve&#39;,ny=&gt;2});</code></pre>
+
+<p>or directly, as an array</p>
+
+<pre><code>  # NOTE: no more {} !
+  $win = PDL::Graphics::PGPLOT::Window-&gt;new(Dev=&gt;&#39;/xserve&#39;,ny=&gt;2);</code></pre>
+
+<p>The following lists the recognised options:</p>
+
+<dl>
+
+<dt id="AspectRatio">AspectRatio</dt>
+<dd>
+
+<p>The aspect ratio of the image, in the sense vertical/horizontal. See the discussion on size setting.</p>
+
+</dd>
+<dt id="Device">Device</dt>
+<dd>
+
+<p>The type of device to use. The syntax of this is the one used by PGPLOT.</p>
+
+</dd>
+<dt id="Hold">Hold</dt>
+<dd>
+
+<p>Hold the plot window so that subsequent plots can plot over existing plots. This can be adjusted with the <code>hold()</code> and <code>release()</code> methods.</p>
+
+</dd>
+<dt id="NXPanel">NXPanel</dt>
+<dd>
+
+<p>The number of panels in the X-direction</p>
+
+</dd>
+<dt id="NYPanel">NYPanel</dt>
+<dd>
+
+<p>The number of panels in the Y-direction</p>
+
+</dd>
+<dt id="Size">Size</dt>
+<dd>
+
+<p>Yet another way to identify the plot window size -- this takes a scalar or an array ref containing one, two, or three numbers. One number gives you a square window. Two gives you a rectangular window <code>(X,Y)</code>. Three lets you specify the unit compactly (e.g. <code>[&lt;X&gt;,&lt;Y&gt;,1]</code> for inches, <code>[&lt;X&gt;,&lt;Y&gt;,2]</code> for mm) but is deprecated in favor of using the <code>Unit</code> option. See the discussion on size setting.</p>
+
+</dd>
+<dt id="Unit">Unit</dt>
+<dd>
+
+<p>The unit to use for size setting. PGPLOT accepts inch, mm, or pixel. The default unit is inches for historical reasons, but you can choose millimeters or (God forbid) pixels as well. String or numeric specifications are OK (0=normalized, 1=inches, 2=mm, 3=pixels). Normalized units make no sense here and are not accepted. Ideally someone will one day hook this into the CPAN units parser so you can specify window size in rods or attoparsecs.</p>
+
+</dd>
+<dt id="WindowName">WindowName</dt>
+<dd>
+
+<p>The name to give to the window. No particular use is made of this at present. It would be great if it was possible to change the title of the window frame.</p>
+
+</dd>
+<dt id="WindowWidth">WindowWidth</dt>
+<dd>
+
+<p>The width of the window in inches (or the specified Unit). See the discussion on size setting.</p>
+
+</dd>
+<dt id="WindowXSize-and-WindowYSize">WindowXSize and WindowYSize</dt>
+<dd>
+
+<p>The width and height of the window in inches (or the specified Unit). See the discussion on size setting.</p>
+
+</dd>
+</dl>
+
+<p>An important point to note is that the default values of most options can be specified by passing these to the constructor. All general options (common to several functions) can be adjusted in such a way, but function specific options can not be set in this way (this is a design limitation which is unlikely to be changed).</p>
+
+<p>Thus the following call will set up a window where the default axis colour will be yellow and where plot lines normally have red colour and dashed linestyle.</p>
+
+<pre><code>  $win = PDL::Graphics::PGPLOT::Window-&gt;new(Device =&gt; &#39;/xs&#39;,
+          AxisColour =&gt; &#39;Yellow&#39;, Colour =&gt; &#39;Red&#39;, LineStyle =&gt; &#39;Dashed&#39;);</code></pre>
+
+<p>Size setting: There are a gazillion ways to set window size, in keeping with TIMTOWTDI. In general you can get away with passing any unique combination of an <code>&lt;X&gt;</code> size, a <code>&lt;Y&gt;</code>size, and/or an aspect ratio. In increasing order of precedence, the options are: (<code>Units</code>, <code>AspectRatio</code>, <code>WindowWidth</code>, <code>Window&lt;X,Y&gt;Size</code>, <code>Size</code>).</p>
+
+<p>So if you specify an AspectRatio *and* an X and a Y coordinate, the AspectRatio is ignored. Likewise, if you specify Units and a three-component Size, the Units option is ignored in favor of the numeric unit in the Size.</p>
+
+<p>If you don&#39;t specify enough information to set the size of the window, you get the default pane size and shape for that device.</p>
+
+<h2 id="close">close</h2>
+
+<p>Close a plot window</p>
+
+<pre><code>  Usage: $win-&gt;close()</code></pre>
+
+<p>Close the current window. This does not necessarily mean that the window is removed from your screen, but it does ensure that the device is closed.</p>
+
+<p>A message will be printed to STDOUT giving the name of the file created if the plot was made to a hardcopy device and <code>$PDL::verbose</code> is true.</p>
+
+<h2 id="held">held</h2>
+
+<p>Check if a window is on hold</p>
+
+<pre><code>  $is_held = $win-&gt;held();</code></pre>
+
+<p>Function to check whether the window is held or not.</p>
+
+<h2 id="hold">hold</h2>
+
+<p>Hold the present window.</p>
+
+<pre><code> Usage: $win-&gt;hold()</code></pre>
+
+<p>Holds the present window so that subsequent plot commands overplots.</p>
+
+<h2 id="panel">panel</h2>
+
+<p>Switch to a different panel</p>
+
+<pre><code>  $win-&gt;panel(&lt;num&gt;);</code></pre>
+
+<p>Move to a different panel on the plotting surface. Note that you will need to erase it manually if that is what you require.</p>
+
+<p>This routine currently does something you probably don&#39;t want, and hence is deprecated for most use: if you say</p>
+
+<pre><code>  $win-&gt;panel(1);
+  $win-&gt;imag($image);</code></pre>
+
+<p>then $image will actually be displayed in panel <b>2</b>. That&#39;s because the main plotting routines such as line and imag all advance the panel when necessary. Instead, it&#39;s better to use the Panel option within plotting commands, if you want to set the panel explicitly.</p>
+
+<h2 id="release">release</h2>
+
+<p>Release a plot window.</p>
+
+<pre><code>   $win-&gt;release()</code></pre>
+
+<p>Release a plot window so that subsequent plot commands move to the next panel or erase the plot and create a new plot.</p>
+
+<h2 id="erase">erase</h2>
+
+<p>Erase plot</p>
+
+<pre><code>  $win-&gt;erase($opt);</code></pre>
+
+<p>Erase a plot area. This accepts the option <code>Panel</code> or alternatively a number or array reference which makes it possible to specify the panel to erase when working with several panels.</p>
+
+<h2 id="Plotting-functions">Plotting functions</h2>
+
+<h2 id="env">env</h2>
+
+<p>Define a plot window, and put graphics on &#39;hold&#39;</p>
+
+<pre><code> $win-&gt;env( $xmin, $xmax, $ymin, $ymax, [$justify, $axis] );
+ $win-&gt;env( $xmin, $xmax, $ymin, $ymax, [$options] );</code></pre>
+
+<p><code>$xmin</code>, <code>$xmax</code>, <code>$ymin</code>, <code>$ymax</code> are the plot boundaries. <code>$justify</code> is a boolean value (default is <b>0</b>); if true the axes scales will be the same (see <code>justify</code>). <code>$axis</code> describes how the axes should be drawn (see <code>axis</code>) and defaults to <b>0</b>.</p>
+
+<p>If the second form is used, $justify and $axis can be set in the options hash, for example:</p>
+
+<pre><code> $win-&gt;env( 0, 100, 0, 50, {JUSTIFY =&gt; 1, AXIS =&gt; &#39;GRID&#39;,
+                            CHARSIZE =&gt; 0.7} );</code></pre>
+
+<p>In addition the following options can also be set for <code>env</code>:</p>
+
+<dl>
+
+<dt id="PlotPosition">PlotPosition</dt>
+<dd>
+
+<p>The position of the plot on the page relative to the view surface in normalised coordinates as an anonymous array. The array should contain the lower and upper X-limits and then the lower and upper Y-limits. To place two plots above each other with no space between them you could do</p>
+
+<pre><code>  $win-&gt;env(0, 1, 0, 1, {PlotPosition =&gt; [0.1, 0.5, 0.1, 0.5]});
+  $win-&gt;env(5, 9, 0, 8, {PlotPosition =&gt; [0.1, 0.5, 0.5, 0.9]});</code></pre>
+
+</dd>
+<dt id="Axis-Justify-Border">Axis, Justify, Border</dt>
+<dd>
+
+<p>See the description of general options for these options.</p>
+
+</dd>
+<dt id="AxisColour">AxisColour</dt>
+<dd>
+
+<p>Set the colour of the coordinate axes.</p>
+
+</dd>
+<dt id="XTitle-YTitle-Title-Font-CharSize">XTitle, YTitle, Title, Font, CharSize</dt>
+<dd>
+
+<p>Axes titles and the font and size to print them.</p>
+
+</dd>
+</dl>
+
+<h2 id="label_axes">label_axes</h2>
+
+<p>Label plot axes</p>
+
+<pre><code>  $win-&gt;label_axes(&lt;xtitle&gt;, &lt;ytitle&gt;, &lt;plot title&gt;, $options);</code></pre>
+
+<p>Draw labels for each axis on a plot.</p>
+
+<h2 id="imag">imag</h2>
+
+<p>Display an image (uses <code>pgimag()</code>/<code>pggray()</code> as appropriate)</p>
+
+<pre><code> $win-&gt;imag ( $image,  [$min, $max, $transform], [$opt] )</code></pre>
+
+<p>NOTES</p>
+
+<p><code>$transform</code> for image/cont etc. is used in the same way as the <code>TR()</code> array in the underlying PGPLOT FORTRAN routine but is, fortunately, zero-offset. The <a href="#transform">transform()</a> routine can be used to create this ndarray.</p>
+
+<p>If <code>$image</code> is two-dimensional, you get a grey or pseudocolor image using the scalar values at each X,Y point. If <code>$image</code> is three-dimensional and the third dimension has order 3, then it is treated as an RGB true-color image via <a href="#rgbi">&quot;rgbi&quot;</a>.</p>
+
+<p>There are several options related to scaling. By default, the image is scaled to fit the PGPLOT default viewport on the screen. Scaling, aspect ratio preservation, and 1:1 pixel mapping are available. (1:1 pixel mapping is useful for avoiding display artifacts, but it&#39;s not recommended for final output as it&#39;s not device-independent.)</p>
+
+<p>Here&#39;s an additional complication: the &quot;pixel&quot; stuff refers not (necessarily) to normal image pixels, but rather to <i>transformed</i> image pixels. That is to say, if you feed in a transform matrix via the <code>TRANSFORM</code> option, the <code>PIX</code>, <code>SCALE</code>, etc. options all refer to the transformed coordinates and not physical image pixels. That is a Good Thing because it, e.g., lets you specify plate scales of your output plots directly! See fits_imag for an example application. If you do not feed in a transform matrix, then the identity matrix is applied so that the scaling options refer to original data pixels.</p>
+
+<p>To draw a colour bar (or wedge), either use the <code>DrawWedge</code> option, or the <code>draw_wedge()</code> routine (once the image has been drawn).</p>
+
+<p>Options recognised:</p>
+
+<dl>
+
+<dt id="ITF">ITF</dt>
+<dd>
+
+<p>the image transfer function applied to the pixel values. It may be one of &#39;LINEAR&#39;, &#39;LOG&#39;, &#39;SQRT&#39; (lower case is acceptable). It defaults to &#39;LINEAR&#39;.</p>
+
+</dd>
+<dt id="MIN">MIN</dt>
+<dd>
+
+<p>Sets the minimum value to be used for calculation of the color-table stretch.</p>
+
+</dd>
+<dt id="MAX">MAX</dt>
+<dd>
+
+<p>Sets the maximum value for the same.</p>
+
+</dd>
+<dt id="RANGE">RANGE</dt>
+<dd>
+
+<p>A more compact way to specify MIN and MAX, as a list: you can say &quot;Range=&gt;[0,10]&quot; to scale the color table for brightness values between 0 and 10 in the iamge data.</p>
+
+</dd>
+<dt id="CRANGE">CRANGE</dt>
+<dd>
+
+<p>Image values between MIN and MAX are scaled to an interval in normalized color domain space, on the interval [0,1], before lookup in the window&#39;s color table. CRANGE lets you use only a part of the color table by specifying your own range -- e.g. if you say &quot;CRange=&gt;[0.25,0.75]&quot; then only the middle half of the pseudocolor space will be used. (See the writeup on ctab().)</p>
+
+</dd>
+<dt id="TRANSFORM">TRANSFORM</dt>
+<dd>
+
+<p>The PGPLOT transform &#39;matrix&#39; as a 6x1 vector for display</p>
+
+</dd>
+<dt id="DrawWedge">DrawWedge</dt>
+<dd>
+
+<p>set to 1 to draw a colour bar (default is 0)</p>
+
+</dd>
+<dt id="Wedge">Wedge</dt>
+<dd>
+
+<p>see the draw_wedge() routine</p>
+
+</dd>
+</dl>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, JUSTIFY, SCALE, PIX, PITCH, ALIGN, XRANGE, YRANGE</code></pre>
+
+<pre><code>   To see an image with maximum size in the current window, but square
+   pixels, say:
+         $win-&gt;imag( $x, { PIX=&gt;1 } );
+   An alternative approach is to try:
+         $win-&gt;imag( $x, { JUSTIFY=&gt;1 } );
+   To see the same image, scaled 1:1 with device pixels, say:
+         $win-&gt;imag( $x, { SCALE=&gt;1 } );
+   To see an image made on a device with 1:2 pixel aspect ratio, with
+   X pixels the same as original image pixels, say
+         $win-&gt;imag( $x, { PIX=&gt;0.5, SCALE=&gt;2 } );
+   To display an image at 100 dpi on any device, say:
+         $win-&gt;imag( $x, { PITCH=&gt;100 } );
+   To display an image with 100 micron pixels, say:
+         $win-&gt;imag( $x, { PITCH=&gt;10, UNIT=&gt;&#39;mm&#39; } );</code></pre>
+
+<h2 id="imag1">imag1</h2>
+
+<p>Display an image with correct aspect ratio</p>
+
+<pre><code> $win-&gt;imag1 ( $image, [$min, $max, $transform], [$opt] )</code></pre>
+
+<p>This is syntactic sugar for</p>
+
+<pre><code>  $win-&gt;imag( { PIX=&gt;1, ALIGN=&gt;&#39;CC&#39; } );</code></pre>
+
+<h2 id="rgbi">rgbi</h2>
+
+<p>Display an RGB color image</p>
+
+<p>The calling sequence is exactly like <a href="#imag">&quot;imag&quot;</a>, except that the input image must have three dimensions: <code>N x M x 3</code>. The last dimension is the (R,G,B) color value. This routine requires <b>pgplot 5.3devel</b> or later. Calling rgbi explicitly is not necessary, as calling image with an appropriately dimensioned RGB triplet makes it fall through to rgbi.</p>
+
+<h2 id="fits_imag">fits_imag</h2>
+
+<p>Display a FITS image with correct axes</p>
+
+<pre><code>  $win-&gt;fits_imag( image,  [$min, $max], [$opt] );</code></pre>
+
+<p>NOTES</p>
+
+<dl>
+
+<dt id="Titles">Titles:</dt>
+<dd>
+
+<p>Currently fits_imag also generates titles for you by default and appends the FITS header scientific units if they&#39;re present. So if you say</p>
+
+<pre><code>  $pdl-&gt;hdr-&gt;{CTYPE1} = &quot;Flamziness&quot;;
+  $pdl-&gt;hdr-&gt;{CUNIT1} = &quot;milliBleems&quot;;
+  $win-&gt;fits_imag($pdl);</code></pre>
+
+<p>then you get an X title of &quot;Flamziness (milliBleems)&quot;. But you can (of course) override that by specifying the XTitle and YTitle switches:</p>
+
+<pre><code>  $win-&gt;fits_imag($pdl,{Xtitle=&gt;&quot;Arbitrary&quot;});</code></pre>
+
+<p>will give you &quot;Arbitrary&quot; as an X axis title, regardless of what&#39;s in the header.</p>
+
+</dd>
+<dt id="Scaling-and-aspect-ratio">Scaling and aspect ratio:</dt>
+<dd>
+
+<p>If CUNIT1 and CUNIT2 (or, if they&#39;re missing, CTYPE1 and CTYPE2) agree, then the default pixel aspect ratio is 1 (in scientific units, NOT in original pixels). If they don&#39;t agree (as for a spectrum) then the default pixel aspect ratio is adjusted automatically to match the plot viewport and other options you&#39;ve specified.</p>
+
+<p>You can override the image scaling using the SCALE, PIX, or PITCH options just as with <a href="#imag">the imag() method</a> -- but those parameters refer to the scientific coordinate system rather than to the pixel coordinate system (e.g. <code>PITCH=&gt;100</code> means &quot;100 scientific units per inch&quot;, and <code>SCALE=&gt;1</code> means &quot;1 scientific unit per device pixel&quot;). See <a href="#imag">the imag() writeup</a> for more info on these options.</p>
+
+<p>The default value of the <code>ALIGN</code> option is &#39;CC&#39; -- centering the image both vertically and horizontally.</p>
+
+</dd>
+<dt id="Axis-direction">Axis direction:</dt>
+<dd>
+
+<p>By default, fits_imag tries to guess which direction your axes are meant to go (left-to-right or right-to-left) using the CDELT keywords: if <code>CDELT</code> is negative, then rather than reflecting the image fits_imag will plot the X axis so that the highest values are on the left.</p>
+
+<p>This is the most convenient behavior for folks who use calibrated (RA,DEC) images, but it is technically incorrect. To force the direction, use the DirAxis option. Setting <code>DirAxis=&gt;1</code> (abbreviated <code>di=&gt;1</code>) will force the scientific axes to increase to the right, reversing the image as necessary.</p>
+
+</dd>
+<dt id="Color-wedge">Color wedge:</dt>
+<dd>
+
+<p>By default fits_imag draws a color wedge on the right; you can explicitly set the <code>DrawWedge</code> option to 0 to avoid this. Use the <code>WTitle</code> option to set the wedge title.</p>
+
+</dd>
+<dt id="Alternate-WCS-coordinates">Alternate WCS coordinates:</dt>
+<dd>
+
+<p>The default behaviour is to use the primary/default WCS information in the FITS header (i.e. the <code>CRVAL1</code>,<code>CRPIX1</code>,... keywords). The Greisen et al. standard (<a href="http://fits.cv.nrao.edu/documents/wcs/wcs.html">http://fits.cv.nrao.edu/documents/wcs/wcs.html</a>) allows alternative/additional mappings to be included in a header; these are denoted by the letters <code>A</code> to <code>Z</code>. If you know that your image contains such a mapping then you can use the <code>WCS</code> option to select the appropriate letter. For example, if you had read in a Chandra image created by the CIAO software package then you can display the image in the <code>physical</code> coordinate system by saying:</p>
+
+<pre><code>  $win-&gt;fits_imag( $pdl, { wcs =&gt; &#39;p&#39; } );</code></pre>
+
+<p>The identity transform is used if you select a mapping for which there is no information in the header. Please note that this support is <b>experimental</b> and is not guaranteed to work correctly; please see the documentation for the <a href="#FITS_tr">&quot;_FITS_tr&quot;</a> routine for more information.</p>
+
+</dd>
+</dl>
+
+<h2 id="fits_rgbi">fits_rgbi</h2>
+
+<p>Display an RGB FITS image with correct axes</p>
+
+<pre><code>  $win-&gt;fits_rgbi( image, [$min,$max], [$opt] );</code></pre>
+
+<p>Works exactly like <a href="#fits_imag">&quot;fits_imag&quot;</a>, but the image must be in (X,Y,RGB) form. Only the first two axes of the FITS header are examined.</p>
+
+<h2 id="fits_cont">fits_cont</h2>
+
+<p>Draw contours of an image, labelling the axes using the WCS information in the FITS header of the image.</p>
+
+<pre><code>  $win-&gt;fits_cont( image, [$contours, $transform, $misval], [$opt] )</code></pre>
+
+<p>Does the same thing for the <a href="#cont">&quot;cont&quot;</a> routine that <a href="#fits_imag">&quot;fits_imag&quot;</a> does for the <a href="#imag">&quot;imag&quot;</a> routines.</p>
+
+<h2 id="draw_wedge">draw_wedge</h2>
+
+<p>Add a wedge (colour bar) to an image.</p>
+
+<pre><code> $win-&gt;draw_wedge( [$opt] )</code></pre>
+
+<p>Adds a wedge - shows the mapping between colour and value for a pixel - to the current image. This can also be achieved by setting <code>DrawWedge</code> to 1 when calling the <code>imag</code> routine.</p>
+
+<p>The colour and font size are the same as used to draw the image axes (although this will probably fail if you did it yourself). To control the size and location of the wedge, use the <code>Wedge</code> option, giving it a hash reference containing any of the following:</p>
+
+<dl>
+
+<dt id="Side">Side</dt>
+<dd>
+
+<p>Which side of the image to draw the wedge: can be one of &#39;B&#39;, &#39;L&#39;, &#39;T&#39;, or &#39;R&#39;. Default is <b>&#39;R&#39;</b>.</p>
+
+</dd>
+<dt id="Displacement">Displacement</dt>
+<dd>
+
+<p>How far from the edge of the image should the wedge be drawn, in units of character size. To draw within the image use a negative value. Default is <b>1.5</b>.</p>
+
+</dd>
+<dt id="Width">Width</dt>
+<dd>
+
+<p>How wide should the wedge be, in units of character size. Default is <b>2</b>.</p>
+
+</dd>
+<dt id="Label">Label</dt>
+<dd>
+
+<p>A text label to be added to the wedge. If set, it is probably worth increasing the <code>Width</code> value by about 1 to keep the text readable. Default is <b>&#39;&#39;</b>. This is equivalent to the <code>WTitle</code> option to <a href="#imag">&quot;imag&quot;</a>, <a href="#fits_imag">&quot;fits_imag&quot;</a>, and similar methods.</p>
+
+</dd>
+<dt id="ForeGround-synonym-Fg">ForeGround (synonym Fg)</dt>
+<dd>
+
+<p>The pixel value corresponding to the &quot;maximum&quot; colour. If <code>undef</code>, uses the value used by <code>imag</code> (recommended choice). Default is <code>undef</code>.</p>
+
+</dd>
+<dt id="BackGround-synonym-Bg">BackGround (synonym Bg)</dt>
+<dd>
+
+<p>The pixel value corresponding to the &quot;minimum&quot; colour. If <code>undef</code>, uses the value used by <code>imag</code> (recommended choice). Default is <code>undef</code>.</p>
+
+</dd>
+</dl>
+
+<pre><code> $x = rvals(50,50);
+ $win = PDL::Graphics::PGPLOT::Window-&gt;new();
+ $win-&gt;imag( $x, { Justify =&gt; 1, ITF =&gt; &#39;sqrt&#39; } );
+ $win-&gt;draw_wedge( { Wedge =&gt; { Width =&gt; 4, Label =&gt; &#39;foo&#39; } } );
+ # although the following might be more sensible
+ $win-&gt;imag( $x, { Justify =&gt; 1, ITF =&gt; &#39;sqrt&#39;, DrawWedge =&gt; 1,
+     Wedge =&gt; { Width =&gt; 4, Label =&gt; &#39;foo&#39;} } );</code></pre>
+
+<h2 id="ctab">ctab</h2>
+
+<p>Load an image colour table.</p>
+
+<pre><code> Usage:</code></pre>
+
+<pre><code>   ctab ( $name, [$contrast, $brightness] ) # Builtin col table
+   ctab ( $ctab, [$contrast, $brightness] ) # $ctab is Nx4 array
+   ctab ( $levels, $red, $green, $blue, [$contrast, $brightness] )
+   ctab ( &#39;&#39;, $contrast, $brightness ) # use last color table</code></pre>
+
+<p>Note: See <a href="../LUT.html">PDL::Graphics::LUT</a> for access to a large number of colour tables.</p>
+
+<p>Notionally, all non-RGB images and vectors have their colors looked up in the window&#39;s color table. Colors in images and such are scaled to a normalized pseudocolor domain on the line segment [0,1]; the color table is a piecewise linear function that maps this one-dimensional scale to the three-dimensional normalized RGB color space [0,1]^3.</p>
+
+<p>You can specify specific indexed colors by appropriate use of the (levels,red,green,blue) syntax -- but that is deprecated, since the actual available number of colors can change depending on the output device. (Someone needs to write a specific hardware-dependent lookup table interface).</p>
+
+<p>See also <a href="#imag">&quot;imag&quot;</a> for a description of how to use only part of the color table for a particular image.</p>
+
+<h2 id="ctab_info">ctab_info</h2>
+
+<p>Return information about the currently loaded color table</p>
+
+<h2 id="autolog">autolog</h2>
+
+<p>Turn on automatic logarithmic scaling in <code>line</code> and <code>points</code></p>
+
+<pre><code>  Usage:  autolog([0|1]);</code></pre>
+
+<p>Setting the argument to 1 turns on automatic log scaling and setting it to zero turns it off again. The function can be used in both the object oriented and standard interface. To learn more, see the documentation for the <a href="#axis">axis option</a>.</p>
+
+<pre><code>   my $win = PDL::Graphics::PGPLOT::Window-&gt;new(dev=&gt;&#39;/xserve&#39;);
+   my $x=sequence(10);
+   my $y=$x*$x+1;
+
+   $win-&gt;autolog(1);
+   $win-&gt;line($x,$y, {Axis =&gt; &#39;LogY&#39;});</code></pre>
+
+<h2 id="line">line</h2>
+
+<p>Plot vector as connected points</p>
+
+<p>If the &#39;MISSING&#39; option is specified, those points in the <code>$y</code> vector which are equal to the MISSING value are not plotted, but are skipped over. This allows one to quickly draw multiple lines with one call to <code>line</code>, for example to draw coastlines for maps.</p>
+
+<pre><code> Usage: line ( [$x,] $y, [$opt] )</code></pre>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, COLO(U)R, LINESTYLE, LINEWIDTH, MISSING,
+ JUSTIFY, SCALE, PITCH, PIX, ALIGN</code></pre>
+
+<pre><code> $x = sequence(10)/10.;
+ $y = sin($x)**2;
+ # Draw a red dot-dashed line
+ line $x, $y, {COLOR =&gt; &#39;RED&#39;, LINESTYLE=&gt;3};</code></pre>
+
+<h2 id="lines">lines</h2>
+
+<p>Plot a list of vectors as discrete sets of connected points</p>
+
+<p>This works much like <a href="#line">&quot;line&quot;</a>, but for discrete sets of connected points. There are two ways to break lines: you can pass in x/y coordinates just like in <a href="#line">&quot;line&quot;</a>, but with an additional <code>pen</code> ndarray that indicates whether the pen is up or down on the line segment following each point (so you set it to zero at the end of each line segment you want to draw); or you can pass in an array ref containing a list of single polylines to draw.</p>
+
+<p>Happily, there&#39;s extra meaning packed into the <code>pen</code> ndarray: it multiplies the COLO(U)R that you set, so if you feed in boolean values you get what you expect -- but you can also feed in integer or floating-point values to get multicolored lines.</p>
+
+<p>Furthermore, the sign bit of <code>pen</code> can be used to draw hairline segments: if <code>pen</code> is negative, then the segment is drawn as though it were positive but with LineWidth and HardLW set to 1 (the minimum).</p>
+
+<p>Equally happily, even if you are using the array ref mechanism to break your polylines you can feed in an array ref of <code>pen</code> values to take advantage of the color functionality or further dice your polylines.</p>
+
+<p>Note that, unlike <a href="#line">&quot;line&quot;</a>, <code>lines</code> has no no specify-$y-only calling path. That&#39;s because <code>lines</code> is intended more for line art than for plotting, so you always have to specify both $x and $y.</p>
+
+<p>Infinite or bad values are ignored -- that is to say, if your vector contains a non-finite point, that point breaks the vector just as if you set pen=0 for both that point and the point before it.</p>
+
+<pre><code> Usage: $w-&gt;lines( $x, $y, [$pen], [$opt] );
+        $w-&gt;lines( $xy, [$pen], [$opt] );
+        $w-&gt;lines( \@xvects, \@yvects, [\@pen], [$opt] );
+        $w-&gt;lines( \@xyvects, [\@pen], [$opt] );</code></pre>
+
+<p>The following standard options influence this command: AXIS, BORDER, COLO(U)R, LINESTYLE, LINEWIDTH, MISSING, JUSTIFY, SCALE, PITCH, PIX, ALIGN</p>
+
+<p>CAVEAT:</p>
+
+<p>Setting <code>pen</code> elements to 0 prevents drawing altogether, so you can&#39;t use that to draw in the background color.</p>
+
+<h2 id="points">points</h2>
+
+<p>Plot vector as points</p>
+
+<pre><code> Usage: points ( [$x,] $y, [$symbol(s)], [$opt] )</code></pre>
+
+<p>Options recognised:</p>
+
+<pre><code>   SYMBOL - Either an ndarray with the same dimensions as $x, containing
+            the symbol associated to each point or a number specifying
+            the symbol to use for every point, or a name specifying the
+            symbol to use according to the following (recognised name in
+             capital letters):
+             0 - SQUARE   1 - DOT     2 - PLUS     3 - ASTERISK
+             4 - CIRCLE   5 - CROSS   7 - TRIANGLE 8 - EARTH
+             9 - SUN     11 - DIAMOND 12- STAR
+ PLOTLINE - If this is &gt;0 a line will be drawn through the points.</code></pre>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, CHARSIZE, COLOUR, LINESTYLE, LINEWIDTH,
+ JUSTIFY, SCALE, PIX, PITCH, ALIGN</code></pre>
+
+<p><code>SymbolSize</code> allows adjusting the symbol size, it defaults to CharSize.</p>
+
+<p>The <code>ColorValues</code> option allows one to plot XYZ data with the Z axis mapped to a color value. For example:</p>
+
+<pre><code> use PDL::Graphics::LUT;
+ ctab(lut_data(&#39;idl5&#39;)); # set up color palette to &#39;idl5&#39;
+ points ($x, $y, {ColorValues =&gt; $z});</code></pre>
+
+<pre><code> $y = sequence(10)**2+random(10);
+ # Plot blue stars with a solid line through:
+ points $y, {PLOTLINE =&gt; 1, COLOUR =&gt; BLUE, symbol =&gt; STAR}; # case insensitive</code></pre>
+
+<h2 id="errb">errb</h2>
+
+<p>Plot error bars (using <code>pgerrb()</code>)</p>
+
+<p>Usage:</p>
+
+<pre><code> errb ( $y, $yerrors, [$opt] )
+ errb ( $x, $y, $yerrors, [$opt] )
+ errb ( $x, $y, $xerrors, $yerrors, [$opt] )
+ errb ( $x, $y, $xloerr, $xhierr, $yloerr, $yhierr, [$opt])</code></pre>
+
+<p>Any of the error bar parameters may be <code>undef</code> to omit those error bars.</p>
+
+<p>Options recognised:</p>
+
+<pre><code>   TERM - Length of terminals in multiples of the default length
+ SYMBOL - Plot the datapoints using the symbol value given, either
+          as name or number - see documentation for &#39;points&#39;</code></pre>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, CHARSIZE, COLOUR, LINESTYLE, LINEWIDTH,
+ JUSTIFY, SCALE, PIX, PITCH, ALIGN</code></pre>
+
+<pre><code> $y = sequence(10)**2+random(10);
+ $sigma=0.5*sqrt($y);
+ errb $y, $sigma, {COLOUR =&gt; RED, SYMBOL =&gt; 18};
+
+ # plot X bars only
+ errb( $x, $y, $xerrors, undef );
+
+ # plot negative going bars only
+ errb( $x, $y, $xloerr, undef, $yloerr, undef );</code></pre>
+
+<h2 id="cont">cont</h2>
+
+<p>Display image as contour map</p>
+
+<pre><code> Usage: cont ( $image,  [$contours, $transform, $misval], [$opt] )</code></pre>
+
+<p>Notes: <code>$transform</code> for image/cont etc. is used in the same way as the <code>TR()</code> array in the underlying PGPLOT FORTRAN routine but is, fortunately, zero-offset. The <a href="#transform">transform()</a> routine can be used to create this ndarray.</p>
+
+<p>Options recognised:</p>
+
+<pre><code>    CONTOURS - A ndarray with the contour levels
+      FOLLOW - Follow the contour lines around (uses pgcont rather than
+               pgcons) If this is set &gt;0 the chosen linestyle will be
+               ignored and solid line used for the positive contours
+               and dashed line for the negative contours.
+      LABELS - An array of strings with labels for each contour
+ LABELCOLOUR - The colour of labels if different from the draw colour
+               This will not interfere with the setting of draw colour
+               using the colour keyword.
+     MISSING - The value to ignore for contouring
+   NCONTOURS - The number of contours wanted for automatical creation,
+               overridden by CONTOURS
+   TRANSFORM - The pixel-to-world coordinate transform vector</code></pre>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, COLOUR, LINESTYLE, LINEWIDTH,
+ JUSTIFY, SCALE, PIX, PITCH, ALIGN</code></pre>
+
+<pre><code> $x=sequence(10,10);
+ $ncont = 4;
+ $labels= [&#39;COLD&#39;, &#39;COLDER&#39;, &#39;FREEZING&#39;, &#39;NORWAY&#39;]
+ # This will give four blue contour lines labelled in red.
+ cont $x, {NCONT =&gt; $ncont, LABELS =&gt; $labels, LABELCOLOR =&gt; RED,
+           COLOR =&gt; BLUE}</code></pre>
+
+<h2 id="bin">bin</h2>
+
+<p>Plot vector as histogram (e.g. <code>bin(hist($data))</code>)</p>
+
+<pre><code> Usage: bin ( [$x,] $data )</code></pre>
+
+<p>Options recognised:</p>
+
+<pre><code> CENTRE - (default=1) if true, the x values denote the centre of the
+          bin otherwise they give the lower-edge (in x) of the bin
+ CENTER - as CENTRE</code></pre>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, COLOUR, JUSTIFY, LINESTYLE, LINEWIDTH</code></pre>
+
+<h2 id="hi2d">hi2d</h2>
+
+<p>Plot image as 2d histogram (not very good IMHO...)</p>
+
+<pre><code> Usage: hi2d ( $image, [$x, $ioff, $bias], [$opt] )</code></pre>
+
+<p>Options recognised:</p>
+
+<pre><code> IOFFSET - The offset for each array slice. &gt;0 slants to the right
+                                            &lt;0 to the left.
+    BIAS - The bias to shift each array slice up by.</code></pre>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, JUSTIFY, SCALE, PIX, PITCH, ALIGN</code></pre>
+
+<p>Note that meddling with the <code>ioffset</code> and <code>bias</code> often will require you to change the default plot range somewhat. It is also worth noting that if you have TriD working you will probably be better off using <a>mesh3d</a> or a similar command - see the <a>PDL::Graphics::TriD</a> module.</p>
+
+<pre><code> $r=sequence(100)/50-1.0;
+ $y=exp(-$r**2)*transpose(exp(-$r**2))
+ hi2d $y, {IOFF =&gt; 1.5, BIAS =&gt; 0.07};</code></pre>
+
+<h2 id="arrow1">arrow</h2>
+
+<p>Plot an arrow</p>
+
+<pre><code> Usage: arrow($x1, $y1, $x2, $y2, [, $opt]);</code></pre>
+
+<p>Plot an arrow from <code>$x1, $y1</code> to <code>$x2, $y2</code>. The arrow shape can be set using the option <code>Arrow</code>. See the documentation for general options for details about this option (and the example below):</p>
+
+<p>Example:</p>
+
+<pre><code>  arrow(0, 1, 1, 2, {Arrow =&gt; {FS =&gt; 1, Angle =&gt; 1, Vent =&gt; 0.3, Size =&gt; 5}});</code></pre>
+
+<p>which draws a broad, large arrow from (0, 1) to (1, 2).</p>
+
+<h2 id="rect">rect</h2>
+
+<p>Draw a non-rotated rectangle</p>
+
+<p>Usage: rect ( $x1, $x2, $y1, $y2 )</p>
+
+<p>Options recognised:</p>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, COLOUR, FILLTYPE, HATCHING, LINESTYLE,  LINEWIDTH
+ JUSTIFY, SCALE, PIX, PITCH, ALIGN</code></pre>
+
+<h2 id="poly">poly</h2>
+
+<p>Draw a polygon</p>
+
+<pre><code> Usage: poly ( $x, $y )</code></pre>
+
+<p>Options recognised:</p>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> AXIS, BORDER, COLOUR, FILLTYPE, HATCHING, LINESTYLE,  LINEWIDTH
+ JUSTIFY, SCALE, PIX, PITCH, ALIGN</code></pre>
+
+<pre><code> # Fill with hatching in two different colours
+ $x=sequence(10)/10;
+ # First fill with cyan hatching
+ poly $x, $x**2, {COLOR=&gt;5, FILL=&gt;3};
+ hold;
+ # Then do it over again with the hatching offset in phase:
+ poly $x, $x**2, {COLOR=&gt;6, FILL=&gt;3, HATCH=&gt;{PHASE=&gt;0.5}};
+ release;</code></pre>
+
+<h2 id="circle">circle</h2>
+
+<p>Plot a circle on the display using the fill setting.</p>
+
+<pre><code> Usage: circle($x, $y, $radius [, $opt]);</code></pre>
+
+<p>All arguments can alternatively be given in the options hash using the following options:</p>
+
+<dl>
+
+<dt id="XCenter-and-YCenter">XCenter and YCenter</dt>
+<dd>
+
+<p>The position of the center of the circle</p>
+
+</dd>
+<dt id="Radius">Radius</dt>
+<dd>
+
+<p>The radius of the circle.</p>
+
+</dd>
+</dl>
+
+<h2 id="ellipse">ellipse</h2>
+
+<p>Plot an ellipse, optionally using fill style.</p>
+
+<pre><code> Usage: ellipse($x, $y, $smaj, $smin, $theta [, $opt]);</code></pre>
+
+<p>All arguments can alternatively be given in the options hash using the following options (for historical reasons the names MajorAxis and MinorAxis have been preserved though they really refer to the semi-axes):</p>
+
+<dl>
+
+<dt id="MajorAxis">MajorAxis</dt>
+<dd>
+
+<p>The semi-major axis of the ellipse - this must be defined or <code>$smaj</code> must be given.</p>
+
+</dd>
+<dt id="MinorAxis">MinorAxis</dt>
+<dd>
+
+<p>The semi-minor axis, like <code>MajorAxis</code> this is required or <code>$smin</code> must be given.</p>
+
+</dd>
+<dt id="Theta-synonym-Angle">Theta (synonym Angle)</dt>
+<dd>
+
+<p>The orientation of the ellipse - defaults to 0.0. This is given in radians.</p>
+
+</dd>
+<dt id="XCenter-and-YCenter1">XCenter and YCenter</dt>
+<dd>
+
+<p>The coordinates of the center of the ellipse. These must be specified or <code>$x</code> and <code>$y</code> must be given.</p>
+
+</dd>
+<dt id="NPoints">NPoints</dt>
+<dd>
+
+<p>The number of points used to draw the ellipse. This defaults to 100 and might need changing in the case of very large ellipses.</p>
+
+</dd>
+</dl>
+
+<p>The routine also recognises the same standard options as accepted by <a href="#poly">&quot;poly&quot;</a>.</p>
+
+<h2 id="rectangle">rectangle</h2>
+
+<p>Draw a rectangle.</p>
+
+<pre><code> Usage: rectangle($xcenter, $ycenter, $xside, $yside, [, $angle, $opt]);</code></pre>
+
+<p>This routine draws a rectangle with the chosen fill style. Internally it calls <a href="#poly">&quot;poly&quot;</a> which is somewhat slower than <code>pgrect</code> but which allows for rotated rectangles as well. The routine recognises the same options as <code>poly</code> and in addition the following:</p>
+
+<dl>
+
+<dt id="XCenter-and-YCenter2">XCenter and YCenter</dt>
+<dd>
+
+<p>The position of the center of the rectangle. XCentre and YCentre are valid synonyms.</p>
+
+</dd>
+<dt id="XSide-and-YSide">XSide and YSide</dt>
+<dd>
+
+<p>The length of the X and Y sides. If only one is specified the shape is taken to be square with that as the side-length, alternatively the user can set Side</p>
+
+</dd>
+<dt id="Side1">Side</dt>
+<dd>
+
+<p>The length of the sides of the rectangle (in this case a square) - syntactic sugar for setting XSide and YSide identical. This is overridden by XSide or YSide if any of those are set.</p>
+
+</dd>
+<dt id="Angle-synonym-Theta">Angle (synonym Theta)</dt>
+<dd>
+
+<p>The angle at which the rectangle is to be drawn. This defaults to 0.0 and is given in radians.</p>
+
+</dd>
+</dl>
+
+<h2 id="vect">vect</h2>
+
+<p>Display 2 images as a vector field</p>
+
+<pre><code> Usage: vect ( $w, $x, $y, [$scale, $pos, $transform, $misval], { opt } );
+        $w-&gt;vect($x,$y,[$scale,$pos,$transform,$misval], { opt });</code></pre>
+
+<p>Notes: <code>$transform</code> for image/cont etc. is used in the same way as the <code>TR()</code> array in the underlying PGPLOT FORTRAN routine but is, fortunately, zero-offset. The <a href="#transform">transform()</a> routine can be used to create this ndarray.</p>
+
+<p>This routine will plot a vector field. <code>$x</code> is the horizontal component and <code>$y</code> the vertical component. The scale factor converts between vector length units and scientific positional units. You can set the scale, position, etc. either by passing in parameters in the normal parameter list or by passing in options.</p>
+
+<p>Options recognised:</p>
+
+<pre><code>     SCALE - Set the scale factor for vector lengths.
+       POS - Set the position of vectors.
+             &lt;0 - vector head at coordinate
+             &gt;0 - vector base at coordinate
+             =0 - vector centered on the coordinate
+ TRANSFORM - The pixel-to-world coordinate transform vector
+   MISSING - Elements with this value are ignored.</code></pre>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code> ARROW, ARROWSIZE, AXIS, BORDER, CHARSIZE, COLOUR,
+ LINESTYLE, LINEWIDTH,</code></pre>
+
+<pre><code> $x=rvals(11,11,{Centre=&gt;[5,5]});
+ $y=rvals(11,11,{Centre=&gt;[0,0]});
+ vect $x, $y, {COLOR=&gt;YELLOW, ARROWSIZE=&gt;0.5, LINESTYLE=&gt;dashed};</code></pre>
+
+<h2 id="fits_vect">fits_vect</h2>
+
+<p>Display a pair of 2-D ndarrays as vectors, with FITS header interpretation</p>
+
+<pre><code> Usage: fits_vect ($x, $y, [$scale, $pos, $transform, $misval] )</code></pre>
+
+<p><code>fits_vect</code> is to <a href="#vect">&quot;vect&quot;</a> as <a href="#fits_imag">&quot;fits_imag&quot;</a> is to <a href="#imag">&quot;imag&quot;</a>.</p>
+
+<h2 id="transform">transform</h2>
+
+<p>Create transform array for contour and image plotting</p>
+
+<pre><code> $win-&gt;transform([$xdim,$ydim], $options);</code></pre>
+
+<p>(For information on coordinate transforms, try <a href="../../Transform.html">PDL::Transform</a>.) This function creates a transform array in the format required by the image and contouring routines. You must call it with the dimensions of your image as arguments or pass these as an anonymous hash - see the example below.</p>
+
+<dl>
+
+<dt id="Angle">Angle</dt>
+<dd>
+
+<p>The rotation angle of the transform, in radians. Positive numbers rotate the image clockwise on the screen.</p>
+
+</dd>
+<dt id="ImageDimensions">ImageDimensions</dt>
+<dd>
+
+<p>The dimensions of the image the transform is required for. The dimensions should be passed as a reference to an array.</p>
+
+</dd>
+<dt id="Pixinc">Pixinc</dt>
+<dd>
+
+<p>The increment in output coordinate per pixel.</p>
+
+</dd>
+<dt id="ImageCenter-or-ImageCentre">ImageCenter (or ImageCentre)</dt>
+<dd>
+
+<p>The centre of the image as an anonymous array <b>or</b> as a scalar, in scientific coordinates. In the latter case the x and y value for the center will be set equal to this scalar. This is particularly useful in the common case when the center is (0, 0). (ImageCenter overrides RefPos if both are specified).</p>
+
+</dd>
+<dt id="RefPos-or-ReferencePosition">RefPos (or ReferencePosition)</dt>
+<dd>
+
+<p>If you wish to set a pixel other than the image centre to a given value, use this option. It should be supplied with a reference to an array containing 2 2-element array references, e.g.</p>
+
+<pre><code> RefPos =&gt; [ [ $xpix, $ypix ], [ $xplot, $yplot ] ]</code></pre>
+
+<p>This will label pixel <code>($xpix,$ypix)</code> as being at position <code>($xplot,$yplot)</code>. For example</p>
+
+<pre><code> RefPos      =&gt; [ [100,74], [ 0, 0 ] ]</code></pre>
+
+<p>sets the scientific coordinate origin to be at the center of the (100,74) pixel coordinate. The pixel coordinates are pixel-centered, and start counting from 0 (as all good pixel coordinates should).</p>
+
+</dd>
+</dl>
+
+<p>Example:</p>
+
+<pre><code>   $im = rvals(100, 100);
+   $w = PDL::Graphics::PGPLOT::Window-&gt;new(Device =&gt; &#39;/xs&#39;);
+   $t = $w-&gt;transform(dims($im), {ImageCenter =&gt; 0,  Pixinc =&gt; 5});
+   $w-&gt;imag($im, {Transform =&gt; $t});</code></pre>
+
+<h2 id="tline">tline</h2>
+
+<p>Broadcasted line plotting</p>
+
+<pre><code> $win-&gt;tline($x, $y, $options);</code></pre>
+
+<p>This is a broadcasted interface to <code>line</code>. This is convenient if you have a 2D array and want to plot out every line in one go. The routine will apply any options you apply in a &quot;reasonable&quot; way. In the sense that it will loop over the options wrapping over if there are less options than lines.</p>
+
+<p>Example:</p>
+
+<pre><code>  $h={Colour =&gt; [&#39;Red&#39;, &#39;1&#39;, 4], Linestyle =&gt; [&#39;Solid&#39; ,&#39;Dashed&#39;]};
+  $tx=zeroes(100,5)-&gt;xlinvals(-5,5);
+  $ty = $tx + $tx-&gt;yvals;
+  $win-&gt;tline($tx, $ty, $h);</code></pre>
+
+<h2 id="tpoints">tpoints</h2>
+
+<p>A broadcasted interface to points</p>
+
+<pre><code> Usage: tpoints($x, $y, $options);</code></pre>
+
+<p>This is a broadcasted interface to <code>points</code>. This is convenient if you have a 2D array and want to plot out every line in one go. The routine will apply any options you apply in a &quot;reasonable&quot; way. In the sense that it will loop over the options wrapping over if there are less options than lines.</p>
+
+<p>Example:</p>
+
+<pre><code>  $h={Colour =&gt; [&#39;Red&#39;, &#39;1&#39;, 4], Linestyle =&gt; [&#39;Solid&#39; ,&#39;Dashed&#39;]};
+  $tx=zeroes(100,5)-&gt;xlinvals(-5,5);
+  $ty = $tx + $tx-&gt;yvals;
+  tpoints($tx, $ty, $h);</code></pre>
+
+<h2 id="tcircle">tcircle</h2>
+
+<p>A broadcasted interface to circle</p>
+
+<pre><code> Usage: tcircle($x, $y, $r, $options);</code></pre>
+
+<p>This is a broadcasted interface to <code>circle</code>. This is convenient if you have a list of circle centers and radii and want to draw every circle in one go. The routine will apply any options you apply in a &quot;reasonable&quot; way, in the sense that it will loop over the options wrapping over if there are less options than circles.</p>
+
+<p>Example:</p>
+
+<pre><code> $x=sequence(5);
+ $y=random(5);
+ $r=sequence(5)/10 + 0.1;
+ $h={justify =&gt; 1,Color =&gt; [&#39;red&#39;,&#39;green&#39;,&#39;blue&#39;], filltype =&gt; [&#39;solid&#39;,&#39;outline&#39;,&#39;hatched&#39;,&#39;cross_hatched&#39;]};
+ tcircle($x, $y, $r, $h);</code></pre>
+
+<p>Note that <code>$x</code> and <code>$y</code> must be the same size (&gt;1D is OK, though meaningless as far as <code>tcircle</code> is concerned). <code>$r</code> can be the same size as <code>$x</code> OR a 1-element ndarray OR a single perl scalar.</p>
+
+<h2 id="Text-routines">Text routines</h2>
+
+<h2 id="text">text</h2>
+
+<p>Write text in a plot window at a specified position.</p>
+
+<pre><code> Usage: text ($text, $x, $y [, $opt])</code></pre>
+
+<p>Options recognised:</p>
+
+<dl>
+
+<dt id="ANGLE"><code>ANGLE</code></dt>
+<dd>
+
+<p>The angle in degrees between the baseline of the text and the horisontal (increasing counter-clockwise). This defaults to 0.</p>
+
+</dd>
+<dt id="JUSTIFICATION"><code>JUSTIFICATION</code></dt>
+<dd>
+
+<p>The justification of the text relative to the position specified. It defaults to 0.0 which gives left-justified text. A value of 0.5 gives centered text and a value of 1.0 gives right-justified text.</p>
+
+</dd>
+<dt id="XPos-YPos-Text"><code>XPos</code>, <code>YPos</code>, <code>Text</code></dt>
+<dd>
+
+<p>These gives alternative ways to specify the text and position.</p>
+
+</dd>
+<dt id="BackgroundColour"><code>BackgroundColour</code></dt>
+<dd>
+
+<p>This sets the background colour for the text in case an opaque background is desired. You can also use the synonyms <code>Bg</code> and <code>BackgroundColor</code>.</p>
+
+</dd>
+</dl>
+
+<p>The following standard options influence this command:</p>
+
+<pre><code>   COLOUR, CHARSIZE</code></pre>
+
+<pre><code>  line sequence(10), sequence(10)**2;
+  text &#39;A parabola&#39;, 3, 9, {Justification =&gt; 1, Angle=&gt;atan2(6,1)};</code></pre>
+
+<h2 id="legend">legend</h2>
+
+<p>Add a legend to a plot</p>
+
+<pre><code> Usage: legend($text, $x, $y, [, $width], $opt]);</code></pre>
+
+<p>This function adds a legend to an existing plot. The action is primarily controlled by information in the options hash, and the basic idea is that <code>$x</code> and <code>$y</code> determines the upper left hand corner of the box in which the legend goes. If the width is specified either as an argument or as an option in the option hash this is used to determine the optimal character size to fit the text into part of this width (defaults to 0.5 - see the description of <code>TextFraction</code> below). The rest of the width is filled out with either lines or symbols according to the content of the <code>LineStyle</code>, <code>Symbol</code>, <code>Colour</code> and <code>LineWidth</code> options.</p>
+
+<p>The local options recognised are as follows:</p>
+
+<dl>
+
+<dt id="Text"><code>Text</code></dt>
+<dd>
+
+<p>An anonymous array of annotations, can also be specified directly.</p>
+
+</dd>
+<dt id="XPos-and-YPos"><code>XPos</code> and <code>YPos</code></dt>
+<dd>
+
+<p>The X and Y position of the upper left-hand corner of the text.</p>
+
+</dd>
+<dt id="Width-and-Height"><code>Width</code> and <code>Height</code></dt>
+<dd>
+
+<p>The width and/or height of each line (including symbol/line). This is used to determine the character size. If any of these are set to &#39;Automatic&#39; the current character size will be used.</p>
+
+</dd>
+<dt id="TextFraction"><code>TextFraction</code></dt>
+<dd>
+
+<p>The text and the symbol/line is set inside a box. <code>TextFraction</code> determines how much of this box should be devoted to text. This defaults to 0.5. You can also use <code>Fraction</code> as a synonym to this.</p>
+
+</dd>
+<dt id="TextShift"><code>TextShift</code></dt>
+<dd>
+
+<p>This option allows for fine control of the spacing between the text and the start of the line/symbol. It is given in fractions of the total width of the legend box. The default value is 0.1.</p>
+
+</dd>
+<dt id="VertSpace-or-VSpace"><code>VertSpace</code> or <code>VSpace</code></dt>
+<dd>
+
+<p>By default the text lines are separated by one character height (in the sense that if the separation were 0 then they would lie on top of each other). The <code>VertSpace</code> option allows you to increase (or decrease) this gap in units of the character height; a value of 0.5 would add half a character height to the gap between lines, and -0.5 would remove the same distance. The default value is 0.</p>
+
+</dd>
+<dt id="BackgroundColour1"><code>BackgroundColour</code></dt>
+<dd>
+
+<p>This sets the background colour for the text in case an opaque background is desired. You can also use the synonyms <code>Bg</code> and <code>BackgroundColor</code>.</p>
+
+</dd>
+</dl>
+
+<pre><code>  line $x, $y, {Color =&gt; &#39;Red&#39;, LineStyle =&gt; &#39;Solid&#39;};
+  line $x2, $y2, {Color =&gt; &#39;Blue&#39;, &#39;LineStyle&#39; =&gt; &#39;Dashed&#39;, LineWidth =&gt; 10};
+
+  legend [&#39;A red line&#39;, &#39;A blue line&#39;], 5, 5,
+      {LineStyle =&gt; [&#39;Solid&#39;, &#39;Dashed&#39;], Colour =&gt; [&#39;Red&#39;, &#39;Blue&#39;]
+       LineWidth =&gt; [undef, 10]}; # undef gives default.</code></pre>
+
+<h2 id="Cursor-routines">Cursor routines</h2>
+
+<h2 id="cursor">cursor</h2>
+
+<p>Interactively read cursor positions.</p>
+
+<pre><code> Usage: ($x, $y, $ch, $xref, $yref) = cursor($opt)</code></pre>
+
+<p>This routine has no standard input parameters, but the type of cursor can be set by setting the option <code>Type</code> as a key in the anonymous hash <code>$opt</code>. The first three return values from the function are always defined and gives the position selected by the user and the character pressed.</p>
+
+<p>Depending on the cursor type selected the last two arguments might also be defined and these give a reference position. For instance if the cursor is selected to be <code>Rectangle</code> then the reference position gives one of the corners of the rectangle and <code>$x</code> and <code>$y</code> the diagonally opposite one.</p>
+
+<p>Options recognised:</p>
+
+<dl>
+
+<dt id="XRef-YRef">XRef, YRef</dt>
+<dd>
+
+<p>The reference position to be used</p>
+
+</dd>
+<dt id="Type">Type</dt>
+<dd>
+
+<p>The type of cursor. This can be selected using a number between 0 and 7 as in PGPLOT, or alternatively you can specify these as, <code>Default</code> (0), <code>RadialLine</code> (1), <code>Rectangle</code> (2), <code>TwoHorizontalLines</code> (3), <code>TwoVerticalLines</code> (4), <code>HorizontalLine</code> (5), <code>VerticalLine</code> (6) and <code>CrossHair</code> (7) respectively. The default cursor is just the normal mouse cursor.</p>
+
+<p>For the <code>RadialLine</code> you <i>must</i> specify the reference point, whereas for the <code>Two(Vertical|Horizontal)Lines</code> cursor the X or Y reference point, respectively, must be specified.</p>
+
+</dd>
+</dl>
+
+<p>To select a region on a plot, use the rectangle cursor:</p>
+
+<pre><code>  ($x, $y, $ch, $xref, $yref) = cursor({Type =&gt; &#39;Rectangle&#39;});
+  poly pdl($x, $xref, $xref, $x, $x), pdl($y, $y, $yref, $yref, $y);</code></pre>
+
+<p>To select a region of the X-axis:</p>
+
+<pre><code>  ($x1, $y1, $ch) = cursor({Type =&gt; &#39;VerticalLine&#39;});
+  ($x2, $y2, $ch) = cursor({Type =&gt; &#39;TwoVerticalLines&#39;, XRef =&gt; $x1});</code></pre>
+
+<h1 id="Internal-routines">Internal routines</h1>
+
+<h2 id="catch_signals">catch_signals</h2>
+
+<p>To prevent pgplot from doing a fandango on core, we have to block interrupts during PGPLOT calls. Specifically, INT needs to get caught. These internal routines provide a mechanism for that.</p>
+
+<p>You simply bracket any PGPLOT calls with <code>catch_signals</code>:</p>
+
+<pre><code> catch_signals {
+   ...
+   pgcube($n, $x-&gt;get_dataref);
+ };</code></pre>
+
+<p>and the signal_catcher will queue up any signals (like INT -- the control-C interrupt) until the end of the block.</p>
+
+<h2 id="open_new_window">_open_new_window</h2>
+
+<p>Open a new window. This sets the window ID, which is the one used when accessing a window later using <code>pgslct</code>. It also sets the window name to something easily remembered if it has not been set before.</p>
+
+<h2 id="setup_window">_setup_window</h2>
+
+<p>This routine sets up a new window with its shape and size. This is also where the size options are actually parsed. These are then forgotten (well, they are stored in $self-&gt;{Options}) and the corresponding aspect ratio and window width is stored. See the discussion under new() for the logic.</p>
+
+<p>Finally the subpanels are set up using <code>pgsubp</code> and colours and linewidth are adjusted according to whether we have a hardcopy device or not.</p>
+
+<h2 id="status">_status</h2>
+
+<p>This routine checks PGPLOT&#39;s status for the window. It returns OPEN if the window is open and CLOSED if it is closed. (Windows can be closed but still exist).</p>
+
+<h2 id="reopen">_reopen</h2>
+
+<p>This functions reopens a window. Since this is an internal function it does not have a lot of error-checking. Make sure the device is closed <i>before</i> calling this routine.</p>
+
+<p>There is an unfortunate problem which pops up viz. that the window name cannot be changed at this point since we are offering that to the rest of the world. That might be sensible, but it means that the window name will not reflect the id of the window - use <code>id()</code> for that (this is also why we do not call <code>open_new_window</code> )</p>
+
+<h2 id="advance_panel">_advance_panel</h2>
+
+<p>This routine advances one plot panel, updating the CurrentPanel as well. If the advance will proceed past the page the page will be erased. Also note that when you advance one panel the hold value will be changed.</p>
+
+<h2 id="check_move_or_erase">_check_move_or_erase</h2>
+
+<p>This routine is a utility routine which checks if we need to move panel, and if so will do this. It also checks if it is necessary to advance panels, and whether they need to be erased.</p>
+
+<h2 id="broadcast_options">_broadcast_options</h2>
+
+<p>This function is a cludgy utility function that expands an options hash to an array of hashes looping over options. This is mainly of use for &quot;broadcasted&quot; interfaces to standard plotting routines.</p>
+
+<h2 id="options">options</h2>
+
+<p>Access the options used when <i>originally</i> opening the window. At the moment this is not updated when the window is changed later.</p>
+
+<h2 id="id">id</h2>
+
+<p>Access the window ID that PGPLOT uses for the present window.</p>
+
+<h2 id="device">device</h2>
+
+<p>This function returns the device type of the present window.</p>
+
+<h2 id="name">name</h2>
+
+<p>Accessor to set and examine the name of a window.</p>
+
+<h2 id="focus">focus</h2>
+
+<p>Set focus for subsequent PGPLOT commands to this window.</p>
+
+<h2 id="info">info</h2>
+
+<p>Get general information about the PGPLOT environment.</p>
+
+<pre><code> @ans = $self-&gt;info( @item );</code></pre>
+
+<p>The valid values of <code>@item</code> are as below, where case is not important:</p>
+
+<pre><code>  VERSION     - What PGPLOT version is in use.
+  STATE       - The status of the output device, this is returns &#39;OPEN&#39;.
+                if the device is open and &#39;CLOSED&#39; otherwise.
+  USER        - The username of the owner of the spawning program.
+  NOW         - The current date and time in the format
+                &#39;dd-MMM-yyyy hh:mm&#39;. Most people are likely to use Perl
+                functions instead.
+  DEVICE    * - The current PGPLOT device or file, see also device().
+  FILE      * - The filename for the current device.
+  TYPE      * - And the device type for the current device.
+  DEV/TYPE  * - This combines DEVICE and TYPE in a form that can be used
+                as input to new.
+  HARDCOPY  * - This is flag which is set to &#39;YES&#39; if the current device is
+                a hardcopy device and &#39;NO&#39; otherwise.
+  TERMINAL  * - This flag is set to &#39;YES&#39; if the current device is the
+                user&#39;s terminal and &#39;NO&#39; otherwise.
+  CURSOR    * - A flag (&#39;YES&#39; or &#39;NO&#39;) to inform whether the current device
+                has a cursor.</code></pre>
+
+<p>Those items marced with a <code>*</code> only return a valid answer if the window is open. A question mark (<code>?</code>) is returned if the item is not recognised or the information is not available.</p>
+
+<h2 id="extract_hash">_extract_hash</h2>
+
+<p>This routine takes and array and returns the first hash reference found as well as those elements that are <i>not</i> hashes. Note the latter point because all other references to hashes in the array will be lost.</p>
+
+<h2 id="parse_unit">_parse_unit</h2>
+
+<p>Convert a unit string or number into a PGPLOT-certified length unit specification, or return undef if it won&#39;t go.</p>
+
+<h2 id="parse_options">_parse_options</h2>
+
+<p>This is a convenience routine for parsing a set of options. It returns both the full set of options and those that the user has set.</p>
+
+<h2 id="save_status">_save_status</h2>
+
+<p>Saves the PGPLOT state so that changes to settings can be made and then the present state restored by <code>_restore_status</code>.</p>
+
+<h2 id="restore_status">_restore_status</h2>
+
+<p>Restore the PGPLOT state. See <a href="#save_status">&quot;_save_status&quot;</a>.</p>
+
+<h2 id="checkarg">_checkarg</h2>
+
+<p>This routine checks and optionally alters the arguments given to it.</p>
+
+<h2 id="set_colour">_set_colour</h2>
+
+<p>This is an internal routine that encapsulates all the nastiness of setting colours depending on the different PGPLOT colour models (although HLS is not supported).</p>
+
+<p>The routine works in the following way:</p>
+
+<ul>
+
+<li><p>At initialisation of the plot device the work colour index is set to 16. The work index is the index the routine will modify unless the user has specified something else.</p>
+
+</li>
+<li><p>The routine should be used after standard interpretation and synonym matching has been used. So if the colour is given as input is an integer that colour index is used.</p>
+
+</li>
+<li><p>If the colour is a reference the routine checks whether it is an <code>ARRAY</code> or a <code>PDL</code> reference. If it is not an error message is given. If it is a <code>PDL</code> reference it will be converted to an array ref.</p>
+
+</li>
+<li><p>If the array has four elements the first element is interpreted as the colour index to modify and this overrules the setting for the work index used internally. Otherwise the work index is used and incremented until the maximum number of colours for the output device is reached (as indicated by <code>pgqcol</code>). Should you wish to change that you need to read the PGPLOT documentation - it is somewhat device dependent.</p>
+
+</li>
+<li><p>When the array has been recognised the R,G and B colours of the user-set index or work index is set using the <code>pgscr</code> command and we are finished.</p>
+
+</li>
+<li><p>If the input colour instead is a string we try to set the colour using the PGPLOT routine <code>pgscrn</code> with no other error-checking. This should be ok, as that routine returns a rather sensible error-message.</p>
+
+</li>
+</ul>
+
+<h2 id="standard_options_parser">_standard_options_parser</h2>
+
+<p>This internal routine is the default routine for parsing options. This routine deals with a subset of options that most routines will accept.</p>
+
+<h2 id="image_xyrange">_image_xyrange</h2>
+
+<p>Given a PGPLOT tr matrix and an image size, calculate the data world coordinates over which the image ranges. This is used in <a href="#imag">&quot;imag&quot;</a> and <a href="#cont">&quot;cont&quot;</a>. It keeps track of the required half-pixel offset to display images properly -- eg feeding in no tr matrix at all, nx=20, and ny=20 will will return (-0.5,19.5,-0.5,19.5). It also checks the options hash for XRange/YRange specifications and, if they are present, it overrides the appropriate output with the exact ranges in those fields.</p>
+
+<h2 id="FITS_tr">_FITS_tr</h2>
+
+<p>Given a FITS image, return the PGPLOT transformation matrix to convert pixel coordinates to scientific coordinates. Used by <a href="#fits_imag">&quot;fits_imag&quot;</a>, <a href="#fits_rgbi">&quot;fits_rgbi&quot;</a>, and <a href="#fits_cont">&quot;fits_cont&quot;</a>, but may come in handy for other methods.</p>
+
+<pre><code>  my $tr = _FITS_tr( $win, $img );
+  my $tr = _FITS_tr( $win, $img, $opts );</code></pre>
+
+<p>The return value (<code>$tr</code> in the examples above) is the same as returned by the <a href="#transform">transform()</a> routine, with values set up to convert the pixel to scientific coordinate values for the two-dimensional image <code>$img</code>. The <code>$opts</code> argument is optional and should be a HASH reference; currently it only understands one key (any others are ignored):</p>
+
+<pre><code>  WCS =&gt; undef (default), &quot;&quot;, or &quot;A&quot; to &quot;Z&quot;</code></pre>
+
+<p>Both the key name and value are case insensitive. If left as <code>undef</code> or <code>&quot;&quot;</code> then the primary coordinate mapping from the header is used, otherwise use the additional WCS mapping given by the appropriate letter. We make <b>no</b> checks that the given mapping is available; the routine falls back to the unit mapping if the specified system is not available.</p>
+
+<p>The WCS option has only been tested on images from the Chandra X-ray satellite (<a href="http://chandra.harvard.edu/">http://chandra.harvard.edu/</a>) created by the CIAO software package (<a href="http://cxc.harvard.edu/ciao/">http://cxc.harvard.edu/ciao/</a>), for which you should set <code>WCS =&gt; &quot;P&quot;</code> to use the <code>PHYSICAL</code> coordinate system.</p>
+
+<p>See <a href="http://fits.cv.nrao.edu/documents/wcs/wcs.html">http://fits.cv.nrao.edu/documents/wcs/wcs.html</a> for further information on the Representation of World Coordinate Systems in FITS.</p>
+
+<h1 id="INTERNAL">INTERNAL</h1>
+
+<p>The coding tries to follow reasonable standards, so that all functions starting with an underscore should be considered as internal and should not be called from outside the package. In addition most routines have a set of options. These are encapsulated and are not accessible outside the routine. This is to avoid collisions between different variables.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Karl Glazebrook [kgb@aaoepp.aao.gov.au] modified by Jarle Brinchmann (jarle@astro.ox.ac.uk) who is also responsible for the OO interface, docs mangled by Tuomas J. Lukka (lukka@fas.harvard.edu) and Christian Soeller (c.soeller@auckland.ac.nz). Further contributions and bugfixes from Kaj Wiik, Doug Burke, Craig DeForest, and many others.</p>
+
+<p>All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+
+</body>
+
+</html>
+
+

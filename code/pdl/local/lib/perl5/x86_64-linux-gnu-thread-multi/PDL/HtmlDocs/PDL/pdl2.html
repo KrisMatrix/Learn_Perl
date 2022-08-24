@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>pdl2 - Simple shell (version 2) for PDL</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#do_print">do_print</a></li>
+    </ul>
+  </li>
+  <li><a href="#VARIABLES">VARIABLES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>pdl2 - Simple shell (version 2) for PDL</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>Use PDL interactively:</p>
+
+<pre><code>  %&gt; pdl2
+
+  pdl&gt; $x = sequence(10)  # or any other perl or PDL command
+
+  pdl&gt; print &quot;\$x = $x\n&quot;;
+  $x = [0 1 2 3 4 5 6 7 8 9]
+
+  pdl&gt; with_time { print +($A-&gt;matmult($B))-&gt;info, &quot;\n&quot; } for 1..5;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>The <code>pdl2</code> program, also known as the Perldl2 shell, is a second generation version of the original <code>perldl</code> interactive PDL shell. It attempts to be backward compatible in usage while providing improved features, better support for Perl syntax, and an more easily extended framework based on the <a>Devel::REPL</a> shell.</p>
+
+<p>If you have <a>Devel::REPL</a> version 1.003011 or later, then <code>pdl2</code> will start with full functionality. If <a>Devel::REPL</a> is not installed or found then <code>pdl2</code> will print a warning and run the legacy <code>perldl</code> shell command instead.</p>
+
+<p>By default, command lines beginning with the default prompt of either <code>pdl2</code> or <code>perldl</code> (one of &#39;pdl&gt; &#39;, &#39;PDL&gt; &#39;, or &#39;perldl&gt; &#39;) will have the prefix string and surrounding whitespace stripped. This allows for easy cut-and-paste from sample PDL shell sessions or other examples into another PDL shell session.</p>
+
+<p>For shell-like <code>Ctrl-C</code> handling, you need <a>Sys::SigAction</a> installed.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="do_print">do_print</h2>
+
+<p>Toggle print-by-default on and off (default value: off)</p>
+
+<p>By default, <code>pdl2</code> does not print the results of operations since the results can be very large (e.g., a small 640x480 RGBA image is still more than 1_000_000 elements). However, for experimenting and debugging more complex structures, it helps to see the results of <i>every</i> operation. The <code>do_print</code> routine allows you to toggle between the default &quot;quiet&quot; operation and a full Read, Evaluate, Loop style.</p>
+
+<pre><code>  pdl&gt; $x = pdl(3,2)
+
+  pdl&gt; do_print
+  1
+  pdl&gt; $x = pdl(3,2)
+  $PDL1 = [3 2];
+  pdl&gt; do_print
+
+  pdl&gt; $x = pdl(3,2)</code></pre>
+
+<h1 id="VARIABLES">VARIABLES</h1>
+
+<dl>
+
+<dt id="PDL::toolongtoprint">$PDL::toolongtoprint</dt>
+<dd>
+
+<p>The maximal size pdls to print (defaults to 10000 elements). This is not just a <code>perldl</code> or <code>pdl2</code> variable but it is something that is usually needed in an interactive debugging session.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a>perldl</a>, <a>Devel::REPL</a></p>
+
+
+</body>
+
+</html>
+
+

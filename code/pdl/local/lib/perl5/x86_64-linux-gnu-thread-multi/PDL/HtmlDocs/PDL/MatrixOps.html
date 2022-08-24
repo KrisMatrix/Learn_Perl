@@ -1,0 +1,429 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::MatrixOps -- Some Useful Matrix Operations</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#TIPS-ON-MATRIX-OPERATIONS">TIPS ON MATRIX OPERATIONS</a></li>
+  <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#identity">identity</a></li>
+      <li><a href="#stretcher">stretcher</a></li>
+      <li><a href="#inv">inv</a></li>
+      <li><a href="#det">det</a></li>
+      <li><a href="#determinant">determinant</a></li>
+      <li><a href="#eigens_sym">eigens_sym</a></li>
+      <li><a href="#eigens">eigens</a></li>
+      <li><a href="#svd">svd</a></li>
+      <li><a href="#lu_decomp">lu_decomp</a></li>
+      <li><a href="#lu_decomp2">lu_decomp2</a></li>
+      <li><a href="#lu_backsub">lu_backsub</a></li>
+      <li><a href="#simq">simq</a></li>
+      <li><a href="#squaretotri">squaretotri</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::MatrixOps -- Some Useful Matrix Operations</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    $inv = $x-&gt;inv;
+
+    $det = $x-&gt;det;
+
+    ($lu,$perm,$par) = $x-&gt;lu_decomp;
+    $y = lu_backsub($lu,$perm,$z); # solve $x x $y = $z</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>PDL::MatrixOps is PDL&#39;s built-in matrix manipulation code. It contains utilities for many common matrix operations: inversion, determinant finding, eigenvalue/vector finding, singular value decomposition, etc. PDL::MatrixOps routines are written in a mixture of Perl and C, so that they are reliably present even when there is no FORTRAN compiler or external library available (e.g. <a>PDL::Slatec</a> or any of the PDL::GSL family of modules).</p>
+
+<p>Matrix manipulation, particularly with large matrices, is a challenging field and no one algorithm is suitable in all cases. The utilities here use general-purpose algorithms that work acceptably for many cases but might not scale well to very large or pathological (near-singular) matrices.</p>
+
+<p>Except as noted, the matrices are PDLs whose 0th dimension ranges over column and whose 1st dimension ranges over row. The matrices appear correctly when printed.</p>
+
+<p>These routines should work OK with <a href="./Matrix.html">PDL::Matrix</a> objects as well as with normal PDLs.</p>
+
+<h1 id="TIPS-ON-MATRIX-OPERATIONS">TIPS ON MATRIX OPERATIONS</h1>
+
+<p>Like most computer languages, PDL addresses matrices in (column,row) order in most cases; this corresponds to (X,Y) coordinates in the matrix itself, counting rightwards and downwards from the upper left corner. This means that if you print a PDL that contains a matrix, the matrix appears correctly on the screen, but if you index a matrix element, you use the indices in the reverse order that you would in a math textbook. If you prefer your matrices indexed in (row, column) order, you can try using the <a href="./Matrix.html">PDL::Matrix</a> object, which includes an implicit exchange of the first two dimensions but should be compatible with most of these matrix operations. TIMTOWDTI.)</p>
+
+<p>Matrices, row vectors, and column vectors can be multiplied with the &#39;x&#39; operator (which is, of course, broadcastable):</p>
+
+<pre><code>    $m3 = $m1 x $m2;
+    $col_vec2 = $m1 x $col_vec1;
+    $row_vec2 = $row_vec1 x $m1;
+    $scalar = $row_vec x $col_vec;</code></pre>
+
+<p>Because of the (column,row) addressing order, 1-D PDLs are treated as _row_ vectors; if you want a _column_ vector you must add a dummy dimension:</p>
+
+<pre><code>    $rowvec  = pdl(1,2);             # row vector
+    $colvec  = $rowvec-&gt;slice(&#39;*1&#39;); # 1x2 column vector
+    $matrix  = pdl([[3,4],[6,2]]);   # 2x2 matrix
+    $rowvec2 = $rowvec x $matrix;    # right-multiplication by matrix
+    $colvec  = $matrix x $colvec;    # left-multiplication by matrix
+    $m2      = $matrix x $rowvec;    # Throws an error</code></pre>
+
+<p>Implicit broadcasting works correctly with most matrix operations, but you must be extra careful that you understand the dimensionality. In particular, matrix multiplication and other matrix ops need nx1 PDLs as row vectors and 1xn PDLs as column vectors. In most cases you must explicitly include the trailing &#39;x1&#39; dimension in order to get the expected results when you broadcast over multiple row vectors.</p>
+
+<p>When broadcasting over matrices, it&#39;s very easy to get confused about which dimension goes where. It is useful to include comments with every expression, explaining what you think each dimension means:</p>
+
+<pre><code>        $x = xvals(360)*3.14159/180;        # (angle)
+        $rot = cat(cat(cos($x),sin($x)),    # rotmat: (col,row,angle)
+                   cat(-sin($x),cos($x)));</code></pre>
+
+<h1 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h1>
+
+<p>MatrixOps includes algorithms and pre-existing code from several origins. In particular, <code>eigens_sym</code> is the work of Stephen Moshier, <code>svd</code> uses an SVD subroutine written by Bryant Marks, and <code>eigens</code> uses a subset of the Small Scientific Library by Kenneth Geisshirt. They are free software, distributable under same terms as PDL itself.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>This is intended as a general-purpose linear algebra package for small-to-mid sized matrices. The algorithms may not scale well to large matrices (hundreds by hundreds) or to near singular matrices.</p>
+
+<p>If there is something you want that is not here, please add and document it!</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="identity">identity</h2>
+
+<pre><code>  Signature: (n; [o]a(n,n))</code></pre>
+
+<p>Return an identity matrix of the specified size. If you hand in a scalar, its value is the size of the identity matrix; if you hand in a dimensioned PDL, the 0th dimension is the first two dimensions of the matrix, with higher dimensions preserved.</p>
+
+<h2 id="stretcher">stretcher</h2>
+
+<pre><code>  Signature: (a(n); [o]b(n,n))</code></pre>
+
+<pre><code>  $mat = stretcher($eigenvalues);</code></pre>
+
+<p>Return a diagonal matrix with the specified diagonal elements</p>
+
+<h2 id="inv">inv</h2>
+
+<pre><code>  Signature: (a(m,m); sv opt )</code></pre>
+
+<pre><code>  $a1 = inv($a, {$opt});</code></pre>
+
+<p>Invert a square matrix.</p>
+
+<p>You feed in an NxN matrix in $a, and get back its inverse (if it exists). The code is inplace-aware, so you can get back the inverse in $a itself if you want -- though temporary storage is used either way. You can cache the LU decomposition in an output option variable.</p>
+
+<p><code>inv</code> uses <code>lu_decomp</code> by default; that is a numerically stable (pivoting) LU decomposition method.</p>
+
+<p>OPTIONS:</p>
+
+<ul>
+
+<li><p>s</p>
+
+<p>Boolean value indicating whether to complain if the matrix is singular. If this is false, singular matrices cause inverse to barf. If it is true, then singular matrices cause inverse to return undef.</p>
+
+</li>
+<li><p>lu (I/O)</p>
+
+<p>This value contains a list ref with the LU decomposition, permutation, and parity values for <code>$a</code>. If you do not mention the key, or if the value is undef, then inverse calls <code>lu_decomp</code>. If the key exists with an undef value, then the output of <code>lu_decomp</code> is stashed here (unless the matrix is singular). If the value exists, then it is assumed to hold the LU decomposition.</p>
+
+</li>
+<li><p>det (Output)</p>
+
+<p>If this key exists, then the determinant of <code>$a</code> get stored here, whether or not the matrix is singular.</p>
+
+</li>
+</ul>
+
+<h2 id="det">det</h2>
+
+<pre><code>  Signature: (a(m,m); sv opt)</code></pre>
+
+<pre><code>  $det = det($a,{opt});</code></pre>
+
+<p>Determinant of a square matrix using LU decomposition (for large matrices)</p>
+
+<p>You feed in a square matrix, you get back the determinant. Some options exist that allow you to cache the LU decomposition of the matrix (note that the LU decomposition is invalid if the determinant is zero!). The LU decomposition is cacheable, in case you want to re-use it. This method of determinant finding is more rapid than recursive-descent on large matrices, and if you reuse the LU decomposition it&#39;s essentially free.</p>
+
+<p>OPTIONS:</p>
+
+<ul>
+
+<li><p>lu (I/O)</p>
+
+<p>Provides a cache for the LU decomposition of the matrix. If you provide the key but leave the value undefined, then the LU decomposition goes in here; if you put an LU decomposition here, it will be used and the matrix will not be decomposed again.</p>
+
+</li>
+</ul>
+
+<h2 id="determinant">determinant</h2>
+
+<pre><code>  Signature: (a(m,m))</code></pre>
+
+<pre><code>  $det = determinant($x);</code></pre>
+
+<p>Determinant of a square matrix, using recursive descent (broadcastable).</p>
+
+<p>This is the traditional, robust recursive determinant method taught in most linear algebra courses. It scales like <code>O(n!)</code> (and hence is pitifully slow for large matrices) but is very robust because no division is involved (hence no division-by-zero errors for singular matrices). It&#39;s also broadcastable, so you can find the determinants of a large collection of matrices all at once if you want.</p>
+
+<p>Matrices up to 3x3 are handled by direct multiplication; larger matrices are handled by recursive descent to the 3x3 case.</p>
+
+<p>The LU-decomposition method <a href="#det">&quot;det&quot;</a> is faster in isolation for single matrices larger than about 4x4, and is much faster if you end up reusing the LU decomposition of <code>$a</code> (NOTE: check performance and broadcasting benchmarks with new code).</p>
+
+<h2 id="eigens_sym">eigens_sym</h2>
+
+<pre><code>  Signature: ([phys]a(m); [o,phys]ev(n,n); [o,phys]e(n))</code></pre>
+
+<p>Eigenvalues and -vectors of a symmetric square matrix. If passed an asymmetric matrix, the routine will warn and symmetrize it, by taking the average value. That is, it will solve for 0.5*($a+$a-&gt;transpose).</p>
+
+<p>It&#39;s broadcastable, so if <code>$a</code> is 3x3x100, it&#39;s treated as 100 separate 3x3 matrices, and both <code>$ev</code> and <code>$e</code> get extra dimensions accordingly.</p>
+
+<p>If called in scalar context it hands back only the eigenvalues. Ultimately, it should switch to a faster algorithm in this case (as discarding the eigenvectors is wasteful).</p>
+
+<p>The algorithm used is due to J. vonNeumann, which was a rediscovery of <a href="http://en.wikipedia.org/wiki/Jacobi_eigenvalue_algorithm">Jacobi&#39;s Method</a> .</p>
+
+<p>The eigenvectors are returned in COLUMNS of the returned PDL. That makes it slightly easier to access individual eigenvectors, since the 0th dim of the output PDL runs across the eigenvectors and the 1st dim runs across their components.</p>
+
+<pre><code>    ($ev,$e) = eigens_sym $x;  # Make eigenvector matrix
+    $vector = $ev-&gt;slice($n);       # Select nth eigenvector as a column-vector
+    $vector = $ev-&gt;slice(&quot;($n)&quot;);     # Select nth eigenvector as a row-vector</code></pre>
+
+<pre><code>    ($ev, $e) = eigens_sym($x); # e-vects &amp; e-values
+    $e = eigens_sym($x);        # just eigenvalues</code></pre>
+
+<p>eigens_sym ignores the bad-value flag of the input ndarrays. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="eigens">eigens</h2>
+
+<pre><code>  Signature: ([phys]a(m); [o,phys]ev(l,n,n); [o,phys]e(l,n))</code></pre>
+
+<p>Real eigenvalues and -vectors of a real square matrix.</p>
+
+<p>(See also <a href="#eigens_sym">&quot;eigens_sym&quot;</a>, for eigenvalues and -vectors of a real, symmetric, square matrix).</p>
+
+<p>The eigens function will attempt to compute the eigenvalues and eigenvectors of a square matrix with real components. If the matrix is symmetric, the same underlying code as <a href="#eigens_sym">&quot;eigens_sym&quot;</a> is used. If asymmetric, the eigenvalues and eigenvectors are computed with algorithms from the sslib library. If any imaginary components exist in the eigenvalues, the results are currently considered to be invalid, and such eigenvalues are returned as &quot;NaN&quot;s. This is true for eigenvectors also. That is if there are imaginary components to any of the values in the eigenvector, the eigenvalue and corresponding eigenvectors are all set to &quot;NaN&quot;. Finally, if there are any repeated eigenvectors, they are replaced with all &quot;NaN&quot;s.</p>
+
+<p>Use of the eigens function on asymmetric matrices should be considered experimental! For asymmetric matrices, nearly all observed matrices with real eigenvalues produce incorrect results, due to errors of the sslib algorithm. If your assymmetric matrix returns all NaNs, do not assume that the values are complex. Also, problems with memory access is known in this library.</p>
+
+<p>Not all square matrices are diagonalizable. If you feed in a non-diagonalizable matrix, then one or more of the eigenvectors will be set to NaN, along with the corresponding eigenvalues.</p>
+
+<p><code>eigens</code> is broadcastable, so you can solve 100 eigenproblems by feeding in a 3x3x100 array. Both <code>$ev</code> and <code>$e</code> get extra dimensions accordingly.</p>
+
+<p>If called in scalar context <code>eigens</code> hands back only the eigenvalues. This is somewhat wasteful, as it calculates the eigenvectors anyway.</p>
+
+<p>The eigenvectors are returned in COLUMNS of the returned PDL (ie the the 0 dimension). That makes it slightly easier to access individual eigenvectors, since the 0th dim of the output PDL runs across the eigenvectors and the 1st dim runs across their components.</p>
+
+<pre><code>        ($ev,$e) = eigens $x;  # Make eigenvector matrix
+        $vector = $ev-&gt;slice($n);   # Select nth eigenvector as a column-vector
+        $vector = $ev-&gt;slice(&quot;($n)&quot;); # Select nth eigenvector as a row-vector</code></pre>
+
+<p>DEVEL NOTES:</p>
+
+<p>For now, there is no distinction between a complex eigenvalue and an invalid eigenvalue, although the underlying code generates complex numbers. It might be useful to be able to return complex eigenvalues.</p>
+
+<pre><code>    ($ev, $e) = eigens($x); # e&#39;vects &amp; e&#39;vals
+    $e = eigens($x);        # just eigenvalues</code></pre>
+
+<p>eigens ignores the bad-value flag of the input ndarrays. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="svd">svd</h2>
+
+<pre><code>  Signature: (a(n,m); [o]u(n,m); [o,phys]z(n); [o]v(n,n))</code></pre>
+
+<pre><code> ($u, $s, $v) = svd($x);</code></pre>
+
+<p>Singular value decomposition of a matrix.</p>
+
+<p><code>svd</code> is broadcastable.</p>
+
+<p>Given an m x n matrix <code>$a</code> that has m rows and n columns (m &gt;= n), <code>svd</code> computes matrices <code>$u</code> and <code>$v</code>, and a vector of the singular values <code>$s</code>. Like most implementations, <code>svd</code> computes what is commonly referred to as the &quot;thin SVD&quot; of <code>$a</code>, such that <code>$u</code> is m x n, <code>$v</code> is n x n, and there are &lt;=n singular values. As long as m &gt;= n, the original matrix can be reconstructed as follows:</p>
+
+<pre><code>    ($u,$s,$v) = svd($x);
+    $ess = zeroes($x-&gt;dim(0),$x-&gt;dim(0));
+    $ess-&gt;slice(&quot;$_&quot;,&quot;$_&quot;).=$s-&gt;slice(&quot;$_&quot;) foreach (0..$x-&gt;dim(0)-1); #generic diagonal
+    $a_copy = $u x $ess x $v-&gt;transpose;</code></pre>
+
+<p>If m==n, <code>$u</code> and <code>$v</code> can be thought of as rotation matrices that convert from the original matrix&#39;s singular coordinates to final coordinates, and from original coordinates to singular coordinates, respectively, and $ess is a diagonal scaling matrix.</p>
+
+<p>If n&gt;m, <code>svd</code> will barf. This can be avoided by passing in the transpose of <code>$a</code>, and reconstructing the original matrix like so:</p>
+
+<pre><code>    ($u,$s,$v) = svd($x-&gt;transpose);
+    $ess = zeroes($x-&gt;dim(1),$x-&gt;dim(1));
+    $ess-&gt;slice($_,$_).=$s-&gt;slice($_) foreach (0..$x-&gt;dim(1)-1); #generic diagonal
+    $x_copy = $v x $ess x $u-&gt;transpose;</code></pre>
+
+<p>EXAMPLE</p>
+
+<p>The computing literature has loads of examples of how to use SVD. Here&#39;s a trivial example (used in <a href="./Transform.html#map">PDL::Transform::map</a>) of how to make a matrix less, er, singular, without changing the orientation of the ellipsoid of transformation:</p>
+
+<pre><code>    { my($r1,$s,$r2) = svd $x;
+      $s++;             # fatten all singular values
+      $r2 *= $s;        # implicit broadcasting for cheap mult.
+      $x .= $r2 x $r1;  # a gets r2 x ess x r1
+    }</code></pre>
+
+<p>svd ignores the bad-value flag of the input ndarrays. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="lu_decomp">lu_decomp</h2>
+
+<pre><code>  Signature: (a(m,m); [o]lu(m,m); [o]perm(m); [o]parity)</code></pre>
+
+<p>LU decompose a matrix, with row permutation</p>
+
+<pre><code>  ($lu, $perm, $parity) = lu_decomp($x);
+
+  $lu = lu_decomp($x, $perm, $par);  # $perm and $par are outputs!
+
+  lu_decomp($x-&gt;inplace,$perm,$par); # Everything in place.</code></pre>
+
+<p><code>lu_decomp</code> returns an LU decomposition of a square matrix, using Crout&#39;s method with partial pivoting. It&#39;s ported from <i>Numerical Recipes</i>. The partial pivoting keeps it numerically stable but means a little more overhead from broadcasting.</p>
+
+<p><code>lu_decomp</code> decomposes the input matrix into matrices L and U such that LU = A, L is a subdiagonal matrix, and U is a superdiagonal matrix. By convention, the diagonal of L is all 1&#39;s.</p>
+
+<p>The single output matrix contains all the variable elements of both the L and U matrices, stacked together. Because the method uses pivoting (rearranging the lower part of the matrix for better numerical stability), you have to permute input vectors before applying the L and U matrices. The permutation is returned either in the second argument or, in list context, as the second element of the list. You need the permutation for the output to make any sense, so be sure to get it one way or the other.</p>
+
+<p>LU decomposition is the answer to a lot of matrix questions, including inversion and determinant-finding, and <code>lu_decomp</code> is used by <a href="#inv">&quot;inv&quot;</a>.</p>
+
+<p>If you pass in <code>$perm</code> and <code>$parity</code>, they either must be predeclared PDLs of the correct size ($perm is an n-vector, <code>$parity</code> is a scalar) or scalars.</p>
+
+<p>If the matrix is singular, then the LU decomposition might not be defined; in those cases, <code>lu_decomp</code> silently returns undef. Some singular matrices LU-decompose just fine, and those are handled OK but give a zero determinant (and hence can&#39;t be inverted).</p>
+
+<p><code>lu_decomp</code> uses pivoting, which rearranges the values in the matrix for more numerical stability. This makes it really good for large and even near-singular matrices. There is a non-pivoting version <code>lu_decomp2</code> available which is from 5 to 60 percent faster for typical problems at the expense of failing to compute a result in some cases.</p>
+
+<p>Now that the <code>lu_decomp</code> is broadcasted, it is the recommended LU decomposition routine. It no longer falls back to <code>lu_decomp2</code>.</p>
+
+<p><code>lu_decomp</code> is ported from <i>Numerical Recipes</i> to PDL. It should probably be implemented in C.</p>
+
+<h2 id="lu_decomp2">lu_decomp2</h2>
+
+<pre><code>  Signature: (a(m,m); [o]lu(m,m))</code></pre>
+
+<p>LU decompose a matrix, with no row permutation</p>
+
+<pre><code>  ($lu, $perm, $parity) = lu_decomp2($x);
+  
+  $lu = lu_decomp2($x,$perm,$parity);   # or
+  $lu = lu_decomp2($x);                 # $perm and $parity are optional
+  
+  lu_decomp($x-&gt;inplace,$perm,$parity); # or
+  lu_decomp($x-&gt;inplace);               # $perm and $parity are optional</code></pre>
+
+<p><code>lu_decomp2</code> works just like <a href="#lu_decomp">&quot;lu_decomp&quot;</a>, but it does <b>no</b> pivoting at all. For compatibility with <a href="#lu_decomp">&quot;lu_decomp&quot;</a>, it will give you a permutation list and a parity scalar if you ask for them -- but they are always trivial.</p>
+
+<p>Because <code>lu_decomp2</code> does not pivot, it is numerically <b>unstable</b> -- that means it is less precise than <a href="#lu_decomp">&quot;lu_decomp&quot;</a>, particularly for large or near-singular matrices. There are also specific types of non-singular matrices that confuse it (e.g. ([0,-1,0],[1,0,0],[0,0,1]), which is a 90 degree rotation matrix but which confuses <code>lu_decomp2</code>).</p>
+
+<p>On the other hand, if you want to invert rapidly a few hundred thousand small matrices and don&#39;t mind missing one or two, it could be the ticket. It can be up to 60% faster at the expense of possible failure of the decomposition for some of the input matrices.</p>
+
+<p>The output is a single matrix that contains the LU decomposition of <code>$a</code>; you can even do it in-place, thereby destroying <code>$a</code>, if you want. See <a href="#lu_decomp">&quot;lu_decomp&quot;</a> for more information about LU decomposition.</p>
+
+<p><code>lu_decomp2</code> is ported from <i>Numerical Recipes</i> into PDL.</p>
+
+<h2 id="lu_backsub">lu_backsub</h2>
+
+<pre><code>  Signature: (lu(m,m); perm(m); b(m))</code></pre>
+
+<p>Solve A x = B for matrix A, by back substitution into A&#39;s LU decomposition.</p>
+
+<pre><code>  ($lu,$perm,$par) = lu_decomp($A);
+
+  $x = lu_backsub($lu,$perm,$par,$A);  # or
+  $x = lu_backsub($lu,$perm,$B);       # $par is not required for lu_backsub
+
+  lu_backsub($lu,$perm,$B-&gt;inplace); # modify $B in-place
+
+  $x = lu_backsub(lu_decomp($A),$B); # (ignores parity value from lu_decomp)
+
+  # starting from square matrix A and columns matrix B, with mathematically
+  # correct dimensions
+  $A = identity(4) + ones(4, 4);
+  $A-&gt;slice(&#39;2,0&#39;) .= 0; # break symmetry to see if need transpose
+  $B = sequence(2, 4);
+  # all these functions take B as rows, interpret as though notional columns
+  # mathematically confusing but can&#39;t change as back-compat and also
+  # familiar to Fortran users, so just transpose inputs and outputs
+
+  # using lu_backsub
+  ($lu,$perm,$par) = lu_decomp($A);
+  $x = lu_backsub($lu,$perm,$par, $B-&gt;transpose)-&gt;transpose;
+
+  # or with Slatec LINPACK
+  use PDL::Slatec;
+  gefa($lu=$A-&gt;copy, $ipiv=null, $info=null);
+  # 1 = do transpose because Fortran&#39;s idea of rows vs columns
+  gesl($lu, $ipiv, $x=$B-&gt;transpose-&gt;copy, 1);
+  $x = $x-&gt;inplace-&gt;transpose;
+
+  # or with LAPACK
+  use PDL::LinearAlgebra::Real;
+  getrf($lu=$A-&gt;copy, $ipiv=null, $info=null);
+  getrs($lu, 1, $x=$B-&gt;transpose-&gt;copy, $ipiv, $info=null); # again, need transpose
+  $x=$x-&gt;inplace-&gt;transpose;
+
+  # or with GSL
+  use PDL::GSL::LINALG;
+  LU_decomp(my $lu=$A-&gt;copy, my $p=null, my $signum=null);
+  # $B and $x, first dim is because GSL treats as vector, higher dims broadcast
+  # so we transpose in and back out
+  LU_solve($lu, $p, $B-&gt;transpose, my $x=null);
+  $x=$x-&gt;inplace-&gt;transpose;
+
+  # proof of the pudding is in the eating:
+  print $A x $x;</code></pre>
+
+<p>Given the LU decomposition of a square matrix (from <a href="#lu_decomp">&quot;lu_decomp&quot;</a>), <code>lu_backsub</code> does back substitution into the matrix to solve <code>a x = b</code> for given vector <code>b</code>. It is separated from the <code>lu_decomp</code> method so that you can call the cheap <code>lu_backsub</code> multiple times and not have to do the expensive LU decomposition more than once.</p>
+
+<p><code>lu_backsub</code> acts on single vectors and broadcasts in the usual way, which means that it treats <code>$y</code> as the <i>transpose</i> of the input. If you want to process a matrix, you must hand in the <i>transpose</i> of the matrix, and then transpose the output when you get it back. that is because pdls are indexed by (col,row), and matrices are (row,column) by convention, so a 1-D pdl corresponds to a row vector, not a column vector.</p>
+
+<p>If <code>$lu</code> is dense and you have more than a few points to solve for, it is probably cheaper to find <code>a^-1</code> with <a href="#inv">&quot;inv&quot;</a>, and just multiply <code>x = a^-1 b</code>.) in fact, <a href="#inv">&quot;inv&quot;</a> works by calling <code>lu_backsub</code> with the identity matrix.</p>
+
+<p><code>lu_backsub</code> is ported from section 2.3 of <i>Numerical Recipes</i>. It is written in PDL but should probably be implemented in C.</p>
+
+<h2 id="simq">simq</h2>
+
+<pre><code>  Signature: ([phys]a(n,n); [phys]b(n); [o,phys]x(n); int [o,phys]ips(n); int flag)</code></pre>
+
+<p>Solution of simultaneous linear equations, <code>a x = b</code>.</p>
+
+<p><code>$a</code> is an <code>n x n</code> matrix (i.e., a vector of length <code>n*n</code>), stored row-wise: that is, <code>a(i,j) = a[ij]</code>, where <code>ij = i*n + j</code>.</p>
+
+<p>While this is the transpose of the normal column-wise storage, this corresponds to normal PDL usage. The contents of matrix a may be altered (but may be required for subsequent calls with flag = -1).</p>
+
+<p><code>$y</code>, <code>$x</code>, <code>$ips</code> are vectors of length <code>n</code>.</p>
+
+<p>Set <code>flag=0</code> to solve. Set <code>flag=-1</code> to do a new back substitution for different <code>$y</code> vector using the same a matrix previously reduced when <code>flag=0</code> (the <code>$ips</code> vector generated in the previous solution is also required).</p>
+
+<p>See also <a href="#lu_backsub">&quot;lu_backsub&quot;</a>, which does the same thing with a slightly less opaque interface.</p>
+
+<p>simq ignores the bad-value flag of the input ndarrays. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="squaretotri">squaretotri</h2>
+
+<pre><code>  Signature: (a(n,n); b(m))</code></pre>
+
+<p>Convert a symmetric square matrix to triangular vector storage.</p>
+
+<p>squaretotri does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) 2002 Craig DeForest (deforest@boulder.swri.edu), R.J.R. Williams (rjrw@ast.leeds.ac.uk), Karl Glazebrook (kgb@aaoepp.aao.gov.au). There is no warranty. You are allowed to redistribute and/or modify this work under the same conditions as PDL itself. If this file is separated from the PDL distribution, then the PDL copyright notice should be included in this file.</p>
+
+
+</body>
+
+</html>
+
+

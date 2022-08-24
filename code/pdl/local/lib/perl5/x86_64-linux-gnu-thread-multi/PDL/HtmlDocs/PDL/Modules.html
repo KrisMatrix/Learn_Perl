@@ -1,0 +1,680 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Modules - A guide to PDL's module reference.</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#LOOKING-FOR-A-FUNCTION">LOOKING FOR A FUNCTION?</a></li>
+  <li><a href="#FOUNDATION">FOUNDATION</a>
+    <ul>
+      <li><a href="#Functions">Functions</a></li>
+      <li><a href="#Other-Features">Other Features</a></li>
+    </ul>
+  </li>
+  <li><a href="#MISCELLANEOUS">MISCELLANEOUS</a></li>
+  <li><a href="#GRAPHICS">GRAPHICS</a>
+    <ul>
+      <li><a href="#D-Graphics">3D Graphics</a></li>
+      <li><a href="#Helper-Modules">Helper Modules</a></li>
+    </ul>
+  </li>
+  <li><a href="#IMAGE-PROCESSING">IMAGE PROCESSING</a></li>
+  <li><a href="#NUMERICAL-METHODS">NUMERICAL METHODS</a></li>
+  <li><a href="#COORDINATE-TRANSFORMATIONS">COORDINATE TRANSFORMATIONS</a></li>
+  <li><a href="#IO-FUNCTIONS">IO FUNCTIONS</a>
+    <ul>
+      <li><a href="#Image-Formats">Image Formats</a></li>
+    </ul>
+  </li>
+  <li><a href="#D-MATRICES">2D MATRICES</a></li>
+  <li><a href="#GNU-SCIENTIFIC-LIBRARY">GNU SCIENTIFIC LIBRARY</a>
+    <ul>
+      <li><a href="#Special-Functions">Special Functions</a></li>
+    </ul>
+  </li>
+  <li><a href="#FITTING-FUNCTIONS">FITTING FUNCTIONS</a></li>
+  <li><a href="#ADVANCED">ADVANCED</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Modules - A guide to PDL&#39;s module reference.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This page serves as a table of contents for PDL&#39;s module documentation. This page does not list every single PDL module. It only shows the ones intended for PDL users, while omitting those which are deemed &quot;for internal use only&quot;. If you wish to see a comprehensive list of all documentation, please see the <a href="./Index.html">PDL::Index</a> page.</p>
+
+<h1 id="LOOKING-FOR-A-FUNCTION">LOOKING FOR A FUNCTION?</h1>
+
+<p>If you want to search for a function name, you should use the PDL shell along with the &quot;help&quot; or &quot;apropos&quot; command (to do a fuzzy search). For example:</p>
+
+<pre><code> pdl&gt; apropos xval
+ xlinvals        X axis values between endpoints (see xvals).
+ xlogvals        X axis values logarithmicly spaced...
+ xvals           Fills an ndarray with X index values...
+ yvals           Fills an ndarray with Y index values. See the CAVEAT for xvals.
+ zvals           Fills an ndarray with Z index values. See the CAVEAT for xvals.</code></pre>
+
+<p>To learn more about the PDL shell, see <a>perldl</a> or <a href="./pdl2.html">pdl2</a>.</p>
+
+<h1 id="FOUNDATION">FOUNDATION</h1>
+
+<dl>
+
+<dt id="perldl-or-pdl2"><a>perldl</a> or <a href="./pdl2.html">pdl2</a></dt>
+<dd>
+
+<p>Learn about the PDL shell.</p>
+
+</dd>
+</dl>
+
+<h2 id="Functions">Functions</h2>
+
+<dl>
+
+<dt id="PDL::Core"><a href="./Core.html">PDL::Core</a></dt>
+<dd>
+
+<p>Core module (e.g. creating ndarrays).</p>
+
+</dd>
+<dt id="PDL::Basic"><a href="./Basic.html">PDL::Basic</a></dt>
+<dd>
+
+<p>Simplified interface to the more general PDL::Primitive.</p>
+
+</dd>
+<dt id="PDL::Ops"><a href="./Ops.html">PDL::Ops</a></dt>
+<dd>
+
+<p>Basic operators (e.g. arithmetic, comparisons, etc.).</p>
+
+</dd>
+<dt id="PDL::Ufunc"><a href="./Ufunc.html">PDL::Ufunc</a></dt>
+<dd>
+
+<p>Functions that accumulate along a dimension (e.g. sum, max).</p>
+
+</dd>
+</dl>
+
+<h2 id="Other-Features">Other Features</h2>
+
+<dl>
+
+<dt id="PDL::AutoLoader"><a href="./AutoLoader.html">PDL::AutoLoader</a></dt>
+<dd>
+
+<p>MATLAB-style function autoloader.</p>
+
+</dd>
+<dt id="PDL::Slices"><a href="./Slices.html">PDL::Slices</a></dt>
+<dd>
+
+<p>Indexing and slices. How to access a subset of an ndarray.</p>
+
+</dd>
+<dt id="PDL::NiceSlice"><a href="./NiceSlice.html">PDL::NiceSlice</a></dt>
+<dd>
+
+<p>Nicer syntax for slices.</p>
+
+</dd>
+</dl>
+
+<h1 id="MISCELLANEOUS">MISCELLANEOUS</h1>
+
+<dl>
+
+<dt id="PDL::Primitive"><a href="./Primitive.html">PDL::Primitive</a></dt>
+<dd>
+
+<p>Fundamental operations on ndarrays.</p>
+
+</dd>
+<dt id="PDL::Bad"><a href="./Bad.html">PDL::Bad</a></dt>
+<dd>
+
+<p>Bad value support.</p>
+
+</dd>
+<dt id="PDL::Reduce"><a href="./Reduce.html">PDL::Reduce</a></dt>
+<dd>
+
+<p>A &#39;reduce&#39; function for PDL.</p>
+
+</dd>
+<dt id="PDL::Lite"><a href="./Lite.html">PDL::Lite</a></dt>
+<dd>
+
+<p>Minimum PDL module OO loader.</p>
+
+</dd>
+<dt id="PDL::LiteF"><a href="./LiteF.html">PDL::LiteF</a></dt>
+<dd>
+
+<p>Minimum PDL module function loader.</p>
+
+</dd>
+<dt id="PDL::Extended"><a>PDL::Extended</a></dt>
+<dd>
+
+<p>Extended Mathematical Operators.</p>
+
+</dd>
+<dt id="PDL::Func"><a href="./Func.html">PDL::Func</a></dt>
+<dd>
+
+<p>Interpolation-related functions.</p>
+
+</dd>
+</dl>
+
+<h1 id="GRAPHICS">GRAPHICS</h1>
+
+<dl>
+
+<dt id="PDL::Graphics::PGPLOT"><a href="Graphics/PGPLOT.html">PDL::Graphics::PGPLOT</a></dt>
+<dd>
+
+<p>PGPLOT library.</p>
+
+</dd>
+<dt id="PDL::Graphics::PLplot"><a>PDL::Graphics::PLplot</a></dt>
+<dd>
+
+<p>PLplot library.</p>
+
+</dd>
+</dl>
+
+<h2 id="D-Graphics">3D Graphics</h2>
+
+<dl>
+
+<dt id="PDL::Graphics::TriD"><a>PDL::Graphics::TriD</a></dt>
+<dd>
+
+<p>3D graphics core module.</p>
+
+</dd>
+<dt id="PDL::Graphics::TriD::Rout"><a>PDL::Graphics::TriD::Rout</a></dt>
+<dd>
+
+<p>Helper routines for 3D graphics.</p>
+
+</dd>
+<dt id="PDL::Graphics::TriD::Contours"><a>PDL::Graphics::TriD::Contours</a></dt>
+<dd>
+
+<p>3D surface contours.</p>
+
+</dd>
+</dl>
+
+<h2 id="Helper-Modules">Helper Modules</h2>
+
+<dl>
+
+<dt id="PDL::Graphics::LUT"><a href="Graphics/LUT.html">PDL::Graphics::LUT</a></dt>
+<dd>
+
+<p>Look-up tables.</p>
+
+</dd>
+<dt id="PDL::Graphics::IIS"><a href="Graphics/IIS.html">PDL::Graphics::IIS</a></dt>
+<dd>
+
+<p>Display images on IIS devices.</p>
+
+</dd>
+<dt id="PDL::Graphics::Limits"><a href="Graphics/Limits.html">PDL::Graphics::Limits</a></dt>
+<dd>
+
+<p>Derive data limits for display purposes.</p>
+
+</dd>
+</dl>
+
+<h1 id="IMAGE-PROCESSING">IMAGE PROCESSING</h1>
+
+<dl>
+
+<dt id="PDL::Compression"><a href="./Compression.html">PDL::Compression</a></dt>
+<dd>
+
+<p>Compression utilities.</p>
+
+</dd>
+<dt id="PDL::Image2D"><a href="./Image2D.html">PDL::Image2D</a></dt>
+<dd>
+
+<p>2-dimensional image processing.</p>
+
+</dd>
+<dt id="PDL::ImageND"><a href="./ImageND.html">PDL::ImageND</a></dt>
+<dd>
+
+<p>N-dimensional image processing.</p>
+
+</dd>
+<dt id="PDL::ImageRGB"><a href="./ImageRGB.html">PDL::ImageRGB</a></dt>
+<dd>
+
+<p>RGB image data handling.</p>
+
+</dd>
+</dl>
+
+<h1 id="NUMERICAL-METHODS">NUMERICAL METHODS</h1>
+
+<dl>
+
+<dt id="PDL::FFT"><a href="./FFT.html">PDL::FFT</a></dt>
+<dd>
+
+<p>Fast Fourier Transform (native implementation).</p>
+
+</dd>
+<dt id="PDL::FFTW"><a>PDL::FFTW</a></dt>
+<dd>
+
+<p>PDL interface to the FFTW library.</p>
+
+</dd>
+<dt id="PDL::Filter::LinPred"><a>PDL::Filter::LinPred</a></dt>
+<dd>
+
+<p>Linear predictive filtering.</p>
+
+</dd>
+<dt id="PDL::Filter::Linear"><a href="Filter/Linear.html">PDL::Filter::Linear</a></dt>
+<dd>
+
+<p>Linear filtering.</p>
+
+</dd>
+<dt id="PDL::Opt::Simplex"><a href="Opt/Simplex.html">PDL::Opt::Simplex</a></dt>
+<dd>
+
+<p>Simplex optimization routines.</p>
+
+</dd>
+<dt id="PDL::Minuit"><a>PDL::Minuit</a></dt>
+<dd>
+
+<p>PDL interface to the Minuit library.</p>
+
+</dd>
+<dt id="PDL::Slatec"><a>PDL::Slatec</a></dt>
+<dd>
+
+<p>PDL interface to the Slatec library.</p>
+
+</dd>
+</dl>
+
+<h1 id="COORDINATE-TRANSFORMATIONS">COORDINATE TRANSFORMATIONS</h1>
+
+<dl>
+
+<dt id="PDL::Transform"><a href="./Transform.html">PDL::Transform</a></dt>
+<dd>
+
+<p>Coordinate transforms, image warping, and N-D functions.</p>
+
+</dd>
+<dt id="PDL::Transform::Cartography"><a href="Transform/Cartography.html">PDL::Transform::Cartography</a></dt>
+<dd>
+
+<p>Cartographic projections.</p>
+
+</dd>
+<dt id="PDL::Transform::Proj4"><a>PDL::Transform::Proj4</a></dt>
+<dd>
+
+<p>PDL interface to the Proj4 projection library.</p>
+
+</dd>
+</dl>
+
+<h1 id="IO-FUNCTIONS">IO FUNCTIONS</h1>
+
+<dl>
+
+<dt id="PDL::IO"><a href="./IO.html">PDL::IO</a></dt>
+<dd>
+
+<p>Overview of IO functions.</p>
+
+</dd>
+<dt id="PDL::IO::Dumper"><a href="IO/Dumper.html">PDL::IO::Dumper</a></dt>
+<dd>
+
+<p>Data dumper.</p>
+
+</dd>
+<dt id="PDL::IO::FastRaw"><a href="IO/FastRaw.html">PDL::IO::FastRaw</a></dt>
+<dd>
+
+<p>Fast storage format (outdated).</p>
+
+</dd>
+<dt id="PDL::IO::FlexRaw"><a href="IO/FlexRaw.html">PDL::IO::FlexRaw</a></dt>
+<dd>
+
+<p>Flexible storage format.</p>
+
+</dd>
+<dt id="PDL::IO::Rout"><a>PDL::IO::Rout</a></dt>
+<dd>
+
+<p>Misc IO routines.</p>
+
+</dd>
+<dt id="PDL::IO::Sortable"><a>PDL::IO::Sortable</a></dt>
+<dd>
+
+<p>Support for Perl&#39;s &#39;Storable&#39; module.</p>
+
+</dd>
+</dl>
+
+<h2 id="Image-Formats">Image Formats</h2>
+
+<dl>
+
+<dt id="PDL::IO::FITS"><a href="IO/FITS.html">PDL::IO::FITS</a></dt>
+<dd>
+
+<p>PDL support for FITS images.</p>
+
+</dd>
+<dt id="PDL::IO::PNM"><a>PDL::IO::PNM</a></dt>
+<dd>
+
+<p>PDL support for PNM images.</p>
+
+</dd>
+<dt id="PDL::IO::GD"><a>PDL::IO::GD</a></dt>
+<dd>
+
+<p>PDL interface to the GD image library.</p>
+
+</dd>
+<dt id="PDL::IO::HDF"><a>PDL::IO::HDF</a></dt>
+<dd>
+
+<p>PDL interface to the HDH4 image library.</p>
+
+</dd>
+<dt id="PDL::IO::NetPBM"><a>PDL::IO::NetPBM</a></dt>
+<dd>
+
+<p>PDL interface to the NetPBM image library.</p>
+
+</dd>
+<dt id="PDL::IO::NDF"><a>PDL::IO::NDF</a></dt>
+<dd>
+
+<p>PDL interface to the Starlink image library. Available as a separate CPAN download.</p>
+
+</dd>
+</dl>
+
+<h1 id="D-MATRICES">2D MATRICES</h1>
+
+<dl>
+
+<dt id="PDL::Matrix"><a href="./Matrix.html">PDL::Matrix</a></dt>
+<dd>
+
+<p>Convenience class for 2D matrix work.</p>
+
+</dd>
+<dt id="PDL::MatrixOps"><a href="./MatrixOps.html">PDL::MatrixOps</a></dt>
+<dd>
+
+<p>Additional matrix operators.</p>
+
+</dd>
+</dl>
+
+<h1 id="GNU-SCIENTIFIC-LIBRARY">GNU SCIENTIFIC LIBRARY</h1>
+
+<dl>
+
+<dt id="PDL::GSL::DIFF"><a>PDL::GSL::DIFF</a></dt>
+<dd>
+
+<p>Numerical differentiation.</p>
+
+</dd>
+<dt id="PDL::GSL::INTEG"><a>PDL::GSL::INTEG</a></dt>
+<dd>
+
+<p>Numerical integration.</p>
+
+</dd>
+<dt id="PDL::GSL::INTERP"><a>PDL::GSL::INTERP</a></dt>
+<dd>
+
+<p>Interpolation.</p>
+
+</dd>
+<dt id="PDL::GSL::MROOT"><a>PDL::GSL::MROOT</a></dt>
+<dd>
+
+<p>Multidimensional root-finding.</p>
+
+</dd>
+<dt id="PDL::GSL::RNG"><a>PDL::GSL::RNG</a></dt>
+<dd>
+
+<p>RNG and randist.</p>
+
+</dd>
+</dl>
+
+<h2 id="Special-Functions">Special Functions</h2>
+
+<dl>
+
+<dt id="PDL::GSLSF::AIRY"><a>PDL::GSLSF::AIRY</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::BESSEL"><a>PDL::GSLSF::BESSEL</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::CLAUSEN"><a>PDL::GSLSF::CLAUSEN</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::COULOMB"><a>PDL::GSLSF::COULOMB</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::COUPLING"><a>PDL::GSLSF::COUPLING</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::DAWSON"><a>PDL::GSLSF::DAWSON</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::DEBYE"><a>PDL::GSLSF::DEBYE</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::DILOG"><a>PDL::GSLSF::DILOG</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::ELEMENTARY"><a>PDL::GSLSF::ELEMENTARY</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::ELLINT"><a>PDL::GSLSF::ELLINT</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::ELLJAC"><a>PDL::GSLSF::ELLJAC</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::ERF"><a>PDL::GSLSF::ERF</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::EXP"><a>PDL::GSLSF::EXP</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::EXPINT"><a>PDL::GSLSF::EXPINT</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::FERMI_DIRAC"><a>PDL::GSLSF::FERMI_DIRAC</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::GAMMA"><a>PDL::GSLSF::GAMMA</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::GEGENBAUER"><a>PDL::GSLSF::GEGENBAUER</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::HYPERG"><a>PDL::GSLSF::HYPERG</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::LAGUERRE"><a>PDL::GSLSF::LAGUERRE</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::LEGENDRE"><a>PDL::GSLSF::LEGENDRE</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::LOG"><a>PDL::GSLSF::LOG</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::POLY"><a>PDL::GSLSF::POLY</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::POW_INT"><a>PDL::GSLSF::POW_INT</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::PSI"><a>PDL::GSLSF::PSI</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::SYNCHROTRON"><a>PDL::GSLSF::SYNCHROTRON</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::TRANSPORT"><a>PDL::GSLSF::TRANSPORT</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::TRIG"><a>PDL::GSLSF::TRIG</a></dt>
+<dd>
+
+</dd>
+<dt id="PDL::GSLSF::ZETA"><a>PDL::GSLSF::ZETA</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="FITTING-FUNCTIONS">FITTING FUNCTIONS</h1>
+
+<dl>
+
+<dt id="PDL::Fit::Gaussian"><a href="Fit/Gaussian.html">PDL::Fit::Gaussian</a></dt>
+<dd>
+
+<p>Fit gaussian curves.</p>
+
+</dd>
+<dt id="PDL::Fit::Polynomial"><a href="Fit/Polynomial.html">PDL::Fit::Polynomial</a></dt>
+<dd>
+
+<p>Fit polynomials.</p>
+
+</dd>
+<dt id="PDL::Fit::Linfit"><a>PDL::Fit::Linfit</a></dt>
+<dd>
+
+<p>Fit linear combinations of functions.</p>
+
+</dd>
+<dt id="PDL::Fit::LM"><a>PDL::Fit::LM</a></dt>
+<dd>
+
+<p>Fit functions using the Levenberg-Marquardt algorithm.</p>
+
+</dd>
+</dl>
+
+<h1 id="ADVANCED">ADVANCED</h1>
+
+<dl>
+
+<dt id="PDL::Dbg"><a href="./Dbg.html">PDL::Dbg</a></dt>
+<dd>
+
+<p>PDL debugger.</p>
+
+</dd>
+<dt id="PDL::DiskCache"><a href="./DiskCache.html">PDL::DiskCache</a></dt>
+<dd>
+
+<p>Manage many ndarrays through a disk cache.</p>
+
+</dd>
+<dt id="PDL::CallExt"><a href="./CallExt.html">PDL::CallExt</a></dt>
+<dd>
+
+<p>Call external functions.</p>
+
+</dd>
+<dt id="PDL::Objects"><a href="./Objects.html">PDL::Objects</a></dt>
+<dd>
+
+<p>If you want to sub-class from PDL (note: incomplete).</p>
+
+</dd>
+</dl>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2010 Daniel Carrera (dcarrera@gmail.com). You can distribute and/or modify this document under the same terms as the current Perl license.</p>
+
+<p>See: http://dev.perl.org/licenses/</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,90 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::IO::STL - read/write 3D stereolithography files</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#rstl">rstl</a></li>
+      <li><a href="#wstl">wstl</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::IO::STL - read/write 3D stereolithography files</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use PDL;
+ use PDL::IO::STL;
+
+ ($vertices, $faceidx, $colours) = rstl(&#39;owl.stl&#39;); # read an STL file
+ wstl(&#39;file.stl&#39;, $vertices, $faceidx, $colours); # write an STL file</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Normal-vector information is currently ignored. The &quot;attribute byte count&quot;, used sometimes to store colour information, is currently ignored.</p>
+
+<p>This module is based on <a>CAD::Format::STL</a>, but with <code>binmode</code> on opened filehandles and little-endian (i.e. network) order forced on the binary format.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="rstl">rstl</h2>
+
+<p>Read an STL file (ASCII or binary), returning vertices and face-indices.</p>
+
+<pre><code> ($vertices, $faceidx, $colours) = rstl(&#39;owl.stl&#39;); # read an STL file</code></pre>
+
+<h2 id="wstl">wstl</h2>
+
+<p>Simple PDL FITS writer</p>
+
+<pre><code>  wstl &#39;file.stl&#39;, $vertices, $faceidx;
+  wstl &#39;file.stl&#39;, $vertices, $faceidx, \%OPTIONS;
+  wstl $fh, $vertices, $faceidx, \%OPTIONS;</code></pre>
+
+<p>Passing a file-handle is supported, so multiple parts can be written to an ASCII file with several calls.</p>
+
+<p><code>wstl</code> accepts several options that may be passed in as a hash ref if desired:</p>
+
+<dl>
+
+<dt id="mode-default-binary">mode (default=&#39;binary&#39;)</dt>
+<dd>
+
+<p>Whether to write out the file as ASCII or binary.</p>
+
+</dd>
+<dt id="name-default-part">name (default=&#39;part&#39;)</dt>
+<dd>
+
+<p>The part name to use.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ed J, based on Eric Wilhelm&#39;s code in <a>CAD::Format::STL</a>.</p>
+
+
+</body>
+
+</html>
+
+

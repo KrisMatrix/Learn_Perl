@@ -1,0 +1,106 @@
+
+=head1 NAME
+
+PDL::Index - an index of PDL documentation
+
+=head1 DESCRIPTION
+
+A meta document listing the documented PDL modules and
+the PDL manual documents
+
+=head1 PDL manuals
+
+=over 4
+
+=item *
+
+L<Inline::Pdlpp> - Write PDL Subroutines inline with PDL::PP
+
+=item *
+
+L<PDL::API> - making ndarrays from Perl and C/XS code
+
+=item *
+
+L<PDL::BadValues> - Discussion of bad value support in PDL
+
+=item *
+
+L<PDL::Broadcasting> - Tutorial for PDL's Broadcasting feature
+
+=item *
+
+L<PDL::Bugs> - How to diagnose and report PDL problems
+
+=item *
+
+L<PDL::Course> - A journey through PDL's documentation, from beginner to advanced.
+
+=item *
+
+L<PDL::Dataflow> - description of the dataflow implementation and philosophy
+
+=item *
+
+L<PDL::Delta> - PDL changes between V1.0 and V2.0
+
+=item *
+
+L<PDL::FAQ> - Frequently asked questions about PDL
+
+=item *
+
+L<PDL::Graphics> - Introduction to the PDL::Graphics modules
+
+=item *
+
+L<PDL::IO> - An overview of the modules in the PDL::IO namespace.
+
+=item *
+
+L<PDL::Indexing> - Introduction to indexing and slicing ndarrays.
+
+=item *
+
+L<PDL::Internals> - description of some aspects of the current internals
+
+=item *
+
+L<PDL::MATLAB> - A guide for MATLAB users.
+
+=item *
+
+L<PDL::Modules> - A guide to PDL's module reference.
+
+=item *
+
+L<PDL::Objects> - Object-Orientation, what is it and how to exploit it
+
+=item *
+
+L<PDL::PP> - Generate PDL routines from concise descriptions
+
+=item *
+
+L<PDL::ParallelCPU> - Parallel processor multi-threading support in PDL
+
+=item *
+
+L<PDL::Philosophy> - Why did we write PDL?
+
+=item *
+
+L<PDL::QuickStart> - Quick introduction to PDL features.
+
+=item *
+
+L<PDL::Scilab> - A guide for Scilab users.
+
+=item *
+
+L<PDL::Tips> - Small tidbits of useful arcana. Programming tidbits and such.
+
+=item *
+
+L<PDL::Tutorials> - A guide to PDL's tutorial documentation.
+

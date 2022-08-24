@@ -1,0 +1,394 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Types - define fundamental PDL Datatypes</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#typesrtkeys">typesrtkeys</a></li>
+      <li><a href="#ppdefs">ppdefs</a></li>
+      <li><a href="#ppdefs_complex">ppdefs_complex</a></li>
+      <li><a href="#ppdefs_all">ppdefs_all</a></li>
+      <li><a href="#typesynonyms">typesynonyms</a></li>
+    </ul>
+  </li>
+  <li><a href="#PDL-TYPES-OVERVIEW">PDL TYPES OVERVIEW</a></li>
+  <li><a href="#PDL::Type-OBJECTS">PDL::Type OBJECTS</a></li>
+  <li><a href="#DEVELOPER-NOTES-ON-ADDING-REMOVING-TYPEs">DEVELOPER NOTES ON ADDING/REMOVING TYPEs</a>
+    <ul>
+      <li><a href="#Format-of-a-type-entry">Format of a type entry</a></li>
+      <li><a href="#Fields-in-a-type-entry">Fields in a type entry</a></li>
+      <li><a href="#Other-things-you-need-to-do">Other things you need to do</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Types - define fundamental PDL Datatypes</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use PDL::Types;
+
+ $pdl = ushort( 2.0, 3.0 );
+ print &quot;The actual c type used to store ushort&#39;s is &#39;&quot; .
+    $pdl-&gt;type-&gt;realctype() . &quot;&#39;\n&quot;;
+ The actual c type used to store ushort&#39;s is &#39;unsigned short&#39;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Internal module - holds all the PDL Type info. The type info can be accessed easily using the <code>PDL::Type</code> object returned by the <a href="./Core.html#type">type</a> method as shown in the synopsis.</p>
+
+<p>Skip to the end of this document to find out how to change the set of types supported by PDL.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>A number of functions are available for module writers to get/process type information. These are used in various places (e.g. <code>PDL::PP</code>, <code>PDL::Core</code>) to generate the appropriate type loops, etc.</p>
+
+<h2 id="typesrtkeys">typesrtkeys</h2>
+
+<p>Returns an array of keys of typehash sorted in order of type complexity</p>
+
+<pre><code> pdl&gt; @typelist = PDL::Types::typesrtkeys;
+ pdl&gt; print @typelist;
+ PDL_B PDL_S PDL_US PDL_L PDL_IND PDL_LL PDL_F PDL_D</code></pre>
+
+<h2 id="ppdefs">ppdefs</h2>
+
+<p>Returns an array of pp symbols for all real types. This informs the default <code>GenericTypes</code> for <code>pp_def</code> functions, making support for complex types require an &quot;opt-in&quot;.</p>
+
+<pre><code> pdl&gt; print PDL::Types::ppdefs
+ B S U L N Q F D</code></pre>
+
+<h2 id="ppdefs_complex">ppdefs_complex</h2>
+
+<p>Returns an array of pp symbols for all complex types.</p>
+
+<pre><code> pdl&gt; print PDL::Types::ppdefs_complex
+ G C</code></pre>
+
+<h2 id="ppdefs_all">ppdefs_all</h2>
+
+<p>Returns an array of pp symbols for all types including complex.</p>
+
+<pre><code> pdl&gt; print PDL::Types::ppdefs_all
+ B S U L N Q F D G C</code></pre>
+
+<h2 id="typesynonyms">typesynonyms</h2>
+
+<p>return type related synonym definitions to be included in pdl.h . This routine must be updated to include new types as required. Mostly the automatic updating should take care of the vital things.</p>
+
+<h1 id="PDL-TYPES-OVERVIEW">PDL TYPES OVERVIEW</h1>
+
+<p>As of 2.065, PDL supports these types:</p>
+
+<dl>
+
+<dt id="SByte">SByte</dt>
+<dd>
+
+<p>Signed 8-bit value.</p>
+
+</dd>
+<dt id="Byte">Byte</dt>
+<dd>
+
+<p>Unsigned 8-bit value.</p>
+
+</dd>
+<dt id="Short">Short</dt>
+<dd>
+
+<p>Signed 16-bit value.</p>
+
+</dd>
+<dt id="UShort">UShort</dt>
+<dd>
+
+<p>Unsigned 16-bit value.</p>
+
+</dd>
+<dt id="Long">Long</dt>
+<dd>
+
+<p>Signed 32-bit value.</p>
+
+</dd>
+<dt id="ULong">ULong</dt>
+<dd>
+
+<p>Unsigned 32-bit value.</p>
+
+</dd>
+<dt id="Indx">Indx</dt>
+<dd>
+
+<p>Signed value, same size as a pointer on the system in use.</p>
+
+</dd>
+<dt id="LongLong">LongLong</dt>
+<dd>
+
+<p>Signed 64-bit value.</p>
+
+</dd>
+<dt id="ULongLong">ULongLong</dt>
+<dd>
+
+<p>Unsigned 64-bit value.</p>
+
+</dd>
+<dt id="Float">Float</dt>
+<dd>
+
+<p><a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</a> single-precision real floating-point value.</p>
+
+</dd>
+<dt id="Double">Double</dt>
+<dd>
+
+<p>IEEE 754 double-precision real value.</p>
+
+</dd>
+<dt id="LDouble">LDouble</dt>
+<dd>
+
+<p>A C99 &quot;long double&quot;, defined as &quot;at least as precise as a double&quot;, but often more precise.</p>
+
+</dd>
+<dt id="CFloat">CFloat</dt>
+<dd>
+
+<p>A C99 complex single-precision floating-point value.</p>
+
+</dd>
+<dt id="CDouble">CDouble</dt>
+<dd>
+
+<p>A C99 complex double-precision floating-point value.</p>
+
+</dd>
+<dt id="CLDouble">CLDouble</dt>
+<dd>
+
+<p>A C99 complex &quot;long double&quot; - see above for description.</p>
+
+</dd>
+</dl>
+
+<h1 id="PDL::Type-OBJECTS">PDL::Type OBJECTS</h1>
+
+<p>This module declares one class - <code>PDL::Type</code> - objects of this class are returned by the <a href="./Core.html#type">type</a> method of an ndarray. It has several methods, listed below, which provide an easy way to access type information:</p>
+
+<p>Additionally, comparison and stringification are overloaded so that you can compare and print type objects, e.g.</p>
+
+<pre><code>  $nofloat = 1 if $pdl-&gt;type &lt; float;
+  die &quot;must be double&quot; if $type != double;</code></pre>
+
+<p>For further examples check again the <a href="./Core.html#type">type</a> method.</p>
+
+<dl>
+
+<dt id="enum">enum</dt>
+<dd>
+
+<p>Returns the number representing this datatype (see <a href="./Core.html#PDL::get_datatype">get_datatype</a>).</p>
+
+</dd>
+<dt id="symbol">symbol</dt>
+<dd>
+
+<p>Returns one of &#39;PDL_B&#39;, &#39;PDL_S&#39;, &#39;PDL_US&#39;, &#39;PDL_L&#39;, &#39;PDL_IND&#39;, &#39;PDL_LL&#39;, &#39;PDL_F&#39; or &#39;PDL_D&#39;.</p>
+
+</dd>
+<dt id="ctype">ctype</dt>
+<dd>
+
+<p>Returns the macro used to represent this type in C code (eg &#39;PDL_Long&#39;).</p>
+
+</dd>
+<dt id="ppsym">ppsym</dt>
+<dd>
+
+<p>The letter used to represent this type in PP code (eg &#39;U&#39; for <a href="./Core.html#ushort">ushort</a>).</p>
+
+</dd>
+<dt id="realctype">realctype</dt>
+<dd>
+
+<p>The actual C type used to store this type.</p>
+
+</dd>
+<dt id="shortctype">shortctype</dt>
+<dd>
+
+<p>The value returned by <code>ctype</code> without the &#39;PDL_&#39; prefix.</p>
+
+</dd>
+<dt id="badvalue">badvalue</dt>
+<dd>
+
+<p>The special numerical value used to represent bad values for this type. See <a href="./Bad.html#badvalue">&quot;badvalue&quot; in PDL::Bad</a> for more details.</p>
+
+</dd>
+<dt id="isnan">isnan</dt>
+<dd>
+
+<p>Given a string representing a C value, will return a C expression for this type that indicates whether that value is NaN (for complex values, if <i>either</i> is NaN).</p>
+
+</dd>
+<dt id="isfinite">isfinite</dt>
+<dd>
+
+<p>Given a string representing a C value, will return a C expression for this type that indicates whether that value is finite (for complex values, if <i>both</i> are finite).</p>
+
+</dd>
+<dt id="floatsuffix">floatsuffix</dt>
+<dd>
+
+<p>The string appended to floating-point functions for this floating-point type. Dies if called on non-floating-point type.</p>
+
+</dd>
+<dt id="orig_badvalue">orig_badvalue</dt>
+<dd>
+
+<p>The default special numerical value used to represent bad values for this type. (You can change the value that represents bad values for each type during runtime.) See the <a href="./Bad.html#orig_badvalue">orig_badvalue routine in PDL::Bad</a> for more details.</p>
+
+</dd>
+<dt id="bswap">bswap</dt>
+<dd>
+
+<p>Returns the appropriate <code>bswap*</code> from <a href="IO/Misc.html">PDL::IO::Misc</a> for the size of this type, including a no-op for types of size 1. Note this means a one-line construction means you must call the return value:</p>
+
+<pre><code>  $pdl-&gt;type-&gt;bswap-&gt;($pdl);</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="DEVELOPER-NOTES-ON-ADDING-REMOVING-TYPEs">DEVELOPER NOTES ON ADDING/REMOVING TYPEs</h1>
+
+<p>You can change the types that PDL knows about by editing entries in the definition of the variable <code>@types</code> that appears close to the top of the file <i>Types.pm.PL</i> (i.e. the file from which this module was generated).</p>
+
+<h2 id="Format-of-a-type-entry">Format of a type entry</h2>
+
+<p>Each entry in the <code>@types</code> array is a hash reference. Here is an example taken from the actual code that defines the <code>ushort</code> type:</p>
+
+<pre><code>             {
+              identifier =&gt; &#39;US&#39;,
+              onecharident =&gt; &#39;U&#39;,   # only needed if different from identifier
+              pdlctype =&gt; &#39;PDL_Ushort&#39;,
+              realctype =&gt; &#39;unsigned short&#39;,
+              ppforcetype =&gt; &#39;ushort&#39;,
+              usenan =&gt; 0,
+              packtype =&gt; &#39;S*&#39;,
+              defaultbadval =&gt; &#39;USHRT_MAX&#39;,
+              real=&gt;1,
+              integer=&gt;1,
+              unsigned=&gt;1,
+             },</code></pre>
+
+<p>Before we start to explain the fields please take this important message on board: <i>entries must be listed in order of increasing complexity</i>. This is critical to ensure that PDL&#39;s type conversion works correctly. Basically, a less complex type will be converted to a more complex type as required.</p>
+
+<h2 id="Fields-in-a-type-entry">Fields in a type entry</h2>
+
+<p>Each type entry has a number of required and optional entry.</p>
+
+<p>A list of all the entries:</p>
+
+<ul>
+
+<li><p>identifier</p>
+
+<p><i>Required</i>. A short sequence of upercase letters that identifies this type uniquely. More than three characters is probably overkill.</p>
+
+</li>
+<li><p>onecharident</p>
+
+<p><i>Optional</i>. Only required if the <code>identifier</code> has more than one character. This should be a unique uppercase character that will be used to reference this type in PP macro expressions of the <code>TBSULFD</code> type - see <a href="./PP.html#T">&quot;$T&quot; in PDL::PP</a>.</p>
+
+</li>
+<li><p>pdlctype</p>
+
+<p><i>Required</i>. The <code>typedef</code>ed name that will be used to access this type from C code.</p>
+
+</li>
+<li><p>realctype</p>
+
+<p><i>Required</i>. The C compiler type that is used to implement this type. For portability reasons this one might be platform dependent.</p>
+
+</li>
+<li><p>ppforcetype</p>
+
+<p><i>Required</i>. The type name used in PP signatures to refer to this type.</p>
+
+</li>
+<li><p>usenan</p>
+
+<p><i>Required</i>. Flag that signals if this type has to deal with NaN issues. Generally only required for floating point types.</p>
+
+</li>
+<li><p>packtype</p>
+
+<p><i>Required</i>. The Perl pack type used to pack Perl values into the machine representation for this type. For details see <code>perldoc -f pack</code>.</p>
+
+</li>
+<li><p>integer</p>
+
+<p><i>Required</i>. Boolean - is this an integer type?</p>
+
+</li>
+<li><p>unsigned</p>
+
+<p><i>Required</i>. Boolean - is this an unsigned type?</p>
+
+</li>
+<li><p>real</p>
+
+<p><i>Required</i>. Boolean - is this a real (not complex) type?</p>
+
+</li>
+<li><p>realversion</p>
+
+<p>String - the real version of this type (e.g. cdouble -&gt; &#39;D&#39;).</p>
+
+</li>
+<li><p>complexversion</p>
+
+<p>String - the complex version of this type (e.g. double -&gt; &#39;C&#39;).</p>
+
+</li>
+</ul>
+
+<p>Also have a look at the entries at the top of <i>Types.pm.PL</i>.</p>
+
+<p>The syntax is not written into stone yet and might change as the concept matures.</p>
+
+<h2 id="Other-things-you-need-to-do">Other things you need to do</h2>
+
+<p>You need to check modules that do I/O (generally in the <i>IO</i> part of the directory tree). In the future we might add fields to type entries to automate this. This requires changes to those IO modules first though.</p>
+
+<p>You should also make sure that any type macros in PP files (i.e. <code>$TBSULFD...</code>) are updated to reflect the new type. PDL::PP::Dump has a mode to check for type macros requiring updating. Do something like</p>
+
+<pre><code>    find . -name \*.pd -exec perl -Mblib=. -M&#39;PDL::PP::Dump=typecheck&#39; {} \;</code></pre>
+
+<p>from the PDL root directory <i>after</i> updating <i>Types.pm.PL</i> to check for such places.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Tips - Small tidbits of useful arcana. Programming tidbits and such.</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Help">Help</a></li>
+      <li><a href="#Indexing-idioms">Indexing idioms</a></li>
+      <li><a href="#What-is-actually-happening">What is actually happening?</a></li>
+      <li><a href="#Memory-savings">Memory savings</a></li>
+      <li><a href="#PP-speed">PP speed</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Tips - Small tidbits of useful arcana. Programming tidbits and such.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>        use PDL;
+
+        # Whatever happens here.</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This page documents useful idioms, helpful hints and tips for using Perl Data Language v2.0.</p>
+
+<h2 id="Help">Help</h2>
+
+<p>Use <code>help help</code> within <i>perldl</i> or <i>pdl2</i> or use the <code>pdldoc</code> program from the command line for access to the PerlDL documentation. HTML versions of the pages should also be present, in the <i>HtmlDocs/PDL</i> directory of the PDL distribution. To find this directory, try the following</p>
+
+<pre><code> pdl&gt; foreach ( map{&quot;$_/PDL/HtmlDocs&quot;}@INC ) { p &quot;$_\n&quot; if -d $_ }  </code></pre>
+
+<h2 id="Indexing-idioms">Indexing idioms</h2>
+
+<p>The following code normalizes a bunch of vectors in $x. This works regardless of the dimensionality of $x.</p>
+
+<pre><code>        $x /= $x-&gt;sumover-&gt;dummy(0);</code></pre>
+
+<h2 id="What-is-actually-happening">What is actually happening?</h2>
+
+<p>If you want to see what the code is actually doing, try the command</p>
+
+<pre><code>        PDL::Core::set_debugging(1);</code></pre>
+
+<p>somewhere. This spews out a huge amount of debug info for PDL into STDOUT. Plans for the future include making it possible to redirect the output, and also making it possible to select messages with more precision.</p>
+
+<p>Many of the messages come from <code>Basic/Core/pdlapi.c</code> and you can look at the source to see what is going on.</p>
+
+<p>If you have any extra time to work on these mechanisms, inform the pdl-porters mailing list.</p>
+
+<h2 id="Memory-savings">Memory savings</h2>
+
+<p>If you are running recursively something that selects certain indices of a large ndarray, like</p>
+
+<pre><code>        while(1) {
+                $inds = where($x&gt;0);
+                $x = $x-&gt;index($inds);
+                $y = $y-&gt;index($inds);
+                func($y,$x);
+        }</code></pre>
+
+<p>If you are not writing to $y, it saves a lot of memory to change this to</p>
+
+<pre><code>                $y = $y-&gt;index($inds)-&gt;sever;</code></pre>
+
+<p>The new method <code>sever</code> is a causes the write-back relation to be forgotten. It is like copy except it changes the original ndarray and returns it).</p>
+
+<p>Of course, the probably best way to do the above is</p>
+
+<pre><code>        $inds = xvals ($x-&gt;long);
+        while(1) {
+                $inds0 = where($x&gt;0);
+                $inds1 = $inds-&gt;index($inds)-&gt;sever;
+                $x = $a0-&gt;index($inds1);
+                $y = $y-&gt;index($inds1)-&gt;sever;
+                func($y,$x);
+        }</code></pre>
+
+<p>which doesn&#39;t save all the temporary instances of $x in memory. See <code>mandel.pl</code> in the Demos subdirectory of the PerlDL distribution for an example.</p>
+
+<h2 id="PP-speed">PP speed</h2>
+
+<p>If you really want to write speedy PP code, the first thing you need to do is to make sure that your C compiler is allowed to do the necessary optimizations.</p>
+
+<p>What this means is that you have to allow as many variables as possible to go into registers:</p>
+
+<pre><code>        loop(a) %{
+                $a() += $COMP(foo_member) * $b()
+        %}</code></pre>
+
+<p>expands to</p>
+
+<pre><code>        for(i=0; i&lt;10000; i++) {
+                a[i] += __privtrans-&gt;foo_member * b[i];
+        }</code></pre>
+
+<p>is about the worst you can do, since your C compiler is not allowed to assume that <code>a</code> doesn&#39;t clobber <code>foo_member</code> which completely inhibits vectorization. Instead, do</p>
+
+<pre><code>        float foo = $COMP(foo_member);
+        loop(a) %{
+                $a() += foo * $b();
+        %}</code></pre>
+
+<p>This is not a restriction caused by PP but by ANSI C semantics. Of course, we could copy the struct into local variables and back but that could cause very strange things sometimes.</p>
+
+<p>There are many other issues on organizing loops.</p>
+
+<p>We are currently planning to make PP able to do fixed-width things as well as physical ndarrays (where looping over the first dimensions would be cheaper as there are less distinct increments, which might make a difference on machines with a small number of registers).</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) Tuomas J. Lukka 1997. All rights reserved. Duplication in the same form and printing a copy for yourself allowed.</p>
+
+
+</body>
+
+</html>
+
+

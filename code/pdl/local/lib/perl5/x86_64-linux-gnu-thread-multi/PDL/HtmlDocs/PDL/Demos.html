@@ -1,0 +1,177 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Demos - PDL demo infrastructure</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#list">list</a></li>
+      <li><a href="#keywords">keywords</a></li>
+      <li><a href="#info">info</a></li>
+      <li><a href="#init">init</a></li>
+      <li><a href="#demo">demo</a></li>
+      <li><a href="#done">done</a></li>
+    </ul>
+  </li>
+  <li><a href="#DEMO-MODULE-METHODS">DEMO MODULE METHODS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#comment">comment</a></li>
+      <li><a href="#output">output</a></li>
+      <li><a href="#actnw">actnw</a></li>
+      <li><a href="#act">act</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Demos - PDL demo infrastructure</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  # in a demo, if text-orientated
+  package PDL::Demos::Blah;
+  sub info { (&#39;blah&#39;, &#39;Longer description of demo&#39;) }
+  sub init { &#39;use PDL::Graphics::PGPLOT;&#39; }
+  my @demo = (
+    [comment =&gt; &quot;Welcome to the Blah demo&quot;],
+    [act =&gt; &lt;&lt;&#39;EOF&#39;],
+  output &quot;PDL can make n-dimensional sequences:\n&quot;;
+  output $x = sequence(2,3);
+  EOF
+  );
+  sub demo { @demo }
+  sub done { &quot;# return things to previous state\n&quot; }
+
+  # a GUI-orientated one
+  package PDL::Demos::GUIBlah;
+  use GUIBlah; # so demo won&#39;t show up in list if GUIBlah not installed
+  sub info { (&#39;blahgui&#39;, &#39;GUIBlah demo&#39;) }
+  sub demo {[actnw =&gt; q|
+    # starting up the GUI demo app
+    |.__PACKAGE__.q|::run();
+  |]}
+  sub run { # this is just a convention, but a good one
+    # ...
+  }
+
+  # iterate a demo of your own module - call it PDL::Demos::(something)
+  make &amp;&amp; perl -Mblib -S perldl # run &quot;demo&quot; and it will see your demo
+
+  # in a CLI or REPL
+  use PDL::Demos;
+  sub demo {
+    if (!$_[0]) {
+      require List::Util;
+      my @kw = sort grep $_ ne &#39;pdl&#39;, PDL::Demos-&gt;keywords;
+      my $maxlen = List::Util::max(map length, @kw);
+      print &quot;Use:\n&quot;;
+      printf &quot;   demo %-${maxlen}s # %s\n&quot;, @$_[0,1] for map [PDL::Demos-&gt;info($_)], &#39;pdl&#39;, @kw;
+      return;
+    }
+    no strict;
+    PDL::Demos-&gt;init($_[0]);
+    $_-&gt;[0]-&gt;($_-&gt;[1]) for PDL::Demos-&gt;demo($_[0]);
+    PDL::Demos-&gt;done($_[0]);
+  }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides utilities to make demos for PDL modules.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="list">list</h2>
+
+<p>Class method; goes through <code>@INC</code> finding all modules starting with <code>PDL::Demos::</code> (with up to two <code>::</code>-separated words). Cached after first run. Does not distinguish demo modules that did not load.</p>
+
+<h2 id="keywords">keywords</h2>
+
+<p>Returns the list of keywords (first element of <code>info</code> return-list) of all found modules that loaded successfully and implement an <code>info</code> method. Caches results.</p>
+
+<h2 id="info">info</h2>
+
+<p>Given a keyword, returns the result of calling <code>info</code> on the relevant module plus the module name (three elements) or throws exception if unknown keyword.</p>
+
+<h2 id="init">init</h2>
+
+<p>Given a keyword, <code>eval</code>s the result of calling <code>init</code> on the relevant module if it has one, or throws exception if unknown keyword.</p>
+
+<h2 id="demo">demo</h2>
+
+<p>Given a keyword, returns the result of calling <code>demo</code> on the relevant module or throws exception if unknown keyword.</p>
+
+<h2 id="done">done</h2>
+
+<p>Given a keyword, <code>eval</code>s the result of calling <code>done</code> on the relevant module if it has one, or throws exception if unknown keyword.</p>
+
+<h1 id="DEMO-MODULE-METHODS">DEMO MODULE METHODS</h1>
+
+<p>Each demo module must provide these class methods:</p>
+
+<dl>
+
+<dt id="info1">info</dt>
+<dd>
+
+<p>Return a two-element list: a single keyword (probably lower-case), and a short description of the demo.</p>
+
+</dd>
+<dt id="demo1">demo</dt>
+<dd>
+
+<p>Returns a list of array-refs of two elements: a function provided by this module, and an argument for it.</p>
+
+</dd>
+<dt id="init1">init</dt>
+<dd>
+
+<p>Return a string which will be evaluated in the package running the demo. Use this for <code>use</code> statements that import functions needed in your demo.</p>
+
+</dd>
+</dl>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>These are all exported.</p>
+
+<h2 id="comment">comment</h2>
+
+<p>Prints its argument, prompts user to press enter before returning.</p>
+
+<h2 id="output">output</h2>
+
+<p>Prints its argument (best for use in <code>actnw</code> etc).</p>
+
+<h2 id="actnw">actnw</h2>
+
+<p>Prints its argument with a separator, then evaluates it as Perl code with <code>PDL</code> loaded. Doesn&#39;t prompt, so use this for e.g. GUI demos that return when the user tells them to.</p>
+
+<h2 id="act">act</h2>
+
+<p>As above, but prompts before returning.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) 1998 Tuomas J. Lukka. Tweaks by Ed J for PDL 2.077, 2022.</p>
+
+
+</body>
+
+</html>
+
+

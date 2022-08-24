@@ -1,0 +1,191 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::DiskCache -- Non-memory-resident array object</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#Shortcomings-caveats">Shortcomings &amp; caveats</a></li>
+  <li><a href="#Author-license-no-warranty">Author, license, no warranty</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#diskcache">diskcache</a></li>
+      <li><a href="#TIEARRAY">TIEARRAY</a></li>
+      <li><a href="#purge">purge</a></li>
+      <li><a href="#sync">sync</a></li>
+      <li><a href="#DESTROY">DESTROY</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::DiskCache -- Non-memory-resident array object</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>NON-OO:</p>
+
+<pre><code>   use PDL::DiskCache;
+   tie @a,&#39;PDL::DiskCache&#39;, \@files, \%options;
+   imag $a[3];</code></pre>
+
+<p>OO:</p>
+
+<pre><code>   use PDL::DiskCache;
+   $x = diskcache(\@files,\%options);
+   imag $x-&gt;[3];</code></pre>
+
+<p>or</p>
+
+<pre><code>   use PDL::DiskCache;
+   $x = new PDL::DiskCache(\@files,\%options);
+   imag $x-&gt;[4];</code></pre>
+
+<dl>
+
+<dt id="files">\@files</dt>
+<dd>
+
+<p>an array ref containing a list of file names</p>
+
+</dd>
+<dt id="options">\%options</dt>
+<dd>
+
+<p>a hash ref containing options for the PDL::DiskCache object (see &quot;TIEARRAY&quot; below for details)</p>
+
+</dd>
+</dl>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>A PDL::DiskCache object is a perl <a>&quot;tied array&quot;</a> that is useful for operations where you have to look at a large collection of PDLs one or a few at a time (such as tracking features through an image sequence). You can write prototype code that uses a perl list of a few PDLs, then scale up to to millions of PDLs simply by handing the prototype code a DiskCache tied array instead of a native perl array. The individual PDLs are stored on disk and a few of them are swapped into memory on a FIFO basis. You can set whether the data are read-only or writeable.</p>
+
+<p>By default, PDL::DiskCache uses FITS files to represent the PDLs, but you can use any sort of file at all -- the read/write routines are the only place where it examines the underlying data, and you can specify the routines to use at construction time (or, of course, subclass PDL::DiskCache).</p>
+
+<p>Items are swapped out on a FIFO basis, so if you have 10 slots and an expression with 10 items in it then you&#39;re OK (but you probably want more slots than that); but if you use more items in an expression than there are slots, thrashing will occur!</p>
+
+<p>The hash ref interface is kept for historical reasons; you can access the sync() and purge() method calls directly from the returned array ref.</p>
+
+<h1 id="Shortcomings-caveats">Shortcomings &amp; caveats</h1>
+
+<p>There&#39;s no file locking, so you could really hose yourself by having two of these things going at once on the same files.</p>
+
+<p>Since this is a tied array, things like Dumper traverse it transparently. That is sort-of good but also sort-of dangerous. You wouldn&#39;t want to PDL::Dumper::sdump() a large PDL::DiskCache, for example -- that would defeat the purpose of using a PDL::DiskCache in the first place.</p>
+
+<h1 id="Author-license-no-warranty">Author, license, no warranty</h1>
+
+<p>Copyright 2001, Craig DeForest</p>
+
+<p>This code may be distributed under the same terms as Perl itself (license available at <a href="http://www.perl.org">http://www.perl.org</a>). Copying, reverse engineering, distribution, and modification are explicitly allowed so long as this notice is preserved intact and modified versions are clearly marked as such.</p>
+
+<p>If you modify the code and it&#39;s useful, please send a copy of the modified version to cdeforest@solar.stanford.edu.</p>
+
+<p>This package comes with NO WARRANTY.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="diskcache">diskcache</h2>
+
+<p>Object constructor.</p>
+
+<pre><code>  $x = diskcache(\@f,\%options);</code></pre>
+
+<p>Options</p>
+
+<ul>
+
+<li><p>See the TIEARRAY options, below.</p>
+
+</li>
+</ul>
+
+<h2 id="TIEARRAY">TIEARRAY</h2>
+
+<p>Tied-array constructor; invoked by perl during object construction.</p>
+
+<pre><code>  TIEARRAY(class,\@f,\%options)</code></pre>
+
+<p>Options</p>
+
+<dl>
+
+<dt id="ro-default-0">ro (default 0)</dt>
+<dd>
+
+<p>If set, treat the files as read-only (modifications to the tied array will only persist until the changed elements are swapped out)</p>
+
+</dd>
+<dt id="rw-default-1">rw (default 1)</dt>
+<dd>
+
+<p>If set, allow reading and writing to the files. Because there&#39;s currently no way to determine reliably whether a PDL has been modified, rw files are always written to disk when they&#39;re swapped out -- this causes a slight performance hit.</p>
+
+</dd>
+<dt id="mem-default-20">mem (default 20)</dt>
+<dd>
+
+<p>Number of files to be cached in memory at once.</p>
+
+</dd>
+<dt id="read-default-rfits">read (default \&amp;rfits)</dt>
+<dd>
+
+<p>A function ref pointing to code that will read list objects from disk. The function must have the same syntax as rfits: $object = rfits(filename).</p>
+
+</dd>
+<dt id="write-default-wfits">write (default \&amp;wfits)</dt>
+<dd>
+
+<p>A function ref pointing to code that will write list objects to disk. The function must have the same syntax as wfits: func(object,filename).</p>
+
+</dd>
+<dt id="bless-default-0">bless (default 0)</dt>
+<dd>
+
+<p>If set to a nonzero value, then the array ref gets blessed into the DiskCache class for for easier access to the &quot;purge&quot; and &quot;sync&quot; methods. This means that you can say <code>$x-&gt;sync</code> instead of the more complex <code>(%{tied @$x})-&gt;sync</code>, but <code>ref $x</code> will return &quot;PDL::DiskCache&quot; instead of &quot;ARRAY&quot;, which could break some code.</p>
+
+</dd>
+<dt id="verbose-default-0">verbose (default 0)</dt>
+<dd>
+
+<p>Get chatty.</p>
+
+</dd>
+</dl>
+
+<h2 id="purge">purge</h2>
+
+<p>Remove an item from the oldest slot in the cache, writing to disk as necessary. You also send in how many slots to purge (default 1; sending in -1 purges everything.)</p>
+
+<p>For most uses, a nice MODIFIED flag in the data structure could save some hassle here. But PDLs can get modified out from under us with slicing and .= -- so for now we always assume everything is tainted and must be written to disk.</p>
+
+<h2 id="sync">sync</h2>
+
+<p>In a rw cache, flush items out to disk but retain them in the cache.</p>
+
+<p>Accepts a single scalar argument, which is the index number of a single item that should be written to disk. Passing (-1), or no argument, writes all items to disk, similar to purge(-1).</p>
+
+<p>For ro caches, this is a not-too-slow (but safe) no-op.</p>
+
+<h2 id="DESTROY">DESTROY</h2>
+
+<p>This is the perl hook for object destruction. It just makes a call to &quot;sync&quot;, to flush the cache out to disk. Destructor calls from perl don&#39;t happen at a guaranteed time, so be sure to call &quot;sync&quot; if you need to ensure that the files get flushed out, e.g. to use &#39;em somewhere else.</p>
+
+
+</body>
+
+</html>
+
+

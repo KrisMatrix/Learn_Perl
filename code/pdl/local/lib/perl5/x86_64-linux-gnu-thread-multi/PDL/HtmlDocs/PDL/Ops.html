@@ -1,0 +1,572 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Ops - Fundamental mathematical operators</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#plus">plus</a></li>
+      <li><a href="#mult">mult</a></li>
+      <li><a href="#minus">minus</a></li>
+      <li><a href="#divide">divide</a></li>
+      <li><a href="#gt">gt</a></li>
+      <li><a href="#lt">lt</a></li>
+      <li><a href="#le">le</a></li>
+      <li><a href="#ge">ge</a></li>
+      <li><a href="#eq">eq</a></li>
+      <li><a href="#ne">ne</a></li>
+      <li><a href="#shiftleft">shiftleft</a></li>
+      <li><a href="#shiftright">shiftright</a></li>
+      <li><a href="#or2">or2</a></li>
+      <li><a href="#and2">and2</a></li>
+      <li><a href="#xor">xor</a></li>
+      <li><a href="#bitnot">bitnot</a></li>
+      <li><a href="#power">power</a></li>
+      <li><a href="#atan2">atan2</a></li>
+      <li><a href="#modulo">modulo</a></li>
+      <li><a href="#spaceship">spaceship</a></li>
+      <li><a href="#sqrt">sqrt</a></li>
+      <li><a href="#sin">sin</a></li>
+      <li><a href="#cos">cos</a></li>
+      <li><a href="#not">not</a></li>
+      <li><a href="#exp">exp</a></li>
+      <li><a href="#log">log</a></li>
+      <li><a href="#re">re</a></li>
+      <li><a href="#im">im</a></li>
+      <li><a href="#cabs">_cabs</a></li>
+      <li><a href="#log10">log10</a></li>
+      <li><a href="#assgn">assgn</a></li>
+      <li><a href="#carg">carg</a></li>
+      <li><a href="#conj">conj</a></li>
+      <li><a href="#czip">czip</a></li>
+      <li><a href="#ipow">ipow</a></li>
+      <li><a href="#abs">abs</a></li>
+      <li><a href="#abs2">abs2</a></li>
+      <li><a href="#r2C">r2C</a></li>
+      <li><a href="#i2C">i2C</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Ops - Fundamental mathematical operators</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides the functions used by PDL to overload the basic mathematical operators (<code>+ - / *</code> etc.) and functions (<code>sin sqrt</code> etc.)</p>
+
+<p>It also includes the function <code>log10</code>, which should be a perl function so that we can overload it!</p>
+
+<p>Matrix multiplication (the operator <code>x</code>) is handled by the module <a href="./Primitive.html">PDL::Primitive</a>.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>none</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="plus">plus</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>add two ndarrays</p>
+
+<pre><code>   $c = $x + $y;        # overloaded call
+   $c = plus $x, $y;     # explicit call with default swap of 0
+   $c = plus $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;plus($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>+</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>plus processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="mult">mult</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>multiply two ndarrays</p>
+
+<pre><code>   $c = $x * $y;        # overloaded call
+   $c = mult $x, $y;     # explicit call with default swap of 0
+   $c = mult $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;mult($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>*</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>mult processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="minus">minus</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>subtract two ndarrays</p>
+
+<pre><code>   $c = $x - $y;        # overloaded call
+   $c = minus $x, $y;     # explicit call with default swap of 0
+   $c = minus $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;minus($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>-</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>minus processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="divide">divide</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>divide two ndarrays</p>
+
+<pre><code>   $c = $x / $y;        # overloaded call
+   $c = divide $x, $y;     # explicit call with default swap of 0
+   $c = divide $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;divide($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>/</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>divide processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="gt">gt</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>the binary &gt; (greater than) operation</p>
+
+<pre><code>   $c = $x &gt; $y;        # overloaded call
+   $c = gt $x, $y;     # explicit call with default swap of 0
+   $c = gt $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;gt($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&gt;</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>gt processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="lt">lt</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>the binary &lt; (less than) operation</p>
+
+<pre><code>   $c = $x &lt; $y;        # overloaded call
+   $c = lt $x, $y;     # explicit call with default swap of 0
+   $c = lt $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;lt($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&lt;</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>lt processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="le">le</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>the binary &lt;= (less equal) operation</p>
+
+<pre><code>   $c = $x &lt;= $y;        # overloaded call
+   $c = le $x, $y;     # explicit call with default swap of 0
+   $c = le $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;le($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&lt;=</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>le processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="ge">ge</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>the binary &gt;= (greater equal) operation</p>
+
+<pre><code>   $c = $x &gt;= $y;        # overloaded call
+   $c = ge $x, $y;     # explicit call with default swap of 0
+   $c = ge $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;ge($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&gt;=</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>ge processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="eq">eq</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>binary <i>equal to</i> operation (<code>==</code>)</p>
+
+<pre><code>   $c = $x == $y;        # overloaded call
+   $c = eq $x, $y;     # explicit call with default swap of 0
+   $c = eq $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;eq($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>==</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>eq processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="ne">ne</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>binary <i>not equal to</i> operation (<code>!=</code>)</p>
+
+<pre><code>   $c = $x != $y;        # overloaded call
+   $c = ne $x, $y;     # explicit call with default swap of 0
+   $c = ne $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;ne($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>!=</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>ne processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="shiftleft">shiftleft</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>leftshift <code>$a</code> by <code>$b</code></p>
+
+<pre><code>   $c = $x &lt;&lt; $y;        # overloaded call
+   $c = shiftleft $x, $y;     # explicit call with default swap of 0
+   $c = shiftleft $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;shiftleft($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&lt;&lt;</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>shiftleft processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="shiftright">shiftright</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>rightshift <code>$a</code> by <code>$b</code></p>
+
+<pre><code>   $c = $x &gt;&gt; $y;        # overloaded call
+   $c = shiftright $x, $y;     # explicit call with default swap of 0
+   $c = shiftright $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;shiftright($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&gt;&gt;</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>shiftright processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="or2">or2</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>binary <i>or</i> of two ndarrays</p>
+
+<pre><code>   $c = $x | $y;        # overloaded call
+   $c = or2 $x, $y;     # explicit call with default swap of 0
+   $c = or2 $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;or2($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>|</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>or2 processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="and2">and2</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>binary <i>and</i> of two ndarrays</p>
+
+<pre><code>   $c = $x &amp; $y;        # overloaded call
+   $c = and2 $x, $y;     # explicit call with default swap of 0
+   $c = and2 $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;and2($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&amp;</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>and2 processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="xor">xor</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>binary <i>exclusive or</i> of two ndarrays</p>
+
+<pre><code>   $c = $x ^ $y;        # overloaded call
+   $c = xor $x, $y;     # explicit call with default swap of 0
+   $c = xor $x, $y, 1;  # explicit call with trailing 1 to swap args
+   $x-&gt;inplace-&gt;xor($y); # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>^</code> operator. As of 2.065, when calling this function explicitly you can omit the third argument (see second example), or supply it (see third one).</p>
+
+<p>xor processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="bitnot">bitnot</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>unary bit negation</p>
+
+<pre><code>   $y = ~ $x;
+   $x-&gt;inplace-&gt;bitnot;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>~</code> operator/function.</p>
+
+<p>bitnot processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="power">power</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>raise ndarray <code>$a</code> to the power <code>$b</code></p>
+
+<pre><code>   $c = $x-&gt;power($y,0); # explicit function call
+   $c = $a ** $b;    # overloaded use
+   $x-&gt;inplace-&gt;power($y,0);     # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>**</code> function. Note that when calling this function explicitly you need to supply a third argument that should generally be zero (see first example). This restriction is expected to go away in future releases.</p>
+
+<p>power processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="atan2">atan2</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>elementwise <code>atan2</code> of two ndarrays</p>
+
+<pre><code>   $c = $x-&gt;atan2($y,0); # explicit function call
+   $c = atan2 $a, $b;    # overloaded use
+   $x-&gt;inplace-&gt;atan2($y,0);     # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>atan2</code> function. Note that when calling this function explicitly you need to supply a third argument that should generally be zero (see first example). This restriction is expected to go away in future releases.</p>
+
+<p>atan2 processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="modulo">modulo</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>elementwise <code>modulo</code> operation</p>
+
+<pre><code>   $c = $x-&gt;modulo($y,0); # explicit function call
+   $c = $a % $b;    # overloaded use
+   $x-&gt;inplace-&gt;modulo($y,0);     # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>%</code> function. Note that when calling this function explicitly you need to supply a third argument that should generally be zero (see first example). This restriction is expected to go away in future releases.</p>
+
+<p>modulo processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="spaceship">spaceship</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c(); int swap)</code></pre>
+
+<p>elementwise &quot;&lt;=&gt;&quot; operation</p>
+
+<pre><code>   $c = $x-&gt;spaceship($y,0); # explicit function call
+   $c = $a &lt;=&gt; $b;    # overloaded use
+   $x-&gt;inplace-&gt;spaceship($y,0);     # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the binary <code>&lt;=&gt;</code> function. Note that when calling this function explicitly you need to supply a third argument that should generally be zero (see first example). This restriction is expected to go away in future releases.</p>
+
+<p>spaceship processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="sqrt">sqrt</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>elementwise square root</p>
+
+<pre><code>   $y = sqrt $x;
+   $x-&gt;inplace-&gt;sqrt;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>sqrt</code> operator/function.</p>
+
+<p>sqrt processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="sin">sin</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>the sin function</p>
+
+<pre><code>   $y = sin $x;
+   $x-&gt;inplace-&gt;sin;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>sin</code> operator/function.</p>
+
+<p>sin processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="cos">cos</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>the cos function</p>
+
+<pre><code>   $y = cos $x;
+   $x-&gt;inplace-&gt;cos;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>cos</code> operator/function.</p>
+
+<p>cos processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="not">not</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>the elementwise <i>not</i> operation</p>
+
+<pre><code>   $y = ! $x;
+   $x-&gt;inplace-&gt;not;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>!</code> operator/function.</p>
+
+<p>not processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="exp">exp</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>the exponential function</p>
+
+<pre><code>   $y = exp $x;
+   $x-&gt;inplace-&gt;exp;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>exp</code> operator/function.</p>
+
+<p>exp processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="log">log</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>the natural logarithm</p>
+
+<pre><code>   $y = log $x;
+   $x-&gt;inplace-&gt;log;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>log</code> operator/function.</p>
+
+<p>log processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="re">re</h2>
+
+<pre><code>  Signature: (complexv(); real [o]b())</code></pre>
+
+<p>Returns the real part of a complex number.</p>
+
+<p>re processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="im">im</h2>
+
+<pre><code>  Signature: (complexv(); real [o]b())</code></pre>
+
+<p>Returns the imaginary part of a complex number.</p>
+
+<p>im processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="cabs">_cabs</h2>
+
+<pre><code>  Signature: (complexv(); real [o]b())</code></pre>
+
+<p>Returns the absolute (length) of a complex number.</p>
+
+<p>_cabs processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="log10">log10</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>the base 10 logarithm</p>
+
+<pre><code>   $y = log10 $x;
+   $x-&gt;inplace-&gt;log10;  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. This function is used to overload the unary <code>log10</code> operator/function.</p>
+
+<p>log10 processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="assgn">assgn</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>Plain numerical assignment. This is used to implement the &quot;.=&quot; operator</p>
+
+<p>assgn processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="carg">carg</h2>
+
+<pre><code>  Signature: (complexv(); real [o]b())</code></pre>
+
+<p>Returns the polar angle of a complex number.</p>
+
+<p>carg processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="conj">conj</h2>
+
+<pre><code>  Signature: (complexv();  [o]b())</code></pre>
+
+<p>complex conjugate.</p>
+
+<p>conj processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="czip">czip</h2>
+
+<pre><code>  Signature: (r(); i(); complex [o]c())</code></pre>
+
+<p>convert real, imaginary to native complex, (sort of) like LISP zip function. Will add the <code>r</code> ndarray to &quot;i&quot; times the <code>i</code> ndarray. Only takes real ndarrays as input.</p>
+
+<p>czip does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="ipow">ipow</h2>
+
+<pre><code>  Signature: (a(); indx b(); [o] ans())</code></pre>
+
+<p>raise ndarray <code>$a</code> to integer power <code>$b</code></p>
+
+<pre><code>   $c = $x-&gt;ipow($y,0);     # explicit function call
+   $c = ipow $x, $y;
+   $x-&gt;inplace-&gt;ipow($y,0);  # modify $x inplace</code></pre>
+
+<p>It can be made to work inplace with the <code>$x-&gt;inplace</code> syntax. Note that when calling this function explicitly you need to supply a third argument that should generally be zero (see first example). This restriction is expected to go away in future releases.</p>
+
+<p>Algorithm from <a href="http://en.wikipedia.org/wiki/Exponentiation_by_squaring">Wikipedia</a></p>
+
+<p>ipow does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="abs">abs</h2>
+
+<p>Returns the absolute value of a number.</p>
+
+<h2 id="abs2">abs2</h2>
+
+<p>Returns the square of the absolute value of a number.</p>
+
+<h2 id="r2C">r2C</h2>
+
+<pre><code>  Signature: (r(); complex [o]c())</code></pre>
+
+<p>convert real to native complex, with an imaginary part of zero</p>
+
+<p>r2C does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="i2C">i2C</h2>
+
+<pre><code>  Signature: (i(); complex [o]c())</code></pre>
+
+<p>convert imaginary to native complex, with a real part of zero</p>
+
+<p>i2C does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Tuomas J. Lukka (lukka@fas.harvard.edu), Karl Glazebrook (kgb@aaoepp.aao.gov.au), Doug Hunt (dhunt@ucar.edu), Christian Soeller (c.soeller@auckland.ac.nz), Doug Burke (burke@ifa.hawaii.edu), and Craig DeForest (deforest@boulder.swri.edu).</p>
+
+
+</body>
+
+</html>
+
+

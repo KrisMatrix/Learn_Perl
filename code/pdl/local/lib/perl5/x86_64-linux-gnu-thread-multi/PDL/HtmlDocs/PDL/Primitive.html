@@ -1,0 +1,1621 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Primitive - primitive operations for pdl</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#inner">inner</a></li>
+      <li><a href="#outer">outer</a></li>
+      <li><a href="#x">x</a></li>
+      <li><a href="#matmult">matmult</a></li>
+      <li><a href="#innerwt">innerwt</a></li>
+      <li><a href="#inner2">inner2</a></li>
+      <li><a href="#inner2d">inner2d</a></li>
+      <li><a href="#inner2t">inner2t</a></li>
+      <li><a href="#crossp">crossp</a></li>
+      <li><a href="#norm">norm</a></li>
+      <li><a href="#indadd">indadd</a></li>
+      <li><a href="#conv1d">conv1d</a></li>
+      <li><a href="#in">in</a></li>
+      <li><a href="#uniq">uniq</a></li>
+      <li><a href="#uniqind">uniqind</a></li>
+      <li><a href="#uniqvec">uniqvec</a></li>
+      <li><a href="#hclip">hclip</a></li>
+      <li><a href="#lclip">lclip</a></li>
+      <li><a href="#clip">clip</a></li>
+      <li><a href="#clip1">clip</a></li>
+      <li><a href="#wtstat">wtstat</a></li>
+      <li><a href="#statsover">statsover</a></li>
+      <li><a href="#stats">stats</a></li>
+      <li><a href="#histogram">histogram</a></li>
+      <li><a href="#whistogram">whistogram</a></li>
+      <li><a href="#histogram2d">histogram2d</a></li>
+      <li><a href="#whistogram2d">whistogram2d</a></li>
+      <li><a href="#fibonacci">fibonacci</a></li>
+      <li><a href="#append">append</a></li>
+      <li><a href="#glue">glue</a></li>
+      <li><a href="#cmpvec">cmpvec</a></li>
+      <li><a href="#eqvec">eqvec</a></li>
+      <li><a href="#enumvec">enumvec</a></li>
+      <li><a href="#enumvecg">enumvecg</a></li>
+      <li><a href="#vsearchvec">vsearchvec</a></li>
+      <li><a href="#unionvec">unionvec</a></li>
+      <li><a href="#intersectvec">intersectvec</a></li>
+      <li><a href="#setdiffvec">setdiffvec</a></li>
+      <li><a href="#union_sorted">union_sorted</a></li>
+      <li><a href="#intersect_sorted">intersect_sorted</a></li>
+      <li><a href="#setdiff_sorted">setdiff_sorted</a></li>
+      <li><a href="#srand">srand</a></li>
+      <li><a href="#random">random</a></li>
+      <li><a href="#randsym">randsym</a></li>
+      <li><a href="#grandom">grandom</a></li>
+      <li><a href="#vsearch">vsearch</a></li>
+      <li><a href="#vsearch_sample">vsearch_sample</a></li>
+      <li><a href="#vsearch_insert_leftmost">vsearch_insert_leftmost</a></li>
+      <li><a href="#vsearch_insert_rightmost">vsearch_insert_rightmost</a></li>
+      <li><a href="#vsearch_match">vsearch_match</a></li>
+      <li><a href="#vsearch_bin_inclusive">vsearch_bin_inclusive</a></li>
+      <li><a href="#vsearch_bin_exclusive">vsearch_bin_exclusive</a></li>
+      <li><a href="#interpolate">interpolate</a></li>
+      <li><a href="#interpol">interpol</a></li>
+      <li><a href="#interpND">interpND</a></li>
+      <li><a href="#one2nd">one2nd</a></li>
+      <li><a href="#which">which</a></li>
+      <li><a href="#which_both">which_both</a></li>
+      <li><a href="#where">where</a></li>
+      <li><a href="#where_both">where_both</a></li>
+      <li><a href="#whereND">whereND</a></li>
+      <li><a href="#whichND">whichND</a></li>
+      <li><a href="#setops">setops</a></li>
+      <li><a href="#intersect">intersect</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Primitive - primitive operations for pdl</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides some primitive and useful functions defined using PDL::PP and able to use the new indexing tricks.</p>
+
+<p>See <a href="./Indexing.html">PDL::Indexing</a> for how to use indices creatively. For explanation of the signature format, see <a href="./PP.html">PDL::PP</a>.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> # Pulls in PDL::Primitive, among other modules.
+ use PDL;
+
+ # Only pull in PDL::Primitive:
+ use PDL::Primitive;</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="inner">inner</h2>
+
+<pre><code>  Signature: (a(n); b(n); [o]c())</code></pre>
+
+<p>Inner product over one dimension</p>
+
+<pre><code> c = sum_i a_i * b_i</code></pre>
+
+<p>If <code>a() * b()</code> contains only bad data, <code>c()</code> is set bad. Otherwise <code>c()</code> will have its bad flag cleared, as it will not contain any bad values.</p>
+
+<h2 id="outer">outer</h2>
+
+<pre><code>  Signature: (a(n); b(m); [o]c(n,m))</code></pre>
+
+<p>outer product over one dimension</p>
+
+<p>Naturally, it is possible to achieve the effects of outer product simply by broadcasting over the &quot;<code>*</code>&quot; operator but this function is provided for convenience.</p>
+
+<p>outer processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="x">x</h2>
+
+<pre><code> Signature: (a(i,z), b(x,i),[o]c(x,z))</code></pre>
+
+<p>Matrix multiplication</p>
+
+<p>PDL overloads the <code>x</code> operator (normally the repeat operator) for matrix multiplication. The number of columns (size of the 0 dimension) in the left-hand argument must normally equal the number of rows (size of the 1 dimension) in the right-hand argument.</p>
+
+<p>Row vectors are represented as (N x 1) two-dimensional PDLs, or you may be sloppy and use a one-dimensional PDL. Column vectors are represented as (1 x N) two-dimensional PDLs.</p>
+
+<p>Broadcasting occurs in the usual way, but as both the 0 and 1 dimension (if present) are included in the operation, you must be sure that you don&#39;t try to broadcast over either of those dims.</p>
+
+<p>Of note, due to how Perl v5.14.0 and above implement operator overloading of the <code>x</code> operator, the use of parentheses for the left operand creates a list context, that is</p>
+
+<pre><code> pdl&gt; ( $x * $y ) x $z
+ ERROR: Argument &quot;...&quot; isn&#39;t numeric in repeat (x) ...</code></pre>
+
+<p>treats <code>$z</code> as a numeric count for the list repeat operation and does not call the scalar form of the overloaded operator. To use the operator in this case, use a scalar context:</p>
+
+<pre><code> pdl&gt; scalar( $x * $y ) x $z</code></pre>
+
+<p>or by calling <a href="#matmult">&quot;matmult&quot;</a> directly:</p>
+
+<pre><code> pdl&gt; ( $x * $y )-&gt;matmult( $z )</code></pre>
+
+<p>EXAMPLES</p>
+
+<p>Here are some simple ways to define vectors and matrices:</p>
+
+<pre><code> pdl&gt; $r = pdl(1,2);                # A row vector
+ pdl&gt; $c = pdl([[3],[4]]);          # A column vector
+ pdl&gt; $c = pdl(3,4)-&gt;(*1);          # A column vector, using NiceSlice
+ pdl&gt; $m = pdl([[1,2],[3,4]]);      # A 2x2 matrix</code></pre>
+
+<p>Now that we have a few objects prepared, here is how to matrix-multiply them:</p>
+
+<pre><code> pdl&gt; print $r x $m                 # row x matrix = row
+ [
+  [ 7 10]
+ ]
+
+ pdl&gt; print $m x $r                 # matrix x row = ERROR
+ PDL: Dim mismatch in matmult of [2x2] x [2x1]: 2 != 1
+
+ pdl&gt; print $m x $c                 # matrix x column = column
+ [
+  [ 5]
+  [11]
+ ]
+
+ pdl&gt; print $m x 2                  # Trivial case: scalar mult.
+ [
+  [2 4]
+  [6 8]
+ ]
+
+ pdl&gt; print $r x $c                 # row x column = scalar
+ [
+  [11]
+ ]
+
+ pdl&gt; print $c x $r                 # column x row = matrix
+ [
+  [3 6]
+  [4 8]
+ ]</code></pre>
+
+<p>INTERNALS</p>
+
+<p>The mechanics of the multiplication are carried out by the <a href="#matmult">&quot;matmult&quot;</a> method.</p>
+
+<h2 id="matmult">matmult</h2>
+
+<pre><code>  Signature: (a(t,h); b(w,t); [o]c(w,h))</code></pre>
+
+<p>Matrix multiplication</p>
+
+<p>Notionally, matrix multiplication $x x $y is equivalent to the broadcasting expression</p>
+
+<pre><code>    $x-&gt;dummy(1)-&gt;inner($y-&gt;xchg(0,1)-&gt;dummy(2),$c);</code></pre>
+
+<p>but for large matrices that breaks CPU cache and is slow. Instead, matmult calculates its result in 32x32x32 tiles, to keep the memory footprint within cache as long as possible on most modern CPUs.</p>
+
+<p>For usage, see <a href="#x">&quot;x&quot;</a>, a description of the overloaded &#39;x&#39; operator</p>
+
+<p>matmult ignores the bad-value flag of the input ndarrays. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="innerwt">innerwt</h2>
+
+<pre><code>  Signature: (a(n); b(n); c(n); [o]d())</code></pre>
+
+<p>Weighted (i.e. triple) inner product</p>
+
+<pre><code> d = sum_i a(i) b(i) c(i)</code></pre>
+
+<p>innerwt processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="inner2">inner2</h2>
+
+<pre><code>  Signature: (a(n); b(n,m); c(m); [o]d())</code></pre>
+
+<p>Inner product of two vectors and a matrix</p>
+
+<pre><code> d = sum_ij a(i) b(i,j) c(j)</code></pre>
+
+<p>Note that you should probably not broadcast over <code>a</code> and <code>c</code> since that would be very wasteful. Instead, you should use a temporary for <code>b*c</code>.</p>
+
+<p>inner2 processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="inner2d">inner2d</h2>
+
+<pre><code>  Signature: (a(n,m); b(n,m); [o]c())</code></pre>
+
+<p>Inner product over 2 dimensions.</p>
+
+<p>Equivalent to</p>
+
+<pre><code> $c = inner($x-&gt;clump(2), $y-&gt;clump(2))</code></pre>
+
+<p>inner2d processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="inner2t">inner2t</h2>
+
+<pre><code>  Signature: (a(j,n); b(n,m); c(m,k); [t]tmp(n,k); [o]d(j,k)))</code></pre>
+
+<p>Efficient Triple matrix product <code>a*b*c</code></p>
+
+<p>Efficiency comes from by using the temporary <code>tmp</code>. This operation only scales as <code>N**3</code> whereas broadcasting using <a href="#inner2">&quot;inner2&quot;</a> would scale as <code>N**4</code>.</p>
+
+<p>The reason for having this routine is that you do not need to have the same broadcast-dimensions for <code>tmp</code> as for the other arguments, which in case of large numbers of matrices makes this much more memory-efficient.</p>
+
+<p>It is hoped that things like this could be taken care of as a kind of closures at some point.</p>
+
+<p>inner2t processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="crossp">crossp</h2>
+
+<pre><code>  Signature: (a(tri=3); b(tri); [o] c(tri))</code></pre>
+
+<p>Cross product of two 3D vectors</p>
+
+<p>After</p>
+
+<pre><code> $c = crossp $x, $y</code></pre>
+
+<p>the inner product <code>$c*$x</code> and <code>$c*$y</code> will be zero, i.e. <code>$c</code> is orthogonal to <code>$x</code> and <code>$y</code></p>
+
+<p>crossp does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="norm">norm</h2>
+
+<pre><code>  Signature: (vec(n); [o] norm(n))</code></pre>
+
+<p>Normalises a vector to unit Euclidean length</p>
+
+<p>norm processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="indadd">indadd</h2>
+
+<pre><code>  Signature: (input(n); indx ind(n); [io] sum(m))</code></pre>
+
+<p>Broadcasting index add: add <code>input</code> to the <code>ind</code> element of <code>sum</code>, i.e:</p>
+
+<pre><code> sum(ind) += input</code></pre>
+
+<p>Simple example:</p>
+
+<pre><code>  $x = 2;
+  $ind = 3;
+  $sum = zeroes(10);
+  indadd($x,$ind, $sum);
+  print $sum
+  #Result: ( 2 added to element 3 of $sum)
+  # [0 0 0 2 0 0 0 0 0 0]</code></pre>
+
+<p>Broadcasting example:</p>
+
+<pre><code>  $x = pdl( 1,2,3);
+  $ind = pdl( 1,4,6);
+  $sum = zeroes(10);
+  indadd($x,$ind, $sum);
+  print $sum.&quot;\n&quot;;
+  #Result: ( 1, 2, and 3 added to elements 1,4,6 $sum)
+  # [0 1 0 0 2 0 3 0 0 0]</code></pre>
+
+<p>The routine barfs on bad indices, and bad inputs set target outputs bad.</p>
+
+<h2 id="conv1d">conv1d</h2>
+
+<pre><code>  Signature: (a(m); kern(p); [o]b(m); int reflect)</code></pre>
+
+<p>1D convolution along first dimension</p>
+
+<p>The m-th element of the discrete convolution of an input ndarray <code>$a</code> of size <code>$M</code>, and a kernel ndarray <code>$kern</code> of size <code>$P</code>, is calculated as</p>
+
+<pre><code>                              n = ($P-1)/2
+                              ====
+                              \
+  ($a conv1d $kern)[m]   =     &gt;      $a_ext[m - n] * $kern[n]
+                              /
+                              ====
+                              n = -($P-1)/2</code></pre>
+
+<p>where <code>$a_ext</code> is either the periodic (or reflected) extension of <code>$a</code> so it is equal to <code>$a</code> on <code> 0..$M-1 </code> and equal to the corresponding periodic/reflected image of <code>$a</code> outside that range.</p>
+
+<pre><code>  $con = conv1d sequence(10), pdl(-1,0,1);
+
+  $con = conv1d sequence(10), pdl(-1,0,1), {Boundary =&gt; &#39;reflect&#39;};</code></pre>
+
+<p>By default, periodic boundary conditions are assumed (i.e. wrap around). Alternatively, you can request reflective boundary conditions using the <code>Boundary</code> option:</p>
+
+<pre><code>  {Boundary =&gt; &#39;reflect&#39;} # case in &#39;reflect&#39; doesn&#39;t matter</code></pre>
+
+<p>The convolution is performed along the first dimension. To apply it across another dimension use the slicing routines, e.g.</p>
+
+<pre><code>  $y = $x-&gt;mv(2,0)-&gt;conv1d($kernel)-&gt;mv(0,2); # along third dim</code></pre>
+
+<p>This function is useful for broadcasted filtering of 1D signals.</p>
+
+<p>Compare also <a href="./Image2D.html#conv2d">conv2d</a>, <a href="./ImageND.html#convolve">convolve</a>, <a href="./FFT.html#fftconvolve">fftconvolve</a>, <a>fftwconv</a>, <a>rfftwconv</a></p>
+
+<p>WARNING: <code>conv1d</code> processes bad values in its inputs as the numeric value of <code>$pdl-&gt;badvalue</code> so it is not recommended for processing pdls with bad values in them unless special care is taken.</p>
+
+<p>conv1d ignores the bad-value flag of the input ndarrays. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="in">in</h2>
+
+<pre><code>  Signature: (a(); b(n); [o] c())</code></pre>
+
+<p>test if a is in the set of values b</p>
+
+<pre><code>   $goodmsk = $labels-&gt;in($goodlabels);
+   print pdl(3,1,4,6,2)-&gt;in(pdl(2,3,3));
+  [1 0 0 0 1]</code></pre>
+
+<p><code>in</code> is akin to the <i>is an element of</i> of set theory. In principle, PDL broadcasting could be used to achieve its functionality by using a construct like</p>
+
+<pre><code>   $msk = ($labels-&gt;dummy(0) == $goodlabels)-&gt;orover;</code></pre>
+
+<p>However, <code>in</code> doesn&#39;t create a (potentially large) intermediate and is generally faster.</p>
+
+<p>in does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="uniq">uniq</h2>
+
+<p>return all unique elements of an ndarray</p>
+
+<p>The unique elements are returned in ascending order.</p>
+
+<pre><code>  PDL&gt; p pdl(2,2,2,4,0,-1,6,6)-&gt;uniq
+  [-1 0 2 4 6]     # 0 is returned 2nd (sorted order)
+
+  PDL&gt; p pdl(2,2,2,4,nan,-1,6,6)-&gt;uniq
+  [-1 2 4 6 nan]   # NaN value is returned at end</code></pre>
+
+<p>Note: The returned pdl is 1D; any structure of the input ndarray is lost. <code>NaN</code> values are never compare equal to any other values, even themselves. As a result, they are always unique. <code>uniq</code> returns the NaN values at the end of the result ndarray. This follows the Matlab usage.</p>
+
+<p>See <a href="#uniqind">&quot;uniqind&quot;</a> if you need the indices of the unique elements rather than the values.</p>
+
+<p>Bad values are not considered unique by uniq and are ignored.</p>
+
+<pre><code> $x=sequence(10);
+ $x=$x-&gt;setbadif($x%3);
+ print $x-&gt;uniq;
+ [0 3 6 9]</code></pre>
+
+<h2 id="uniqind">uniqind</h2>
+
+<p>Return the indices of all unique elements of an ndarray The order is in the order of the values to be consistent with uniq. <code>NaN</code> values never compare equal with any other value and so are always unique. This follows the Matlab usage.</p>
+
+<pre><code>  PDL&gt; p pdl(2,2,2,4,0,-1,6,6)-&gt;uniqind
+  [5 4 1 3 6]     # the 0 at index 4 is returned 2nd, but...
+
+  PDL&gt; p pdl(2,2,2,4,nan,-1,6,6)-&gt;uniqind
+  [5 1 3 6 4]     # ...the NaN at index 4 is returned at end</code></pre>
+
+<p>Note: The returned pdl is 1D; any structure of the input ndarray is lost.</p>
+
+<p>See <a href="#uniq">&quot;uniq&quot;</a> if you want the unique values instead of the indices.</p>
+
+<p>Bad values are not considered unique by uniqind and are ignored.</p>
+
+<h2 id="uniqvec">uniqvec</h2>
+
+<p>Return all unique vectors out of a collection</p>
+
+<pre><code>  NOTE: If any vectors in the input ndarray have NaN values
+  they are returned at the end of the non-NaN ones.  This is
+  because, by definition, NaN values never compare equal with
+  any other value.
+
+  NOTE: The current implementation does not sort the vectors
+  containing NaN values.</code></pre>
+
+<p>The unique vectors are returned in lexicographically sorted ascending order. The 0th dimension of the input PDL is treated as a dimensional index within each vector, and the 1st and any higher dimensions are taken to run across vectors. The return value is always 2D; any structure of the input PDL (beyond using the 0th dimension for vector index) is lost.</p>
+
+<p>See also <a href="#uniq">&quot;uniq&quot;</a> for a unique list of scalars; and <a href="./Ufunc.html#qsortvec">qsortvec</a> for sorting a list of vectors lexicographcally.</p>
+
+<p>If a vector contains all bad values, it is ignored as in <a href="#uniq">&quot;uniq&quot;</a>. If some of the values are good, it is treated as a normal vector. For example, [1 2 BAD] and [BAD 2 3] could be returned, but [BAD BAD BAD] could not. Vectors containing BAD values will be returned after any non-NaN and non-BAD containing vectors, followed by the NaN vectors.</p>
+
+<h2 id="hclip">hclip</h2>
+
+<pre><code>  Signature: (a(); b(); [o] c())</code></pre>
+
+<p>clip (threshold) <code>$a</code> by <code>$b</code> (<code>$b</code> is upper bound)</p>
+
+<p>hclip processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="lclip">lclip</h2>
+
+<pre><code>  Signature: (a(); b(); [o] c())</code></pre>
+
+<p>clip (threshold) <code>$a</code> by <code>$b</code> (<code>$b</code> is lower bound)</p>
+
+<p>lclip processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="clip">clip</h2>
+
+<p>Clip (threshold) an ndarray by (optional) upper or lower bounds.</p>
+
+<pre><code> $y = $x-&gt;clip(0,3);
+ $c = $x-&gt;clip(undef, $x);</code></pre>
+
+<p>clip handles bad values since it is just a wrapper around <a href="#hclip">&quot;hclip&quot;</a> and <a href="#lclip">&quot;lclip&quot;</a>.</p>
+
+<h2 id="clip1">clip</h2>
+
+<pre><code>  Signature: (a(); l(); h(); [o] c())</code></pre>
+
+<p>info not available</p>
+
+<p>clip processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="wtstat">wtstat</h2>
+
+<pre><code>  Signature: (a(n); wt(n); avg(); [o]b(); int deg)</code></pre>
+
+<p>Weighted statistical moment of given degree</p>
+
+<p>This calculates a weighted statistic over the vector <code>a</code>. The formula is</p>
+
+<pre><code> b() = (sum_i wt_i * (a_i ** degree - avg)) / (sum_i wt_i)</code></pre>
+
+<p>Bad values are ignored in any calculation; <code>$b</code> will only have its bad flag set if the output contains any bad data.</p>
+
+<h2 id="statsover">statsover</h2>
+
+<pre><code>  Signature: (a(n); w(n); float+ [o]avg(); float+ [o]prms(); int+ [o]median(); int+ [o]min(); int+ [o]max(); float+ [o]adev(); float+ [o]rms())</code></pre>
+
+<p>Calculate useful statistics over a dimension of an ndarray</p>
+
+<pre><code>  ($mean,$prms,$median,$min,$max,$adev,$rms) = statsover($ndarray, $weights);</code></pre>
+
+<p>This utility function calculates various useful quantities of an ndarray. These are:</p>
+
+<ul>
+
+<li><p>the mean:</p>
+
+<pre><code>  MEAN = sum (x)/ N</code></pre>
+
+<p>with <code>N</code> being the number of elements in x</p>
+
+</li>
+<li><p>the population RMS deviation from the mean:</p>
+
+<pre><code>  PRMS = sqrt( sum( (x-mean(x))^2 )/(N-1)</code></pre>
+
+<p>The population deviation is the best-estimate of the deviation of the population from which a sample is drawn.</p>
+
+</li>
+<li><p>the median</p>
+
+<p>The median is the 50th percentile data value. Median is found by <a href="./Ufunc.html#medover">medover</a>, so WEIGHTING IS IGNORED FOR THE MEDIAN CALCULATION.</p>
+
+</li>
+<li><p>the minimum</p>
+
+</li>
+<li><p>the maximum</p>
+
+</li>
+<li><p>the average absolute deviation:</p>
+
+<pre><code>  AADEV = sum( abs(x-mean(x)) )/N</code></pre>
+
+</li>
+<li><p>RMS deviation from the mean:</p>
+
+<pre><code>  RMS = sqrt(sum( (x-mean(x))^2 )/N)</code></pre>
+
+<p>(also known as the root-mean-square deviation, or the square root of the variance)</p>
+
+</li>
+</ul>
+
+<p>This operator is a projection operator so the calculation will take place over the final dimension. Thus if the input is N-dimensional each returned value will be N-1 dimensional, to calculate the statistics for the entire ndarray either use <code>clump(-1)</code> directly on the ndarray or call <code>stats</code>.</p>
+
+<p>Bad values are simply ignored in the calculation, effectively reducing the sample size. If all data are bad then the output data are marked bad.</p>
+
+<h2 id="stats">stats</h2>
+
+<p>Calculates useful statistics on an ndarray</p>
+
+<pre><code> ($mean,$prms,$median,$min,$max,$adev,$rms) = stats($ndarray,[$weights]);</code></pre>
+
+<p>This utility calculates all the most useful quantities in one call. It works the same way as <a href="#statsover">&quot;statsover&quot;</a>, except that the quantities are calculated considering the entire input PDL as a single sample, rather than as a collection of rows. See <a href="#statsover">&quot;statsover&quot;</a> for definitions of the returned quantities.</p>
+
+<p>Bad values are handled; if all input values are bad, then all of the output values are flagged bad.</p>
+
+<h2 id="histogram">histogram</h2>
+
+<pre><code>  Signature: (in(n); int+[o] hist(m); double step; double min; int msize =&gt; m)</code></pre>
+
+<p>Calculates a histogram for given stepsize and minimum.</p>
+
+<pre><code> $h = histogram($data, $step, $min, $numbins);
+ $hist = zeroes $numbins;  # Put histogram in existing ndarray.
+ histogram($data, $hist, $step, $min, $numbins);</code></pre>
+
+<p>The histogram will contain <code>$numbins</code> bins starting from <code>$min</code>, each <code>$step</code> wide. The value in each bin is the number of values in <code>$data</code> that lie within the bin limits.</p>
+
+<p>Data below the lower limit is put in the first bin, and data above the upper limit is put in the last bin.</p>
+
+<p>The output is reset in a different broadcastloop so that you can take a histogram of <code>$a(10,12)</code> into <code>$b(15)</code> and get the result you want.</p>
+
+<p>For a higher-level interface, see <a href="./Basic.html#hist">hist</a>.</p>
+
+<pre><code> pdl&gt; p histogram(pdl(1,1,2),1,0,3)
+ [0 2 1]</code></pre>
+
+<p>histogram processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="whistogram">whistogram</h2>
+
+<pre><code>  Signature: (in(n); float+ wt(n);float+[o] hist(m); double step; double min; int msize =&gt; m)</code></pre>
+
+<p>Calculates a histogram from weighted data for given stepsize and minimum.</p>
+
+<pre><code> $h = whistogram($data, $weights, $step, $min, $numbins);
+ $hist = zeroes $numbins;  # Put histogram in existing ndarray.
+ whistogram($data, $weights, $hist, $step, $min, $numbins);</code></pre>
+
+<p>The histogram will contain <code>$numbins</code> bins starting from <code>$min</code>, each <code>$step</code> wide. The value in each bin is the sum of the values in <code>$weights</code> that correspond to values in <code>$data</code> that lie within the bin limits.</p>
+
+<p>Data below the lower limit is put in the first bin, and data above the upper limit is put in the last bin.</p>
+
+<p>The output is reset in a different broadcastloop so that you can take a histogram of <code>$a(10,12)</code> into <code>$b(15)</code> and get the result you want.</p>
+
+<pre><code> pdl&gt; p whistogram(pdl(1,1,2), pdl(0.1,0.1,0.5), 1, 0, 4)
+ [0 0.2 0.5 0]</code></pre>
+
+<p>whistogram processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="histogram2d">histogram2d</h2>
+
+<pre><code>  Signature: (ina(n); inb(n); int+[o] hist(ma,mb); double stepa; double mina; int masize =&gt; ma;
+                     double stepb; double minb; int mbsize =&gt; mb;)</code></pre>
+
+<p>Calculates a 2d histogram.</p>
+
+<pre><code> $h = histogram2d($datax, $datay, $stepx, $minx,
+       $nbinx, $stepy, $miny, $nbiny);
+ $hist = zeroes $nbinx, $nbiny;  # Put histogram in existing ndarray.
+ histogram2d($datax, $datay, $hist, $stepx, $minx,
+       $nbinx, $stepy, $miny, $nbiny);</code></pre>
+
+<p>The histogram will contain <code>$nbinx</code> x <code>$nbiny</code> bins, with the lower limits of the first one at <code>($minx, $miny)</code>, and with bin size <code>($stepx, $stepy)</code>. The value in each bin is the number of values in <code>$datax</code> and <code>$datay</code> that lie within the bin limits.</p>
+
+<p>Data below the lower limit is put in the first bin, and data above the upper limit is put in the last bin.</p>
+
+<pre><code> pdl&gt; p histogram2d(pdl(1,1,1,2,2),pdl(2,1,1,1,1),1,0,3,1,0,3)
+ [
+  [0 0 0]
+  [0 2 2]
+  [0 1 0]
+ ]</code></pre>
+
+<p>histogram2d processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="whistogram2d">whistogram2d</h2>
+
+<pre><code>  Signature: (ina(n); inb(n); float+ wt(n);float+[o] hist(ma,mb); double stepa; double mina; int masize =&gt; ma;
+                     double stepb; double minb; int mbsize =&gt; mb;)</code></pre>
+
+<p>Calculates a 2d histogram from weighted data.</p>
+
+<pre><code> $h = whistogram2d($datax, $datay, $weights,
+       $stepx, $minx, $nbinx, $stepy, $miny, $nbiny);
+ $hist = zeroes $nbinx, $nbiny;  # Put histogram in existing ndarray.
+ whistogram2d($datax, $datay, $weights, $hist,
+       $stepx, $minx, $nbinx, $stepy, $miny, $nbiny);</code></pre>
+
+<p>The histogram will contain <code>$nbinx</code> x <code>$nbiny</code> bins, with the lower limits of the first one at <code>($minx, $miny)</code>, and with bin size <code>($stepx, $stepy)</code>. The value in each bin is the sum of the values in <code>$weights</code> that correspond to values in <code>$datax</code> and <code>$datay</code> that lie within the bin limits.</p>
+
+<p>Data below the lower limit is put in the first bin, and data above the upper limit is put in the last bin.</p>
+
+<pre><code> pdl&gt; p whistogram2d(pdl(1,1,1,2,2),pdl(2,1,1,1,1),pdl(0.1,0.2,0.3,0.4,0.5),1,0,3,1,0,3)
+ [
+  [  0   0   0]
+  [  0 0.5 0.9]
+  [  0 0.1   0]
+ ]</code></pre>
+
+<p>whistogram2d processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="fibonacci">fibonacci</h2>
+
+<pre><code>  Signature: (i(n); indx [o]x(n))</code></pre>
+
+<p>Constructor - a vector with Fibonacci&#39;s sequence</p>
+
+<p>fibonacci does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="append">append</h2>
+
+<pre><code>  Signature: (a(n); b(m); [o] c(mn))</code></pre>
+
+<p>append two ndarrays by concatenating along their first dimensions</p>
+
+<pre><code> $x = ones(2,4,7);
+ $y = sequence 5;
+ $c = $x-&gt;append($y);  # size of $c is now (7,4,7) (a jumbo-ndarray ;)</code></pre>
+
+<p><code>append</code> appends two ndarrays along their first dimensions. The rest of the dimensions must be compatible in the broadcasting sense. The resulting size of the first dimension is the sum of the sizes of the first dimensions of the two argument ndarrays - i.e. <code>n + m</code>.</p>
+
+<p>Similar functions include <a href="#glue">&quot;glue&quot;</a> (below), which can append more than two ndarrays along an arbitrary dimension, and <a href="./Core.html#cat">cat</a>, which can append more than two ndarrays that all have the same sized dimensions.</p>
+
+<p>append does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="glue">glue</h2>
+
+<pre><code>  $c = $x-&gt;glue(&lt;dim&gt;,$y,...)</code></pre>
+
+<p>Glue two or more PDLs together along an arbitrary dimension (N-D <a href="#append">&quot;append&quot;</a>).</p>
+
+<p>Sticks $x, $y, and all following arguments together along the specified dimension. All other dimensions must be compatible in the broadcasting sense.</p>
+
+<p>Glue is permissive, in the sense that every PDL is treated as having an infinite number of trivial dimensions of order 1 -- so <code>$x-&gt;glue(3,$y)</code> works, even if $x and $y are only one dimensional.</p>
+
+<p>If one of the PDLs has no elements, it is ignored. Likewise, if one of them is actually the undefined value, it is treated as if it had no elements.</p>
+
+<p>If the first parameter is a defined perl scalar rather than a pdl, then it is taken as a dimension along which to glue everything else, so you can say <code>$cube = PDL::glue(3,@image_list);</code> if you like.</p>
+
+<p><code>glue</code> is implemented in pdl, using a combination of <a href="./Slices.html#xchg">xchg</a> and <a href="#append">&quot;append&quot;</a>. It should probably be updated (one day) to a pure PP function.</p>
+
+<p>Similar functions include <a href="#append">&quot;append&quot;</a> (above), which appends only two ndarrays along their first dimension, and <a href="./Core.html#cat">cat</a>, which can append more than two ndarrays that all have the same sized dimensions.</p>
+
+<h2 id="cmpvec">cmpvec</h2>
+
+<pre><code>  Signature: (a(n); b(n); sbyte [o]c())</code></pre>
+
+<p>Compare two vectors lexicographically.</p>
+
+<p>Returns -1 if a is less, 1 if greater, 0 if equal.</p>
+
+<p>The output is bad if any input values up to the point of inequality are bad - any after are ignored.</p>
+
+<h2 id="eqvec">eqvec</h2>
+
+<pre><code>  Signature: (a(n); b(n); sbyte [o]c())</code></pre>
+
+<p>Compare two vectors, returning 1 if equal, 0 if not equal.</p>
+
+<p>The output is bad if any input values are bad.</p>
+
+<h2 id="enumvec">enumvec</h2>
+
+<pre><code>  Signature: (v(M,N); indx [o]k(N))</code></pre>
+
+<p>Enumerate a list of vectors with locally unique keys.</p>
+
+<p>Given a sorted list of vectors $v, generate a vector $k containing locally unique keys for the elements of $v (where an &quot;element&quot; is a vector of length $M ocurring in $v).</p>
+
+<p>Note that the keys returned in $k are only unique over a run of a single vector in $v, so that each unique vector in $v has at least one 0 (zero) index in $k associated with it. If you need global keys, see enumvecg().</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>enumvec does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="enumvecg">enumvecg</h2>
+
+<pre><code>  Signature: (v(M,N); indx [o]k(N))</code></pre>
+
+<p>Enumerate a list of vectors with globally unique keys.</p>
+
+<p>Given a sorted list of vectors $v, generate a vector $k containing globally unique keys for the elements of $v (where an &quot;element&quot; is a vector of length $M ocurring in $v). Basically does the same thing as:</p>
+
+<pre><code> $k = $v-&gt;vsearchvec($v-&gt;uniqvec);</code></pre>
+
+<p>... but somewhat more efficiently.</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>enumvecg does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="vsearchvec">vsearchvec</h2>
+
+<pre><code>  Signature: (find(M); which(M,N); indx [o]found())</code></pre>
+
+<p>Routine for searching N-dimensional values - akin to vsearch() for vectors.</p>
+
+<pre><code> $found   = vsearchvec($find, $which);
+ $nearest = $which-&gt;dice_axis(1,$found);</code></pre>
+
+<p>Returns for each row-vector in <code>$find</code> the index along dimension N of the least row vector of <code>$which</code> greater or equal to it. <code>$which</code> should be sorted in increasing order. If the value of <code>$find</code> is larger than any member of <code>$which</code>, the index to the last element of <code>$which</code> is returned.</p>
+
+<p>See also: <a href="#vsearch">&quot;vsearch&quot;</a>. Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>vsearchvec does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="unionvec">unionvec</h2>
+
+<pre><code>  Signature: (a(M,NA); b(M,NB); [o]c(M,NC); indx [o]nc())</code></pre>
+
+<p>Union of two vector-valued PDLs.</p>
+
+<p>Input PDLs $a() and $b() <b>MUST</b> be sorted in lexicographic order. On return, $nc() holds the actual number of vector-values in the union.</p>
+
+<p>In scalar context, slices $c() to the actual number of elements in the union and returns the sliced PDL.</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>unionvec does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="intersectvec">intersectvec</h2>
+
+<pre><code>  Signature: (a(M,NA); b(M,NB); [o]c(M,NC); indx [o]nc())</code></pre>
+
+<p>Intersection of two vector-valued PDLs. Input PDLs $a() and $b() <b>MUST</b> be sorted in lexicographic order. On return, $nc() holds the actual number of vector-values in the intersection.</p>
+
+<p>In scalar context, slices $c() to the actual number of elements in the intersection and returns the sliced PDL.</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>intersectvec does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="setdiffvec">setdiffvec</h2>
+
+<pre><code>  Signature: (a(M,NA); b(M,NB); [o]c(M,NC); indx [o]nc())</code></pre>
+
+<p>Set-difference ($a() \ $b()) of two vector-valued PDLs.</p>
+
+<p>Input PDLs $a() and $b() <b>MUST</b> be sorted in lexicographic order. On return, $nc() holds the actual number of vector-values in the computed vector set.</p>
+
+<p>In scalar context, slices $c() to the actual number of elements in the output vector set and returns the sliced PDL.</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>setdiffvec does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="union_sorted">union_sorted</h2>
+
+<pre><code>  Signature: (a(NA); b(NB); [o]c(NC); indx [o]nc())</code></pre>
+
+<p>Union of two flat sorted unique-valued PDLs. Input PDLs $a() and $b() <b>MUST</b> be sorted in lexicographic order and contain no duplicates. On return, $nc() holds the actual number of values in the union.</p>
+
+<p>In scalar context, reshapes $c() to the actual number of elements in the union and returns it.</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>union_sorted does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="intersect_sorted">intersect_sorted</h2>
+
+<pre><code>  Signature: (a(NA); b(NB); [o]c(NC); indx [o]nc())</code></pre>
+
+<p>Intersection of two flat sorted unique-valued PDLs. Input PDLs $a() and $b() <b>MUST</b> be sorted in lexicographic order and contain no duplicates. On return, $nc() holds the actual number of values in the intersection.</p>
+
+<p>In scalar context, reshapes $c() to the actual number of elements in the intersection and returns it.</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>intersect_sorted does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="setdiff_sorted">setdiff_sorted</h2>
+
+<pre><code>  Signature: (a(NA); b(NB); [o]c(NC); indx [o]nc())</code></pre>
+
+<p>Set-difference ($a() \ $b()) of two flat sorted unique-valued PDLs.</p>
+
+<p>Input PDLs $a() and $b() <b>MUST</b> be sorted in lexicographic order and contain no duplicate values. On return, $nc() holds the actual number of values in the computed vector set.</p>
+
+<p>In scalar context, reshapes $c() to the actual number of elements in the difference set and returns it.</p>
+
+<p>Contributed by Bryan Jurish &lt;moocow@cpan.org&gt;.</p>
+
+<p>setdiff_sorted does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="srand">srand</h2>
+
+<pre><code>  Signature: (a())</code></pre>
+
+<p>Seed random-number generator with a 64-bit int. Will generate seed data for a number of threads equal to the return-value of <a href="./Core.html#online_cpus">&quot;online_cpus&quot; in PDL::Core</a>.</p>
+
+<pre><code> srand(); # uses current time
+ srand(5); # fixed number e.g. for testing</code></pre>
+
+<p>srand does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="random">random</h2>
+
+<pre><code>  Signature: (a())</code></pre>
+
+<p>Constructor which returns ndarray of random numbers</p>
+
+<pre><code> $x = random([type], $nx, $ny, $nz,...);
+ $x = random $y;</code></pre>
+
+<p>etc (see <a href="./Core.html#zeroes">zeroes</a>).</p>
+
+<p>This is the uniform distribution between 0 and 1 (assumedly excluding 1 itself). The arguments are the same as <code>zeroes</code> (q.v.) - i.e. one can specify dimensions, types or give a template.</p>
+
+<p>You can use the PDL function <a href="#srand">&quot;srand&quot;</a> to seed the random generator. If it has not been called yet, it will be with the current time.</p>
+
+<p>random does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="randsym">randsym</h2>
+
+<pre><code>  Signature: (a())</code></pre>
+
+<p>Constructor which returns ndarray of random numbers</p>
+
+<pre><code> $x = randsym([type], $nx, $ny, $nz,...);
+ $x = randsym $y;</code></pre>
+
+<p>etc (see <a href="./Core.html#zeroes">zeroes</a>).</p>
+
+<p>This is the uniform distribution between 0 and 1 (excluding both 0 and 1, cf <a href="#random">&quot;random&quot;</a>). The arguments are the same as <code>zeroes</code> (q.v.) - i.e. one can specify dimensions, types or give a template.</p>
+
+<p>You can use the PDL function <a href="#srand">&quot;srand&quot;</a> to seed the random generator. If it has not been called yet, it will be with the current time.</p>
+
+<p>randsym does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="grandom">grandom</h2>
+
+<p>Constructor which returns ndarray of Gaussian random numbers</p>
+
+<pre><code> $x = grandom([type], $nx, $ny, $nz,...);
+ $x = grandom $y;</code></pre>
+
+<p>etc (see <a href="./Core.html#zeroes">zeroes</a>).</p>
+
+<p>This is generated using the math library routine <code>ndtri</code>.</p>
+
+<p>Mean = 0, Stddev = 1</p>
+
+<p>You can use the PDL function <a href="#srand">&quot;srand&quot;</a> to seed the random generator. If it has not been called yet, it will be with the current time.</p>
+
+<h2 id="vsearch">vsearch</h2>
+
+<pre><code>  Signature: ( vals(); xs(n); [o] indx(); [\%options] )</code></pre>
+
+<p>Efficiently search for values in a sorted ndarray, returning indices.</p>
+
+<pre><code>  $idx = vsearch( $vals, $x, [\%options] );
+  vsearch( $vals, $x, $idx, [\%options ] );</code></pre>
+
+<p><b>vsearch</b> performs a binary search in the ordered ndarray <code>$x</code>, for the values from <code>$vals</code> ndarray, returning indices into <code>$x</code>. What is a &quot;match&quot;, and the meaning of the returned indices, are determined by the options.</p>
+
+<p>The <code>mode</code> option indicates which method of searching to use, and may be one of:</p>
+
+<dl>
+
+<dt id="sample"><code>sample</code></dt>
+<dd>
+
+<p>invoke <a href="#vsearch_sample"><b>vsearch_sample</b></a>, returning indices appropriate for sampling within a distribution.</p>
+
+</dd>
+<dt id="insert_leftmost"><code>insert_leftmost</code></dt>
+<dd>
+
+<p>invoke <a href="#vsearch_insert_leftmost"><b>vsearch_insert_leftmost</b></a>, returning the left-most possible insertion point which still leaves the ndarray sorted.</p>
+
+</dd>
+<dt id="insert_rightmost"><code>insert_rightmost</code></dt>
+<dd>
+
+<p>invoke <a href="#vsearch_insert_rightmost"><b>vsearch_insert_rightmost</b></a>, returning the right-most possible insertion point which still leaves the ndarray sorted.</p>
+
+</dd>
+<dt id="match"><code>match</code></dt>
+<dd>
+
+<p>invoke <a href="#vsearch_match"><b>vsearch_match</b></a>, returning the index of a matching element, else -(insertion point + 1)</p>
+
+</dd>
+<dt id="bin_inclusive"><code>bin_inclusive</code></dt>
+<dd>
+
+<p>invoke <a href="#vsearch_bin_inclusive"><b>vsearch_bin_inclusive</b></a>, returning an index appropriate for binning on a grid where the left bin edges are <i>inclusive</i> of the bin. See below for further explanation of the bin.</p>
+
+</dd>
+<dt id="bin_exclusive"><code>bin_exclusive</code></dt>
+<dd>
+
+<p>invoke <a href="#vsearch_bin_exclusive"><b>vsearch_bin_exclusive</b></a>, returning an index appropriate for binning on a grid where the left bin edges are <i>exclusive</i> of the bin. See below for further explanation of the bin.</p>
+
+</dd>
+</dl>
+
+<p>The default value of <code>mode</code> is <code>sample</code>.</p>
+
+<pre><code>  use PDL;
+  
+  my @modes = qw( sample insert_leftmost insert_rightmost match
+                  bin_inclusive bin_exclusive );
+  
+  # Generate a sequence of 3 zeros, 3 ones, ..., 3 fours.
+  my $x = zeroes(3,5)-&gt;yvals-&gt;flat;
+  
+  for my $mode ( @modes ) {
+    # if the value is in $x
+    my $contained = 2;
+    my $idx_contained = vsearch( $contained, $x, { mode =&gt; $mode } );
+    my $x_contained = $x-&gt;copy;
+    $x_contained-&gt;slice( $idx_contained ) .= 9;
+    
+    # if the value is not in $x
+    my $not_contained = 1.5;
+    my $idx_not_contained = vsearch( $not_contained, $x, { mode =&gt; $mode } );
+    my $x_not_contained = $x-&gt;copy;
+    $x_not_contained-&gt;slice( $idx_not_contained ) .= 9;
+    
+    print sprintf(&quot;%-23s%30s\n&quot;, &#39;$x&#39;, $x);
+    print sprintf(&quot;%-23s%30s\n&quot;,   &quot;$mode ($contained)&quot;, $x_contained);
+    print sprintf(&quot;%-23s%30s\n\n&quot;, &quot;$mode ($not_contained)&quot;, $x_not_contained);
+  }
+  
+  # $x                     [0 0 0 1 1 1 2 2 2 3 3 3 4 4 4]
+  # sample (2)             [0 0 0 1 1 1 9 2 2 3 3 3 4 4 4]
+  # sample (1.5)           [0 0 0 1 1 1 9 2 2 3 3 3 4 4 4]
+  # 
+  # $x                     [0 0 0 1 1 1 2 2 2 3 3 3 4 4 4]
+  # insert_leftmost (2)    [0 0 0 1 1 1 9 2 2 3 3 3 4 4 4]
+  # insert_leftmost (1.5)  [0 0 0 1 1 1 9 2 2 3 3 3 4 4 4]
+  # 
+  # $x                     [0 0 0 1 1 1 2 2 2 3 3 3 4 4 4]
+  # insert_rightmost (2)   [0 0 0 1 1 1 2 2 2 9 3 3 4 4 4]
+  # insert_rightmost (1.5) [0 0 0 1 1 1 9 2 2 3 3 3 4 4 4]
+  # 
+  # $x                     [0 0 0 1 1 1 2 2 2 3 3 3 4 4 4]
+  # match (2)              [0 0 0 1 1 1 2 9 2 3 3 3 4 4 4]
+  # match (1.5)            [0 0 0 1 1 1 2 2 9 3 3 3 4 4 4]
+  # 
+  # $x                     [0 0 0 1 1 1 2 2 2 3 3 3 4 4 4]
+  # bin_inclusive (2)      [0 0 0 1 1 1 2 2 9 3 3 3 4 4 4]
+  # bin_inclusive (1.5)    [0 0 0 1 1 9 2 2 2 3 3 3 4 4 4]
+  # 
+  # $x                     [0 0 0 1 1 1 2 2 2 3 3 3 4 4 4]
+  # bin_exclusive (2)      [0 0 0 1 1 9 2 2 2 3 3 3 4 4 4]
+  # bin_exclusive (1.5)    [0 0 0 1 1 9 2 2 2 3 3 3 4 4 4]</code></pre>
+
+<p>Also see <a href="#vsearch_sample"><b>vsearch_sample</b></a>, <a href="#vsearch_insert_leftmost"><b>vsearch_insert_leftmost</b></a>, <a href="#vsearch_insert_rightmost"><b>vsearch_insert_rightmost</b></a>, <a href="#vsearch_match"><b>vsearch_match</b></a>, <a href="#vsearch_bin_inclusive"><b>vsearch_bin_inclusive</b></a>, and <a href="#vsearch_bin_exclusive"><b>vsearch_bin_exclusive</b></a></p>
+
+<h2 id="vsearch_sample">vsearch_sample</h2>
+
+<pre><code>  Signature: (vals(); x(n); indx [o]idx())</code></pre>
+
+<p>Search for values in a sorted array, return index appropriate for sampling from a distribution</p>
+
+<pre><code>  $idx = vsearch_sample($vals, $x);</code></pre>
+
+<p><code>$x</code> must be sorted, but may be in decreasing or increasing order.</p>
+
+<p><b>vsearch_sample</b> returns an index <i>I</i> for each value <i>V</i> of <code>$vals</code> appropriate for sampling <code>$vals</code></p>
+
+<p><i>I</i> has the following properties:</p>
+
+<ul>
+
+<li><p>if <code>$x</code> is sorted in increasing order</p>
+
+<pre><code>          V &lt;= x[0]  : I = 0
+  x[0]  &lt; V &lt;= x[-1] : I s.t. x[I-1] &lt; V &lt;= x[I]
+  x[-1] &lt; V          : I = $x-&gt;nelem -1</code></pre>
+
+</li>
+<li><p>if <code>$x</code> is sorted in decreasing order</p>
+
+<pre><code>           V &gt; x[0]  : I = 0
+  x[0]  &gt;= V &gt; x[-1] : I s.t. x[I] &gt;= V &gt; x[I+1]
+  x[-1] &gt;= V         : I = $x-&gt;nelem - 1</code></pre>
+
+</li>
+</ul>
+
+<p>If all elements of <code>$x</code> are equal, <i>I = $x-&gt;nelem - 1</i>.</p>
+
+<p>If <code>$x</code> contains duplicated elements, <i>I</i> is the index of the leftmost (by position in array) duplicate if <i>V</i> matches.</p>
+
+<p>This function is useful e.g. when you have a list of probabilities for events and want to generate indices to events:</p>
+
+<pre><code> $x = pdl(.01,.86,.93,1); # Barnsley IFS probabilities cumulatively
+ $y = random 20;
+ $c = vsearch_sample($y, $x); # Now, $c will have the appropriate distr.</code></pre>
+
+<p>It is possible to use the <a href="./Ufunc.html#cumusumover">cumusumover</a> function to obtain cumulative probabilities from absolute probabilities.</p>
+
+<p>needs major (?) work to handles bad values</p>
+
+<h2 id="vsearch_insert_leftmost">vsearch_insert_leftmost</h2>
+
+<pre><code>  Signature: (vals(); x(n); indx [o]idx())</code></pre>
+
+<p>Determine the insertion point for values in a sorted array, inserting before duplicates.</p>
+
+<pre><code>  $idx = vsearch_insert_leftmost($vals, $x);</code></pre>
+
+<p><code>$x</code> must be sorted, but may be in decreasing or increasing order.</p>
+
+<p><b>vsearch_insert_leftmost</b> returns an index <i>I</i> for each value <i>V</i> of <code>$vals</code> equal to the leftmost position (by index in array) within <code>$x</code> that <i>V</i> may be inserted and still maintain the order in <code>$x</code>.</p>
+
+<p>Insertion at index <i>I</i> involves shifting elements <i>I</i> and higher of <code>$x</code> to the right by one and setting the now empty element at index <i>I</i> to <i>V</i>.</p>
+
+<p><i>I</i> has the following properties:</p>
+
+<ul>
+
+<li><p>if <code>$x</code> is sorted in increasing order</p>
+
+<pre><code>          V &lt;= x[0]  : I = 0
+  x[0]  &lt; V &lt;= x[-1] : I s.t. x[I-1] &lt; V &lt;= x[I]
+  x[-1] &lt; V          : I = $x-&gt;nelem</code></pre>
+
+</li>
+<li><p>if <code>$x</code> is sorted in decreasing order</p>
+
+<pre><code>           V &gt;  x[0]  : I = -1
+  x[0]  &gt;= V &gt;= x[-1] : I s.t. x[I] &gt;= V &gt; x[I+1]
+  x[-1] &gt;= V          : I = $x-&gt;nelem -1</code></pre>
+
+</li>
+</ul>
+
+<p>If all elements of <code>$x</code> are equal,</p>
+
+<pre><code>    i = 0</code></pre>
+
+<p>If <code>$x</code> contains duplicated elements, <i>I</i> is the index of the leftmost (by index in array) duplicate if <i>V</i> matches.</p>
+
+<p>needs major (?) work to handles bad values</p>
+
+<h2 id="vsearch_insert_rightmost">vsearch_insert_rightmost</h2>
+
+<pre><code>  Signature: (vals(); x(n); indx [o]idx())</code></pre>
+
+<p>Determine the insertion point for values in a sorted array, inserting after duplicates.</p>
+
+<pre><code>  $idx = vsearch_insert_rightmost($vals, $x);</code></pre>
+
+<p><code>$x</code> must be sorted, but may be in decreasing or increasing order.</p>
+
+<p><b>vsearch_insert_rightmost</b> returns an index <i>I</i> for each value <i>V</i> of <code>$vals</code> equal to the rightmost position (by index in array) within <code>$x</code> that <i>V</i> may be inserted and still maintain the order in <code>$x</code>.</p>
+
+<p>Insertion at index <i>I</i> involves shifting elements <i>I</i> and higher of <code>$x</code> to the right by one and setting the now empty element at index <i>I</i> to <i>V</i>.</p>
+
+<p><i>I</i> has the following properties:</p>
+
+<ul>
+
+<li><p>if <code>$x</code> is sorted in increasing order</p>
+
+<pre><code>           V &lt; x[0]  : I = 0
+  x[0]  &lt;= V &lt; x[-1] : I s.t. x[I-1] &lt;= V &lt; x[I]
+  x[-1] &lt;= V         : I = $x-&gt;nelem</code></pre>
+
+</li>
+<li><p>if <code>$x</code> is sorted in decreasing order</p>
+
+<pre><code>          V &gt;= x[0]  : I = -1
+  x[0]  &gt; V &gt;= x[-1] : I s.t. x[I] &gt;= V &gt; x[I+1]
+  x[-1] &gt; V          : I = $x-&gt;nelem -1</code></pre>
+
+</li>
+</ul>
+
+<p>If all elements of <code>$x</code> are equal,</p>
+
+<pre><code>    i = $x-&gt;nelem - 1</code></pre>
+
+<p>If <code>$x</code> contains duplicated elements, <i>I</i> is the index of the leftmost (by index in array) duplicate if <i>V</i> matches.</p>
+
+<p>needs major (?) work to handles bad values</p>
+
+<h2 id="vsearch_match">vsearch_match</h2>
+
+<pre><code>  Signature: (vals(); x(n); indx [o]idx())</code></pre>
+
+<p>Match values against a sorted array.</p>
+
+<pre><code>  $idx = vsearch_match($vals, $x);</code></pre>
+
+<p><code>$x</code> must be sorted, but may be in decreasing or increasing order.</p>
+
+<p><b>vsearch_match</b> returns an index <i>I</i> for each value <i>V</i> of <code>$vals</code>. If <i>V</i> matches an element in <code>$x</code>, <i>I</i> is the index of that element, otherwise it is <i>-( insertion_point + 1 )</i>, where <i>insertion_point</i> is an index in <code>$x</code> where <i>V</i> may be inserted while maintaining the order in <code>$x</code>. If <code>$x</code> has duplicated values, <i>I</i> may refer to any of them.</p>
+
+<p>needs major (?) work to handles bad values</p>
+
+<h2 id="vsearch_bin_inclusive">vsearch_bin_inclusive</h2>
+
+<pre><code>  Signature: (vals(); x(n); indx [o]idx())</code></pre>
+
+<p>Determine the index for values in a sorted array of bins, lower bound inclusive.</p>
+
+<pre><code>  $idx = vsearch_bin_inclusive($vals, $x);</code></pre>
+
+<p><code>$x</code> must be sorted, but may be in decreasing or increasing order.</p>
+
+<p><code>$x</code> represents the edges of contiguous bins, with the first and last elements representing the outer edges of the outer bins, and the inner elements the shared bin edges.</p>
+
+<p>The lower bound of a bin is inclusive to the bin, its outer bound is exclusive to it. <b>vsearch_bin_inclusive</b> returns an index <i>I</i> for each value <i>V</i> of <code>$vals</code></p>
+
+<p><i>I</i> has the following properties:</p>
+
+<ul>
+
+<li><p>if <code>$x</code> is sorted in increasing order</p>
+
+<pre><code>           V &lt; x[0]  : I = -1
+  x[0]  &lt;= V &lt; x[-1] : I s.t. x[I] &lt;= V &lt; x[I+1]
+  x[-1] &lt;= V         : I = $x-&gt;nelem - 1</code></pre>
+
+</li>
+<li><p>if <code>$x</code> is sorted in decreasing order</p>
+
+<pre><code>           V &gt;= x[0]  : I = 0
+  x[0]  &gt;  V &gt;= x[-1] : I s.t. x[I+1] &gt; V &gt;= x[I]
+  x[-1] &gt;  V          : I = $x-&gt;nelem</code></pre>
+
+</li>
+</ul>
+
+<p>If all elements of <code>$x</code> are equal,</p>
+
+<pre><code>    i = $x-&gt;nelem - 1</code></pre>
+
+<p>If <code>$x</code> contains duplicated elements, <i>I</i> is the index of the righmost (by index in array) duplicate if <i>V</i> matches.</p>
+
+<p>needs major (?) work to handles bad values</p>
+
+<h2 id="vsearch_bin_exclusive">vsearch_bin_exclusive</h2>
+
+<pre><code>  Signature: (vals(); x(n); indx [o]idx())</code></pre>
+
+<p>Determine the index for values in a sorted array of bins, lower bound exclusive.</p>
+
+<pre><code>  $idx = vsearch_bin_exclusive($vals, $x);</code></pre>
+
+<p><code>$x</code> must be sorted, but may be in decreasing or increasing order.</p>
+
+<p><code>$x</code> represents the edges of contiguous bins, with the first and last elements representing the outer edges of the outer bins, and the inner elements the shared bin edges.</p>
+
+<p>The lower bound of a bin is exclusive to the bin, its upper bound is inclusive to it. <b>vsearch_bin_exclusive</b> returns an index <i>I</i> for each value <i>V</i> of <code>$vals</code>.</p>
+
+<p><i>I</i> has the following properties:</p>
+
+<ul>
+
+<li><p>if <code>$x</code> is sorted in increasing order</p>
+
+<pre><code>           V &lt;= x[0]  : I = -1
+  x[0]  &lt;  V &lt;= x[-1] : I s.t. x[I] &lt; V &lt;= x[I+1]
+  x[-1] &lt;  V          : I = $x-&gt;nelem - 1</code></pre>
+
+</li>
+<li><p>if <code>$x</code> is sorted in decreasing order</p>
+
+<pre><code>           V &gt;  x[0]  : I = 0
+  x[0]  &gt;= V &gt;  x[-1] : I s.t. x[I-1] &gt;= V &gt; x[I]
+  x[-1] &gt;= V          : I = $x-&gt;nelem</code></pre>
+
+</li>
+</ul>
+
+<p>If all elements of <code>$x</code> are equal,</p>
+
+<pre><code>    i = $x-&gt;nelem - 1</code></pre>
+
+<p>If <code>$x</code> contains duplicated elements, <i>I</i> is the index of the righmost (by index in array) duplicate if <i>V</i> matches.</p>
+
+<p>needs major (?) work to handles bad values</p>
+
+<h2 id="interpolate">interpolate</h2>
+
+<pre><code>  Signature: (xi(); x(n); y(n); [o] yi(); int [o] err())</code></pre>
+
+<p>routine for 1D linear interpolation</p>
+
+<pre><code> ( $yi, $err ) = interpolate($xi, $x, $y)</code></pre>
+
+<p>Given a set of points <code>($x,$y)</code>, use linear interpolation to find the values <code>$yi</code> at a set of points <code>$xi</code>.</p>
+
+<p><code>interpolate</code> uses a binary search to find the suspects, er..., interpolation indices and therefore abscissas (ie <code>$x</code>) have to be <i>strictly</i> ordered (increasing or decreasing). For interpolation at lots of closely spaced abscissas an approach that uses the last index found as a start for the next search can be faster (compare Numerical Recipes <code>hunt</code> routine). Feel free to implement that on top of the binary search if you like. For out of bounds values it just does a linear extrapolation and sets the corresponding element of <code>$err</code> to 1, which is otherwise 0.</p>
+
+<p>See also <a href="#interpol">&quot;interpol&quot;</a>, which uses the same routine, differing only in the handling of extrapolation - an error message is printed rather than returning an error ndarray.</p>
+
+<p>needs major (?) work to handles bad values</p>
+
+<h2 id="interpol">interpol</h2>
+
+<pre><code> Signature: (xi(); x(n); y(n); [o] yi())</code></pre>
+
+<p>routine for 1D linear interpolation</p>
+
+<pre><code> $yi = interpol($xi, $x, $y)</code></pre>
+
+<p><code>interpol</code> uses the same search method as <a href="#interpolate">&quot;interpolate&quot;</a>, hence <code>$x</code> must be <i>strictly</i> ordered (either increasing or decreasing). The difference occurs in the handling of out-of-bounds values; here an error message is printed.</p>
+
+<h2 id="interpND">interpND</h2>
+
+<p>Interpolate values from an N-D ndarray, with switchable method</p>
+
+<pre><code>  $source = 10*xvals(10,10) + yvals(10,10);
+  $index = pdl([[2.2,3.5],[4.1,5.0]],[[6.0,7.4],[8,9]]);
+  print $source-&gt;interpND( $index );</code></pre>
+
+<p>InterpND acts like <a href="./Slices.html#indexND">indexND</a>, collapsing <code>$index</code> by lookup into <code>$source</code>; but it does interpolation rather than direct sampling. The interpolation method and boundary condition are switchable via an options hash.</p>
+
+<p>By default, linear or sample interpolation is used, with constant value outside the boundaries of the source pdl. No dataflow occurs, because in general the output is computed rather than indexed.</p>
+
+<p>All the interpolation methods treat the pixels as value-centered, so the <code>sample</code> method will return <code>$a-&gt;(0)</code> for coordinate values on the set [-0.5,0.5), and all methods will return <code>$a-&gt;(1)</code> for a coordinate value of exactly 1.</p>
+
+<p>Recognized options:</p>
+
+<dl>
+
+<dt id="method">method</dt>
+<dd>
+
+<p>Values can be:</p>
+
+<ul>
+
+<li><p>0, s, sample, Sample (default for integer source types)</p>
+
+<p>The nearest value is taken. Pixels are regarded as centered on their respective integer coordinates (no offset from the linear case).</p>
+
+</li>
+<li><p>1, l, linear, Linear (default for floating point source types)</p>
+
+<p>The values are N-linearly interpolated from an N-dimensional cube of size 2.</p>
+
+</li>
+<li><p>3, c, cube, cubic, Cubic</p>
+
+<p>The values are interpolated using a local cubic fit to the data. The fit is constrained to match the original data and its derivative at the data points. The second derivative of the fit is not continuous at the data points. Multidimensional datasets are interpolated by the successive-collapse method.</p>
+
+<p>(Note that the constraint on the first derivative causes a small amount of ringing around sudden features such as step functions).</p>
+
+</li>
+<li><p>f, fft, fourier, Fourier</p>
+
+<p>The source is Fourier transformed, and the interpolated values are explicitly calculated from the coefficients. The boundary condition option is ignored -- periodic boundaries are imposed.</p>
+
+<p>If you pass in the option &quot;fft&quot;, and it is a list (ARRAY) ref, then it is a stash for the magnitude and phase of the source FFT. If the list has two elements then they are taken as already computed; otherwise they are calculated and put in the stash.</p>
+
+</li>
+</ul>
+
+</dd>
+<dt id="b-bound-boundary-Boundary">b, bound, boundary, Boundary</dt>
+<dd>
+
+<p>This option is passed unmodified into <a href="./Slices.html#indexND">indexND</a>, which is used as the indexing engine for the interpolation. Some current allowed values are &#39;extend&#39;, &#39;periodic&#39;, &#39;truncate&#39;, and &#39;mirror&#39; (default is &#39;truncate&#39;).</p>
+
+</dd>
+<dt id="bad">bad</dt>
+<dd>
+
+<p>contains the fill value used for &#39;truncate&#39; boundary. (default 0)</p>
+
+</dd>
+<dt id="fft">fft</dt>
+<dd>
+
+<p>An array ref whose associated list is used to stash the FFT of the source data, for the FFT method.</p>
+
+</dd>
+</dl>
+
+<h2 id="one2nd">one2nd</h2>
+
+<p>Converts a one dimensional index ndarray to a set of ND coordinates</p>
+
+<pre><code> @coords=one2nd($x, $indices)</code></pre>
+
+<p>returns an array of ndarrays containing the ND indexes corresponding to the one dimensional list indices. The indices are assumed to correspond to array <code>$x</code> clumped using <code>clump(-1)</code>. This routine is used in the old vector form of <a href="#whichND">&quot;whichND&quot;</a>, but is useful on its own occasionally.</p>
+
+<p>Returned ndarrays have the <a href="./Core.html#indx">indx</a> datatype. <code>$indices</code> can have values larger than <code>$x-&gt;nelem</code> but negative values in <code>$indices</code> will not give the answer you expect.</p>
+
+<pre><code> pdl&gt; $x=pdl [[[1,2],[-1,1]], [[0,-3],[3,2]]]; $c=$x-&gt;clump(-1)
+ pdl&gt; $maxind=maximum_ind($c); p $maxind;
+ 6
+ pdl&gt; print one2nd($x, maximum_ind($c))
+ 0 1 1
+ pdl&gt; p $x-&gt;at(0,1,1)
+ 3</code></pre>
+
+<h2 id="which">which</h2>
+
+<pre><code>  Signature: (mask(n); indx [o] inds(n); indx [o]lastout())</code></pre>
+
+<p>Returns indices of non-zero values from a 1-D PDL</p>
+
+<pre><code> $i = which($mask);</code></pre>
+
+<p>returns a pdl with indices for all those elements that are nonzero in the mask. Note that the returned indices will be 1D. If you feed in a multidimensional mask, it will be flattened before the indices are calculated. See also <a href="#whichND">&quot;whichND&quot;</a> for multidimensional masks.</p>
+
+<p>If you want to index into the original mask or a similar ndarray with output from <code>which</code>, remember to flatten it before calling index:</p>
+
+<pre><code>  $data = random 5, 5;
+  $idx = which $data &gt; 0.5; # $idx is now 1D
+  $bigsum = $data-&gt;flat-&gt;index($idx)-&gt;sum;  # flatten before indexing</code></pre>
+
+<p>Compare also <a href="#where">&quot;where&quot;</a> for similar functionality.</p>
+
+<p>SEE ALSO:</p>
+
+<p><a href="#which_both">&quot;which_both&quot;</a> returns separately the indices of both nonzero and zero values in the mask.</p>
+
+<p><a href="#where_both">&quot;where_both&quot;</a> returns separately slices of both nonzero and zero values in the mask.</p>
+
+<p><a href="#where">&quot;where&quot;</a> returns associated values from a data PDL, rather than indices into the mask PDL.</p>
+
+<p><a href="#whichND">&quot;whichND&quot;</a> returns N-D indices into a multidimensional PDL.</p>
+
+<pre><code> pdl&gt; $x = sequence(10); p $x
+ [0 1 2 3 4 5 6 7 8 9]
+ pdl&gt; $indx = which($x&gt;6); p $indx
+ [7 8 9]</code></pre>
+
+<p>which processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="which_both">which_both</h2>
+
+<pre><code>  Signature: (mask(n); indx [o] inds(n); indx [o]notinds(n); indx [o]lastout(); indx [o]lastoutn())</code></pre>
+
+<p>Returns indices of nonzero and zero values in a mask PDL</p>
+
+<pre><code> ($i, $c_i) = which_both($mask);</code></pre>
+
+<p>This works just as <a href="#which">&quot;which&quot;</a>, but the complement of <code>$i</code> will be in <code>$c_i</code>.</p>
+
+<pre><code> pdl&gt; p $x = sequence(10)
+ [0 1 2 3 4 5 6 7 8 9]
+ pdl&gt; ($big, $small) = which_both($x &gt;= 5); p &quot;$big\n$small&quot;
+ [5 6 7 8 9]
+ [0 1 2 3 4]</code></pre>
+
+<p>which_both processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="where">where</h2>
+
+<p>Use a mask to select values from one or more data PDLs</p>
+
+<p><code>where</code> accepts one or more data ndarrays and a mask ndarray. It returns a list of output ndarrays, corresponding to the input data ndarrays. Each output ndarray is a 1-dimensional list of values in its corresponding data ndarray. The values are drawn from locations where the mask is nonzero.</p>
+
+<p>The output PDLs are still connected to the original data PDLs, for the purpose of dataflow.</p>
+
+<p><code>where</code> combines the functionality of <a href="#which">&quot;which&quot;</a> and <a href="./Slices.html#index">index</a> into a single operation.</p>
+
+<p>BUGS:</p>
+
+<p>While <code>where</code> works OK for most N-dimensional cases, it does not broadcast properly over (for example) the (N+1)th dimension in data that is compared to an N-dimensional mask. Use <code>whereND</code> for that.</p>
+
+<pre><code> $i = $x-&gt;where($x+5 &gt; 0); # $i contains those elements of $x
+                           # where mask ($x+5 &gt; 0) is 1
+ $i .= -5;  # Set those elements (of $x) to -5. Together, these
+            # commands clamp $x to a maximum of -5.</code></pre>
+
+<p>It is also possible to use the same mask for several ndarrays with the same call:</p>
+
+<pre><code> ($i,$j,$k) = where($x,$y,$z, $x+5&gt;0);</code></pre>
+
+<p>Note: <code>$i</code> is always 1-D, even if <code>$x</code> is &gt;1-D.</p>
+
+<p>WARNING: The first argument (the values) and the second argument (the mask) currently have to have the exact same dimensions (or horrible things happen). You *cannot* broadcast over a smaller mask, for example.</p>
+
+<h2 id="where_both">where_both</h2>
+
+<p>Returns slices (non-zero in mask, zero) of an ndarray according to a mask</p>
+
+<pre><code> ($match_vals, $non_match_vals) = where_both($pdl, $mask);</code></pre>
+
+<p>This works like <a href="#which_both">&quot;which_both&quot;</a>, but (flattened) data-flowing slices rather than index-sets are returned.</p>
+
+<pre><code> pdl&gt; p $x = sequence(10) + 2
+ [2 3 4 5 6 7 8 9 10 11]
+ pdl&gt; ($big, $small) = where_both($x, $x &gt; 5); p &quot;$big\n$small&quot;
+ [6 7 8 9 10 11]
+ [2 3 4 5]
+ pdl&gt; p $big += 2, $small -= 1
+ [8 9 10 11 12 13] [1 2 3 4]
+ pdl&gt; p $x
+ [1 2 3 4 8 9 10 11 12 13]</code></pre>
+
+<h2 id="whereND">whereND</h2>
+
+<p><code>where</code> with support for ND masks and broadcasting</p>
+
+<p><code>whereND</code> accepts one or more data ndarrays and a mask ndarray. It returns a list of output ndarrays, corresponding to the input data ndarrays. The values are drawn from locations where the mask is nonzero.</p>
+
+<p><code>whereND</code> differs from <code>where</code> in that the mask dimensionality is preserved which allows for proper broadcasting of the selection operation over higher dimensions.</p>
+
+<p>As with <code>where</code> the output PDLs are still connected to the original data PDLs, for the purpose of dataflow.</p>
+
+<pre><code>  $sdata = whereND $data, $mask
+  ($s1, $s2, ..., $sn) = whereND $d1, $d2, ..., $dn, $mask
+
+  where
+
+    $data is M dimensional
+    $mask is N &lt; M dimensional
+    dims($data) 1..N == dims($mask) 1..N
+    with broadcasting over N+1 to M dimensions</code></pre>
+
+<pre><code>  $data   = sequence(4,3,2);   # example data array
+  $mask4  = (random(4)&gt;0.5);   # example 1-D mask array, has $n4 true values
+  $mask43 = (random(4,3)&gt;0.5); # example 2-D mask array, has $n43 true values
+  $sdat4  = whereND $data, $mask4;   # $sdat4 is a [$n4,3,2] pdl
+  $sdat43 = whereND $data, $mask43;  # $sdat43 is a [$n43,2] pdl</code></pre>
+
+<p>Just as with <code>where</code>, you can use the returned value in an assignment. That means that both of these examples are valid:</p>
+
+<pre><code>  # Used to create a new slice stored in $sdat4:
+  $sdat4 = $data-&gt;whereND($mask4);
+  $sdat4 .= 0;
+  # Used in lvalue context:
+  $data-&gt;whereND($mask4) .= 0;</code></pre>
+
+<p>SEE ALSO:</p>
+
+<p><a href="#whichND">&quot;whichND&quot;</a> returns N-D indices into a multidimensional PDL, from a mask.</p>
+
+<h2 id="whichND">whichND</h2>
+
+<p>Return the coordinates of non-zero values in a mask.</p>
+
+<p>WhichND returns the N-dimensional coordinates of each nonzero value in a mask PDL with any number of dimensions. The returned values arrive as an array-of-vectors suitable for use in <a href="./Slices.html#indexND">indexND</a> or <a href="./Slices.html#range">range</a>.</p>
+
+<pre><code> $coords = whichND($mask);</code></pre>
+
+<p>returns a PDL containing the coordinates of the elements that are non-zero in <code>$mask</code>, suitable for use in <a href="./Slices.html#indexND">&quot;indexND&quot; in PDL::Slices</a>. The 0th dimension contains the full coordinate listing of each point; the 1st dimension lists all the points. For example, if $mask has rank 4 and 100 matching elements, then $coords has dimension 4x100.</p>
+
+<p>If no such elements exist, then whichND returns a structured empty PDL: an Nx0 PDL that contains no values (but matches, broadcasting-wise, with the vectors that would be produced if such elements existed).</p>
+
+<p>DEPRECATED BEHAVIOR IN LIST CONTEXT:</p>
+
+<p>whichND once delivered different values in list context than in scalar context, for historical reasons. In list context, it returned the coordinates transposed, as a collection of 1-PDLs (one per dimension) in a list. This usage is deprecated in PDL 2.4.10, and will cause a warning to be issued every time it is encountered. To avoid the warning, you can set the global variable &quot;$PDL::whichND&quot; to &#39;s&#39; to get scalar behavior in all contexts, or to &#39;l&#39; to get list behavior in list context.</p>
+
+<p>In later versions of PDL, the deprecated behavior will disappear. Deprecated list context whichND expressions can be replaced with:</p>
+
+<pre><code>    @list = $x-&gt;whichND-&gt;mv(0,-1)-&gt;dog;</code></pre>
+
+<p>SEE ALSO:</p>
+
+<p><a href="#which">&quot;which&quot;</a> finds coordinates of nonzero values in a 1-D mask.</p>
+
+<p><a href="#where">&quot;where&quot;</a> extracts values from a data PDL that are associated with nonzero values in a mask PDL.</p>
+
+<p><a href="./Slices.html#indexND">&quot;indexND&quot; in PDL::Slices</a> can be fed the coordinates to return the values.</p>
+
+<pre><code> pdl&gt; $s=sequence(10,10,3,4)
+ pdl&gt; ($x, $y, $z, $w)=whichND($s == 203); p $x, $y, $z, $w
+ [3] [0] [2] [0]
+ pdl&gt; print $s-&gt;at(list(cat($x,$y,$z,$w)))
+ 203</code></pre>
+
+<h2 id="setops">setops</h2>
+
+<p>Implements simple set operations like union and intersection</p>
+
+<pre><code>   Usage: $set = setops($x, &lt;OPERATOR&gt;, $y);</code></pre>
+
+<p>The operator can be <code>OR</code>, <code>XOR</code> or <code>AND</code>. This is then applied to <code>$x</code> viewed as a set and <code>$y</code> viewed as a set. Set theory says that a set may not have two or more identical elements, but setops takes care of this for you, so <code>$x=pdl(1,1,2)</code> is OK. The functioning is as follows:</p>
+
+<dl>
+
+<dt id="OR"><code>OR</code></dt>
+<dd>
+
+<p>The resulting vector will contain the elements that are either in <code>$x</code> <i>or</i> in <code>$y</code> or both. This is the union in set operation terms</p>
+
+</dd>
+<dt id="XOR"><code>XOR</code></dt>
+<dd>
+
+<p>The resulting vector will contain the elements that are either in <code>$x</code> or <code>$y</code>, but not in both. This is</p>
+
+<pre><code>     Union($x, $y) - Intersection($x, $y)</code></pre>
+
+<p>in set operation terms.</p>
+
+</dd>
+<dt id="AND"><code>AND</code></dt>
+<dd>
+
+<p>The resulting vector will contain the intersection of <code>$x</code> and <code>$y</code>, so the elements that are in both <code>$x</code> and <code>$y</code>. Note that for convenience this operation is also aliased to <a href="#intersect">&quot;intersect&quot;</a>.</p>
+
+</dd>
+</dl>
+
+<p>It should be emphasized that these routines are used when one or both of the sets <code>$x</code>, <code>$y</code> are hard to calculate or that you get from a separate subroutine.</p>
+
+<p>Finally IDL users might be familiar with Craig Markwardt&#39;s <code>cmset_op.pro</code> routine which has inspired this routine although it was written independently However the present routine has a few less options (but see the examples)</p>
+
+<p>You will very often use these functions on an index vector, so that is what we will show here. We will in fact something slightly silly. First we will find all squares that are also cubes below 10000.</p>
+
+<p>Create a sequence vector:</p>
+
+<pre><code>  pdl&gt; $x = sequence(10000)</code></pre>
+
+<p>Find all odd and even elements:</p>
+
+<pre><code>  pdl&gt; ($even, $odd) = which_both( ($x % 2) == 0)</code></pre>
+
+<p>Find all squares</p>
+
+<pre><code>  pdl&gt; $squares= which(ceil(sqrt($x)) == floor(sqrt($x)))</code></pre>
+
+<p>Find all cubes (being careful with roundoff error!)</p>
+
+<pre><code>  pdl&gt; $cubes= which(ceil($x**(1.0/3.0)) == floor($x**(1.0/3.0)+1e-6))</code></pre>
+
+<p>Then find all squares that are cubes:</p>
+
+<pre><code>  pdl&gt; $both = setops($squares, &#39;AND&#39;, $cubes)</code></pre>
+
+<p>And print these (assumes that <code>PDL::NiceSlice</code> is loaded!)</p>
+
+<pre><code>  pdl&gt; p $x($both)
+   [0 1 64 729 4096]</code></pre>
+
+<p>Then find all numbers that are either cubes or squares, but not both:</p>
+
+<pre><code>  pdl&gt; $cube_xor_square = setops($squares, &#39;XOR&#39;, $cubes)
+
+  pdl&gt; p $cube_xor_square-&gt;nelem()
+   112</code></pre>
+
+<p>So there are a total of 112 of these!</p>
+
+<p>Finally find all odd squares:</p>
+
+<pre><code>  pdl&gt; $odd_squares = setops($squares, &#39;AND&#39;, $odd)</code></pre>
+
+<p>Another common occurrence is to want to get all objects that are in <code>$x</code> and in the complement of <code>$y</code>. But it is almost always best to create the complement explicitly since the universe that both are taken from is not known. Thus use <a href="#which_both">&quot;which_both&quot;</a> if possible to keep track of complements.</p>
+
+<p>If this is impossible the best approach is to make a temporary:</p>
+
+<p>This creates an index vector the size of the universe of the sets and set all elements in <code>$y</code> to 0</p>
+
+<pre><code>  pdl&gt; $tmp = ones($n_universe); $tmp($y) .= 0;</code></pre>
+
+<p>This then finds the complement of <code>$y</code></p>
+
+<pre><code>  pdl&gt; $C_b = which($tmp == 1);</code></pre>
+
+<p>and this does the final selection:</p>
+
+<pre><code>  pdl&gt; $set = setops($x, &#39;AND&#39;, $C_b)</code></pre>
+
+<h2 id="intersect">intersect</h2>
+
+<p>Calculate the intersection of two ndarrays</p>
+
+<pre><code>   Usage: $set = intersect($x, $y);</code></pre>
+
+<p>This routine is merely a simple interface to <a href="#setops">&quot;setops&quot;</a>. See that for more information</p>
+
+<p>Find all numbers less that 100 that are of the form 2*y and 3*x</p>
+
+<pre><code> pdl&gt; $x=sequence(100)
+ pdl&gt; $factor2 = which( ($x % 2) == 0)
+ pdl&gt; $factor3 = which( ($x % 3) == 0)
+ pdl&gt; $ii=intersect($factor2, $factor3)
+ pdl&gt; p $x($ii)
+ [0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96]</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) Tuomas J. Lukka 1997 (lukka@husc.harvard.edu). Contributions by Christian Soeller (c.soeller@auckland.ac.nz), Karl Glazebrook (kgb@aaoepp.aao.gov.au), Craig DeForest (deforest@boulder.swri.edu) and Jarle Brinchmann (jarle@astro.up.pt) All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+<p>Updated for CPAN viewing compatibility by David Mertens.</p>
+
+
+</body>
+
+</html>
+
+

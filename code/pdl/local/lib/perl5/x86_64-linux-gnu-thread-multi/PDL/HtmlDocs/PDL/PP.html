@@ -1,0 +1,1983 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::PP - Generate PDL routines from concise descriptions</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#pp_add_boot">pp_add_boot</a></li>
+      <li><a href="#pp_add_exported">pp_add_exported</a></li>
+      <li><a href="#pp_add_isa">pp_add_isa</a></li>
+      <li><a href="#pp_addbegin">pp_addbegin</a></li>
+      <li><a href="#pp_addhdr">pp_addhdr</a></li>
+      <li><a href="#pp_addpm">pp_addpm</a></li>
+      <li><a href="#pp_addxs">pp_addxs</a></li>
+      <li><a href="#pp_add_macros">pp_add_macros</a></li>
+      <li><a href="#pp_beginwrap">pp_beginwrap</a></li>
+      <li><a href="#pp_bless">pp_bless</a></li>
+      <li><a href="#pp_boundscheck">pp_boundscheck</a></li>
+      <li><a href="#pp_core_importList">pp_core_importList</a></li>
+      <li><a href="#pp_def">pp_def</a></li>
+      <li><a href="#pp_deprecate_module">pp_deprecate_module</a></li>
+      <li><a href="#pp_done">pp_done</a></li>
+      <li><a href="#pp_export_nothing">pp_export_nothing</a></li>
+      <li><a href="#pp_line_numbers">pp_line_numbers</a></li>
+    </ul>
+  </li>
+  <li><a href="#OVERVIEW">OVERVIEW</a></li>
+  <li><a href="#WARNING">WARNING</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#DATA-OPERATION">DATA OPERATION</a>
+    <ul>
+      <li><a href="#A-simple-example">A simple example</a></li>
+      <li><a href="#The-Pars-section:-the-signature-of-a-PP-function">The Pars section: the signature of a PP function</a></li>
+      <li><a href="#Argument-dimensions-and-the-signature">Argument dimensions and the signature</a></li>
+      <li><a href="#Constant-argument-dimensions-in-the-signature">Constant argument dimensions in the signature</a></li>
+      <li><a href="#Type-conversions-and-the-signature">Type conversions and the signature</a></li>
+      <li><a href="#The-Code-section">The Code section</a></li>
+      <li><a href="#Handling-bad-values">Handling bad values</a></li>
+      <li><a href="#Other-bad-value-macros">Other bad-value macros</a>
+        <ul>
+          <li><a href="#ISBAD-var">$ISBAD(var)</a></li>
+          <li><a href="#ISGOOD-var">$ISGOOD(var)</a></li>
+          <li><a href="#SETBAD-var">$SETBAD(var)</a></li>
+          <li><a href="#ISBADVAR-c_var-pdl">$ISBADVAR(c_var,pdl)</a></li>
+          <li><a href="#ISGOODVAR-c_var-pdl">$ISGOODVAR(c_var,pdl)</a></li>
+          <li><a href="#SETBADVAR-c_var-pdl">$SETBADVAR(c_var,pdl)</a></li>
+        </ul>
+      </li>
+      <li><a href="#PDL-STATE-macros">PDL STATE macros</a></li>
+      <li><a href="#Bad-value-examples">Bad-value examples</a></li>
+      <li><a href="#Interfacing-your-own-library-functions-using-PP">Interfacing your own/library functions using PP</a></li>
+      <li><a href="#Other-macros-in-the-Code-section">Other macros in the Code section</a>
+        <ul>
+          <li><a href="#T">$T</a></li>
+          <li><a href="#PP">$PP</a></li>
+          <li><a href="#PPSYM">$PPSYM</a></li>
+          <li><a href="#COMP-and-the-OtherPars-section">$COMP (and the OtherPars section)</a></li>
+        </ul>
+      </li>
+      <li><a href="#Other-functions-in-the-Code-section">Other functions in the Code section</a>
+        <ul>
+          <li><a href="#broadcastloop">broadcastloop</a></li>
+          <li><a href="#types">types</a></li>
+        </ul>
+      </li>
+      <li><a href="#The-RedoDimsCode-Section">The RedoDimsCode Section</a>
+        <ul>
+          <li><a href="#RedoDims-passed-directly">RedoDims passed directly</a></li>
+          <li><a href="#RedoDims-generated-from-EquivPDimExpr-and-EquivDimCheck">RedoDims generated from EquivPDimExpr and EquivDimCheck</a></li>
+        </ul>
+      </li>
+      <li><a href="#Typemap-handling-in-the-OtherPars-section">Typemap handling in the OtherPars section</a></li>
+      <li><a href="#Other-useful-PP-keys-in-data-operation-definitions">Other useful PP keys in data operation definitions</a>
+        <ul>
+          <li><a href="#Inplace">Inplace</a></li>
+          <li><a href="#FTypes">FTypes</a></li>
+          <li><a href="#OtherParsDefaults">OtherParsDefaults</a></li>
+        </ul>
+      </li>
+      <li><a href="#Other-PDL::PP-functions-to-support-concise-package-definition">Other PDL::PP functions to support concise package definition</a>
+        <ul>
+          <li><a href="#pp_addhdr1">pp_addhdr</a></li>
+          <li><a href="#pp_addpm1">pp_addpm</a></li>
+          <li><a href="#pp_add_exported1">pp_add_exported</a></li>
+          <li><a href="#pp_add_isa1">pp_add_isa</a></li>
+          <li><a href="#pp_bless1">pp_bless</a></li>
+          <li><a href="#pp_addxs1">pp_addxs</a></li>
+          <li><a href="#pp_add_boot1">pp_add_boot</a></li>
+          <li><a href="#pp_export_nothing1">pp_export_nothing</a></li>
+          <li><a href="#pp_core_importList1">pp_core_importList</a></li>
+          <li><a href="#pp_setversion">pp_setversion</a></li>
+          <li><a href="#pp_deprecate_module1">pp_deprecate_module</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#MAKING-YOUR-PP-FUNCTION-PRIVATE">MAKING YOUR PP FUNCTION PRIVATE</a></li>
+  <li><a href="#SLICE-OPERATION">SLICE OPERATION</a>
+    <ul>
+      <li><a href="#Slices-and-bad-values">Slices and bad values</a></li>
+    </ul>
+  </li>
+  <li><a href="#Handling-of-warn-and-barf-in-PP-Code">Handling of warn and barf in PP Code</a></li>
+  <li><a href="#MAKEFILES-FOR-PP-FILES">MAKEFILES FOR PP FILES</a></li>
+  <li><a href="#INTERNALS">INTERNALS</a></li>
+  <li><a href="#C-PREPROCESSOR-MACROS">C PREPROCESSOR MACROS</a></li>
+  <li><a href="#Appendix-A:-Some-keys-recognised-by-PDL::PP">Appendix A: Some keys recognised by PDL::PP</a>
+    <ul>
+      <li>
+        <ul>
+          <li><a href="#Pars">Pars</a></li>
+          <li><a href="#OtherPars">OtherPars</a></li>
+          <li><a href="#Code">Code</a></li>
+          <li><a href="#HandleBad">HandleBad</a></li>
+          <li><a href="#BadCode">BadCode</a></li>
+          <li><a href="#CopyBadStatusCode">CopyBadStatusCode</a></li>
+          <li><a href="#GenericTypes">GenericTypes</a></li>
+          <li><a href="#Inplace1">Inplace</a></li>
+          <li><a href="#Doc">Doc</a></li>
+          <li><a href="#BadDoc">BadDoc</a></li>
+          <li><a href="#NoPthread">NoPthread</a></li>
+          <li><a href="#PMCode">PMCode</a></li>
+          <li><a href="#PMFunc">PMFunc</a></li>
+          <li><a href="#ReadDataFuncName">ReadDataFuncName</a></li>
+          <li><a href="#WriteBackDataFuncName">WriteBackDataFuncName</a></li>
+          <li><a href="#AffinePriv">AffinePriv</a></li>
+          <li><a href="#GlobalNew">GlobalNew</a></li>
+          <li><a href="#P2Child">P2Child</a></li>
+          <li><a href="#DefaultFlow">DefaultFlow</a></li>
+          <li><a href="#HaveBroadcasting">HaveBroadcasting</a></li>
+          <li><a href="#CallCopy">CallCopy</a></li>
+          <li><a href="#TwoWay">TwoWay</a></li>
+          <li><a href="#Identity">Identity</a></li>
+          <li><a href="#BackCode">BackCode</a></li>
+          <li><a href="#BadBackCode">BadBackCode</a></li>
+          <li><a href="#EquivCPOffsCode">EquivCPOffsCode</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#Appendix-B:-PP-macros-and-functions">Appendix B: PP macros and functions</a>
+    <ul>
+      <li><a href="#Macros">Macros</a>
+        <ul>
+          <li><a href="#variablename_from_sig">$variablename_from_sig()</a></li>
+          <li><a href="#COMP-x">$COMP(x)</a></li>
+          <li><a href="#SIZE-n">$SIZE(n)</a></li>
+          <li><a href="#GENERIC">$GENERIC()</a></li>
+          <li><a href="#P-a">$P(a)</a></li>
+          <li><a href="#PP-a">$PP(a)</a></li>
+          <li><a href="#TXYZ-AlternativeX-AlternativeY-AlternativeZ">$TXYZ(AlternativeX,AlternativeY,AlternativeZ)</a></li>
+          <li><a href="#PDL-a">$PDL(a)</a></li>
+          <li><a href="#ISBAD-a">$ISBAD(a())</a></li>
+          <li><a href="#ISGOOD-a">$ISGOOD(a())</a></li>
+          <li><a href="#SETBAD-a">$SETBAD(a())</a></li>
+          <li><a href="#PRIV">$PRIV()</a></li>
+          <li><a href="#CROAK">$CROAK()</a></li>
+          <li><a href="#EQUIVCPOFFS">$EQUIVCPOFFS()</a></li>
+          <li><a href="#EQUIVCPTRUNC">$EQUIVCPTRUNC()</a></li>
+          <li><a href="#DOCOMPALLOC">$DOCOMPALLOC()</a></li>
+          <li><a href="#DOPRIVALLOC">$DOPRIVALLOC()</a></li>
+          <li><a href="#SETNDIMS">$SETNDIMS()</a></li>
+          <li><a href="#SETDIMS">$SETDIMS()</a></li>
+          <li><a href="#SETDELTABROADCASTIDS">$SETDELTABROADCASTIDS()</a></li>
+        </ul>
+      </li>
+      <li><a href="#functions">functions</a>
+        <ul>
+          <li><a href="#loop-DIMS">loop(DIMS) %{ ... %}</a></li>
+          <li><a href="#broadcastloop1">broadcastloop %{ ... %}</a></li>
+          <li><a href="#types-TYPES">types(TYPES) %{ ... %}</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#Appendix-C:-Functions-imported-by-PDL::PP">Appendix C: Functions imported by PDL::PP</a>
+    <ul>
+      <li><a href="#Generating-C-and-XS-Code">Generating C and XS Code</a>
+        <ul>
+          <li><a href="#pp_def1">pp_def</a></li>
+          <li><a href="#pp_done1">pp_done</a></li>
+          <li><a href="#pp_addxs2">pp_addxs</a></li>
+          <li><a href="#pp_add_boot2">pp_add_boot</a></li>
+          <li><a href="#pp_addhdr2">pp_addhdr</a></li>
+          <li><a href="#pp_boundscheck1">pp_boundscheck</a></li>
+        </ul>
+      </li>
+      <li><a href="#Generating-Perl-Code">Generating Perl Code</a>
+        <ul>
+          <li><a href="#pp_addpm2">pp_addpm</a></li>
+          <li><a href="#pp_beginwrap1">pp_beginwrap</a></li>
+          <li><a href="#pp_addbegin1">pp_addbegin</a></li>
+        </ul>
+      </li>
+      <li><a href="#Tracking-Line-Numbers">Tracking Line Numbers</a>
+        <ul>
+          <li><a href="#pp_line_numbers1">pp_line_numbers</a></li>
+        </ul>
+      </li>
+      <li><a href="#Modifying-the-Symbol-Table-and-Export-Behavior">Modifying the Symbol Table and Export Behavior</a>
+        <ul>
+          <li><a href="#pp_bless2">pp_bless</a></li>
+          <li><a href="#pp_add_isa2">pp_add_isa</a></li>
+          <li><a href="#pp_core_importlist">pp_core_importlist</a></li>
+          <li><a href="#pp_setversion1">pp_setversion</a></li>
+          <li><a href="#pp_add_exported2">pp_add_exported</a></li>
+          <li><a href="#pp_export_nothing2">pp_export_nothing</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::PP - Generate PDL routines from concise descriptions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>        # let PDL::PP tell you what it&#39;s doing
+        $::PP_VERBOSE = 1;
+        pp_def(
+                &#39;sumover&#39;,
+                Pars =&gt; &#39;a(n); [o]b();&#39;,
+                Code =&gt; q{
+                        double tmp=0;
+                        loop(n) %{
+                                tmp += $a();
+                        %}
+                        $b() = tmp;
+                },
+        );
+
+        pp_done();
+        # do not call exit() as some processing can be done in same process</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>Here is a quick reference list of the functions provided by PDL::PP.</p>
+
+<h2 id="pp_add_boot">pp_add_boot</h2>
+
+<p>Add code to the BOOT section of generated XS file</p>
+
+<h2 id="pp_add_exported">pp_add_exported</h2>
+
+<p>Add functions to the list of exported functions</p>
+
+<h2 id="pp_add_isa">pp_add_isa</h2>
+
+<p>Add entries to the @ISA list</p>
+
+<h2 id="pp_addbegin">pp_addbegin</h2>
+
+<p>Sets code to be added at the top of the generate .pm file</p>
+
+<h2 id="pp_addhdr">pp_addhdr</h2>
+
+<p>Add code and includes to C section of the generated XS file.</p>
+
+<p>When used in a module that is &quot;multi-C&quot; (one <i>.c</i> file per <code>pp_def</code>ed function), you need to bear in mind that as each one is generated, all the <code>pp_addhdr</code> so far will be included. Therefore, if you add C functions, make sure to make them <code>static</code> to avoid clashes with later <i>.c</i> files. But a better practice is make them be separate C files, with any necessary <i>.h</i> to be included by them and the <i>.pd</i> file. You can then add them to your <i>Makefile.PL</i> (note this is the <code>_int</code> version, see separate notes on how to &quot;opt-in&quot; for your own modules):</p>
+
+<pre><code>  my @pack = ([&quot;pnm.pd&quot;, qw(Pnm PDL::IO::Pnm)]);
+  my %hash = pdlpp_stdargs_int(@pack);
+  $hash{OBJECT} .= &#39; get$(OBJ_EXT)&#39;;
+  sub MY::postamble { pdlpp_postamble_int(@pack); };
+  WriteMakefile(%hash);</code></pre>
+
+<h2 id="pp_addpm">pp_addpm</h2>
+
+<p>Add code to the generated .pm file</p>
+
+<h2 id="pp_addxs">pp_addxs</h2>
+
+<p>Add extra XS code to the generated XS file</p>
+
+<h2 id="pp_add_macros">pp_add_macros</h2>
+
+<p>Add extra <code>$MACRO()</code> definitions for these functions. Note these generate C code. As of 2.080, they will be passed the list of arguments they were called with, rather than a single string, split like the C pre-processor on commas except if in <code>&quot;&quot;</code> or <code>()</code>, with leading and trailing whitespace removed.</p>
+
+<pre><code>  pp_add_macros(SUCC =&gt; sub { &quot;($_[0] + 1)&quot; });
+  # ...
+    Code =&gt; &#39;$a() = $SUCC($b());&#39;,</code></pre>
+
+<h2 id="pp_beginwrap">pp_beginwrap</h2>
+
+<p>Add BEGIN-block wrapping to code for the generated .pm file</p>
+
+<h2 id="pp_bless">pp_bless</h2>
+
+<p>Sets the package to which the XS code is added (default is PDL)</p>
+
+<h2 id="pp_boundscheck">pp_boundscheck</h2>
+
+<p>Control state of PDL bounds checking activity</p>
+
+<h2 id="pp_core_importList">pp_core_importList</h2>
+
+<p>Specify what is imported from PDL::Core</p>
+
+<h2 id="pp_def">pp_def</h2>
+
+<p>Define a new PDL function</p>
+
+<h2 id="pp_deprecate_module">pp_deprecate_module</h2>
+
+<p>Add runtime and POD warnings about a module being deprecated</p>
+
+<h2 id="pp_done">pp_done</h2>
+
+<p>Mark the end of PDL::PP definitions in the file</p>
+
+<h2 id="pp_export_nothing">pp_export_nothing</h2>
+
+<p>Clear out the export list for your generated module</p>
+
+<h2 id="pp_line_numbers">pp_line_numbers</h2>
+
+<p>Add line number information to simplify debugging of PDL::PP code</p>
+
+<h1 id="OVERVIEW">OVERVIEW</h1>
+
+<p>For an alternate introduction to PDL::PP, see <a href="https://arxiv.org/abs/1702.07753">Practical Magick with C, PDL, and PDL::PP -- a guide to compiled add-ons for PDL</a>.</p>
+
+<p>Why do we need PP? Several reasons: firstly, we want to be able to generate subroutine code for each of the PDL datatypes (PDL_Byte, PDL_Short, etc). AUTOMATICALLY. Secondly, when referring to slices of PDL arrays in Perl (e.g. <code>$x-&gt;slice(&#39;0:10:2,:&#39;)</code> or other things such as transposes) it is nice to be able to do this transparently and to be able to do this &#39;in-place&#39; - i.e, not to have to make a memory copy of the section. PP handles all the necessary element and offset arithmetic for you. There are also the notions of broadcasting (repeated calling of the same routine for multiple slices, see <a href="./Indexing.html">PDL::Indexing</a>) and dataflow (see <a href="./Dataflow.html">PDL::Dataflow</a>, and <a href="#DefaultFlow">&quot;DefaultFlow&quot;</a>) which use of PP allows.</p>
+
+<p>In much of what follows we will assume familiarity of the reader with the concepts of implicit and explicit broadcasting and index manipulations within PDL. If you have not yet heard of these concepts or are not very comfortable with them it is time to check <a href="./Indexing.html">PDL::Indexing</a>.</p>
+
+<p>As you may appreciate from its name PDL::PP is a Pre-Processor, i.e. it expands code via substitutions to make real C-code. Technically, the output is XS code (see <i>perlxs</i>) but that is very close to C.</p>
+
+<p>So how do you use PP? Well for the most part you just write ordinary C code except for special PP constructs which take the form:</p>
+
+<pre><code>   $something(something else)</code></pre>
+
+<p>or:</p>
+
+<pre><code>   PPfunction %{
+     &lt;stuff&gt;
+   %}</code></pre>
+
+<p>The most important PP construct is the form <code>$array()</code>. Consider the very simple PP function to sum the elements of a 1D vector (in fact this is very similar to the actual code used by &#39;sumover&#39;):</p>
+
+<pre><code>   pp_def(&#39;sumit&#39;,
+       Pars =&gt; &#39;a(n);  [o]b();&#39;,
+       Code =&gt; q{
+           double tmp;
+           tmp = 0;
+           loop(n) %{
+               tmp += $a();
+           %}
+           $b() = tmp;
+       }
+   );</code></pre>
+
+<p>What&#39;s going on? The <code>Pars =&gt;</code> line is very important for PP - it specifies all the arguments and their dimensionality. We call this the <i>signature</i> of the PP function (compare also the explanations in <a href="./Indexing.html">PDL::Indexing</a>). In this case the routine takes a 1-D function as input and returns a 0-D scalar as output. The <code>$a()</code> PP construct is used to access elements of the array a(n) for you - PP fills in all the required C code.</p>
+
+<p>You will notice that we are using the <code>q{}</code> single-quote operator. This is not an accident. You generally want to use single quotes to denote your PP Code sections. PDL::PP uses <code>$var()</code> for its parsing and if you don&#39;t use single quotes, Perl will try to interpolate <code>$var()</code>. Also, using the single quote <code>q</code> operator with curly braces makes it look like you are creating a code block, which is What You Mean. (Perl is smart enough to look for nested curly braces and not close the quote until it finds the matching curly brace, so it&#39;s safe to have nested blocks.) Under other circumstances, such as when you&#39;re stitching together a Code block using string concatenations, it&#39;s often easiest to use real single quotes as</p>
+
+<pre><code> Code =&gt; &#39;something&#39;.$interpolatable.&#39;somethingelse;&#39;</code></pre>
+
+<p>In the simple case here where all elements are accessed the PP construct <code>loop(n) %{ ... %}</code> is used to loop over all elements in dimension <code>n</code>. Note this feature of PP: ALL DIMENSIONS ARE SPECIFIED BY NAME.</p>
+
+<p>This is made clearer if we avoid the PP loop() construct and write the loop explicitly using conventional C:</p>
+
+<pre><code>   pp_def(&#39;sumit&#39;,
+       Pars =&gt; &#39;a(n);  [o]b();&#39;,
+       Code =&gt; q{
+           PDL_Indx i,n_size;
+           double tmp;
+           n_size = $SIZE(n);
+           tmp = 0;
+           for(i=0; i&lt;n_size; i++) {
+               tmp += $a(n=&gt;i);
+           }
+           $b() = tmp;
+       },
+   );</code></pre>
+
+<p>which does the same as before, but is more long-winded. You can see to get element <code>i</code> of a() we say <code>$a(n=&gt;i)</code> - we are specifying the dimension by name <code>n</code>. In 2D we might say:</p>
+
+<pre><code>   Pars=&gt;&#39;a(m,n);&#39;,
+      ...
+      tmp += $a(m=&gt;i,n=&gt;j);
+      ...</code></pre>
+
+<p>The syntax <code>m=&gt;i</code> borrows from Perl hashes, which are in fact used in the implementation of PP. One could also say <code>$a(n=&gt;j,m=&gt;i)</code> as order is not important.</p>
+
+<p>You can also see in the above example the use of another PP construct - <code>$SIZE(n)</code> to get the length of the dimension <code>n</code>.</p>
+
+<p>It should, however, be noted that you shouldn&#39;t write an explicit C-loop when you could have used the PP <code>loop</code> construct since PDL::PP checks automatically the loop limits for you, usage of <code>loop</code> makes the code more concise, etc. But there are certainly situations where you need explicit control of the loop and now you know how to do it ;).</p>
+
+<p>To revisit &#39;Why PP?&#39; - the above code for sumit() will be generated for each data-type. It will operate on slices of arrays &#39;in-place&#39;. It will broadcast automatically - e.g. if a 2D array is given it will be called repeatedly for each 1D row (again check <a href="./Indexing.html">PDL::Indexing</a> for the details of broadcasting). And then b() will be a 1D array of sums of each row. We could call it with $x-&gt;transpose to sum the columns instead. And Dataflow tracing etc. will be available.</p>
+
+<p>You can see PP saves the programmer from writing a lot of needlessly repetitive C-code -- in our opinion this is one of the best features of PDL making writing new C subroutines for PDL an amazingly concise exercise. A second reason is the ability to make PP expand your concise code definitions into different C code based on the needs of the computer architecture in question. Imagine for example you are lucky to have a supercomputer at your hands; in that case you want PDL::PP certainly to generate code that takes advantage of the vectorising/parallel computing features of your machine (this a project for the future). In any case, the bottom line is that your unchanged code should still expand to working XS code even if the internals of PDL changed.</p>
+
+<p>Also, because you are generating the code in an actual Perl script, there are many fun things that you can do. Let&#39;s say that you need to write both sumit (as above) and multit. With a little bit of creativity, we can do</p>
+
+<pre><code>   for({Name =&gt; &#39;sumit&#39;, Init =&gt; &#39;0&#39;, Op =&gt; &#39;+=&#39;},
+       {Name =&gt; &#39;multit&#39;, Init =&gt; &#39;1&#39;, Op =&gt; &#39;*=&#39;}) {
+           pp_def($_-&gt;{Name},
+                   Pars =&gt; &#39;a(n);  [o]b();&#39;,
+                   Code =&gt; &#39;
+                        double tmp;
+                        tmp = &#39;.$_-&gt;{Init}.&#39;;
+                        loop(n) %{
+                          tmp &#39;.$_-&gt;{Op}.&#39; $a();
+                        %}
+                        $b() = tmp;
+           &#39;);
+   }</code></pre>
+
+<p>which defines both the functions easily. Now, if you later need to change the signature or dimensionality or whatever, you only need to change one place in your code. Yeah, sure, your editor does have &#39;cut and paste&#39; and &#39;search and replace&#39; but it&#39;s still less bothersome and definitely more difficult to forget just one place and have strange bugs creep in. Also, adding &#39;orit&#39; (bitwise or) later is a one-liner.</p>
+
+<p>And remember, you really have Perl&#39;s full abilities with you - you can very easily read any input file and make routines from the information in that file. For simple cases like the above, the author (Tjl) currently favors the hash syntax like the above - it&#39;s not too much more characters than the corresponding array syntax but much easier to understand and change.</p>
+
+<p>As of 2.064, the <code>Code</code> must not just <code>return</code>, since the signature of the generated functions has changed from returning <code>void</code> to returning a <code>pdl_error</code>, which is pre-initialised to a successful return value. You can easily just replace the <code>return;</code> with <code>return PDL_err;</code>, which is the variable&#39;s name.</p>
+
+<p>We should mention here also the ability to get the pointer to the beginning of the data in memory - a prerequisite for interfacing PDL to some libraries. This is handled with the <code>$P(var)</code> directive, see below.</p>
+
+<p>When starting work on a new pp_def&#39;ined function, if you make a mistake, you will usually find a pile of compiler errors indicating line numbers in the generated XS file. If you know how to read XS files (or if you want to learn the hard way), you could open the generated XS file and search for the line number with the error. However, a recent addition to PDL::PP helps report the correct line number of your errors: <code>pp_line_numbers</code>. Working with the original summit example, if you had a mis-spelling of tmp in your code, you could change the (erroneous) code to something like this and the compiler would give you much more useful information:</p>
+
+<pre><code>   pp_def(&#39;sumit&#39;,
+       Pars =&gt; &#39;a(n);  [o]b();&#39;,
+       Code =&gt; pp_line_numbers(__LINE__, q{
+           double tmp;
+           tmp = 0;
+           loop(n) %{
+               tmp += $a();
+           %}
+           $b() = rmp;
+       })
+   );</code></pre>
+
+<p>For the above situation, my compiler tells me:</p>
+
+<pre><code> ...
+ test.pd:15: error: &#39;rmp&#39; undeclared (first use in this function)
+ ...</code></pre>
+
+<p>In my example script (called test.pd), line 15 is exactly the line at which I made my typo: <code>rmp</code> instead of <code>tmp</code>.</p>
+
+<p>So, after this quick overview of the general flavour of programming PDL routines using PDL::PP let&#39;s summarise in which circumstances you should actually use this preprocessor/precompiler. You should use PDL::PP if you want to</p>
+
+<ul>
+
+<li><p>interface PDL to some external library</p>
+
+</li>
+<li><p>write some algorithm that would be slow if coded in Perl (this is not as often as you think; take a look at broadcasting and dataflow first).</p>
+
+</li>
+<li><p>be a PDL developer (and even then it&#39;s not obligatory)</p>
+
+</li>
+</ul>
+
+<h1 id="WARNING">WARNING</h1>
+
+<p>Because of its architecture, PDL::PP can be both flexible and easy to use on the one hand, yet exuberantly complicated at the same time. Currently, part of the problem is that error messages are not very informative and if something goes wrong, you&#39;d better know what you are doing and be able to hack your way through the internals (or be able to figure out by trial and error what is wrong with your args to <code>pp_def</code>). Although work is being done to produce better warnings, do not be afraid to send your questions to the mailing list if you run into trouble.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Now that you have some idea how to use <code>pp_def</code> to define new PDL functions it is time to explain the general syntax of <code>pp_def</code>. <code>pp_def</code> takes as arguments first the name of the function you are defining and then a hash list that can contain various keys.</p>
+
+<p>Based on these keys PP generates XS code and a .pm file. The function <code>pp_done</code> (see example in the SYNOPSIS) is used to tell PDL::PP that there are no more definitions in this file and it is time to generate the .xs and .pm file.</p>
+
+<p>As a consequence, there may be several pp_def() calls inside a file (by convention files with PP code have the extension .pd or .pp) but generally only one pp_done().</p>
+
+<p>There are two main different types of usage of pp_def(), the &#39;data operation&#39; and &#39;slice operation&#39; prototypes.</p>
+
+<p>The &#39;data operation&#39; is used to take some data, mangle it and output some other data; this includes for example the &#39;+&#39; operation, matrix inverse, sumover etc and all the examples we have talked about in this document so far. Implicit and explicit broadcasting and the creation of the result are taken care of automatically in those operations. You can even do dataflow with <code>sumit</code>, <code>sumover</code>, etc (don&#39;t be dismayed if you don&#39;t understand the concept of dataflow in PDL very well yet; it is still very much experimental).</p>
+
+<p>The &#39;slice operation&#39; is a different kind of operation: in a slice operation, you are not changing any data, you are defining correspondences between different elements of two ndarrays (examples include the index manipulation/slicing function definitions in the file <i>slices.pd</i> that is part of the PDL distribution; but beware, this is not introductory level stuff).</p>
+
+<p>To support bad values, additional keys are required for <code>pp_def</code>, as explained below.</p>
+
+<p>If you are just interested in communicating with some external library (for example some linear algebra/matrix library), you&#39;ll usually want the &#39;data operation&#39; so we are going to discuss that first.</p>
+
+<h1 id="DATA-OPERATION">DATA OPERATION</h1>
+
+<h2 id="A-simple-example">A simple example</h2>
+
+<p>In the data operation, you must know what dimensions of data you need. First, an example with scalars:</p>
+
+<pre><code>        pp_def(&#39;add&#39;,
+                Pars =&gt; &#39;a(); b(); [o]c();&#39;,
+                Code =&gt; &#39;$c() = $a() + $b();&#39;
+        );</code></pre>
+
+<p>That looks a little strange but let&#39;s dissect it. The first line is easy: we&#39;re defining a routine with the name &#39;add&#39;. The second line simply declares our parameters and the parentheses mean that they are scalars. We call the string that defines our parameters and their dimensionality the <i>signature</i> of that function. For its relevance with regard to broadcasting and index manipulations check the <a href="./Indexing.html">PDL::Indexing</a> man page.</p>
+
+<p>The third line is the actual operation. You need to use the dollar signs and parentheses to refer to your parameters (this will probably change at some point in the future, once a good syntax is found).</p>
+
+<p>These lines are all that is necessary to actually define the function for PDL (well, actually it isn&#39;t; you additionally need to write a Makefile.PL (see below) and build the module (something like &#39;perl Makefile.PL; make&#39;); but let&#39;s ignore that for the moment). So now you can do</p>
+
+<pre><code>        use MyModule;
+        $x = pdl 2,3,4;
+        $y = pdl 5;
+
+        $c = add($x,$y);
+        # or
+        add($x,$y,($c=null)); # Alternative form, useful if $c has been
+                              # preset to something big, not useful here.</code></pre>
+
+<p>and have broadcasting work correctly (the result is $c == [7 8 9]).</p>
+
+<h2 id="The-Pars-section:-the-signature-of-a-PP-function">The Pars section: the signature of a PP function</h2>
+
+<p>Seeing the above example code you will most probably ask: what is this strange <code>$c=null</code> syntax in the second call to our new <code>add</code> function? If you take another look at the definition of <code>add</code> you will notice that the third argument <code>c</code> is flagged with the qualifier <code>[o]</code> which tells PDL::PP that this is an output argument. So the above call to add means &#39;create a new $c from scratch with correct dimensions&#39; - <code>null</code> is a special token for &#39;empty ndarray&#39; (you might ask why we haven&#39;t used the value <code>undef</code> to flag this instead of the PDL specific <code>null</code>; we are currently thinking about it ;).</p>
+
+<p>[This should be explained in some other section of the manual as well!!] The reason for having this syntax as an alternative is that if you have really huge ndarrays, you can do</p>
+
+<pre><code>        $c = PDL-&gt;null;
+        for(some long loop) {
+                # munge a,b
+                add($x,$y,$c);
+                # munge c, put something back to x,y
+        }</code></pre>
+
+<p>and avoid allocating and deallocating $c each time. It is allocated once at the first add() and thereafter the memory stays until $c is destroyed.</p>
+
+<p>If you just say</p>
+
+<pre><code>  $c =  add($x,$y);</code></pre>
+
+<p>the code generated by PP will automatically fill in <code>$c=null</code> and return the result. If you want to learn more about the reasons why PDL::PP supports this style where output arguments are given as last arguments check the <a href="./Indexing.html">PDL::Indexing</a> man page.</p>
+
+<p><code>[o]</code> is not the only qualifier a pdl argument can have in the signature. Another important qualifier is the <code>[t]</code> option which flags a pdl as temporary. What does that mean? You tell PDL::PP that this pdl is only used for temporary results in the course of the calculation and you are not interested in its value after the computation has been completed. But why should PDL::PP want to know about this in the first place? The reason is closely related to the concepts of pdl auto creation (you heard about that above) and implicit broadcasting. If you use implicit broadcasting the dimensionality of automatically created pdls is actually larger than that specified in the signature. With <code>[o]</code> flagged pdls will be created so that they have the additional dimensions as required by the number of implicit broadcast dimensions. When creating a temporary pdl, however, it will always only be made big enough so that it can hold the result for one iteration in a broadcast loop, i.e. as large as required by the signature. So less memory is wasted when you flag a pdl as temporary. Secondly, you can use output auto creation with temporary pdls even when you are using explicit broadcasting which is forbidden for normal output pdls flagged with <code>[o]</code> (see <a href="./Indexing.html">PDL::Indexing</a>).</p>
+
+<p>As of 2.073, the user is unable to pass a <code>[t]</code> parameter, and PDL will create and size it to its notional size, times the number of threads.</p>
+
+<p>Here is an example where we use the <code>[t]</code> qualifier. We define the function <code>callf</code> that calls a C routine <code>f</code> which needs a temporary array of the same size and type as the array <code>a</code> (sorry about the forward reference for <code>$P</code>; it&#39;s a pointer access, see below) :</p>
+
+<pre><code>  pp_def(&#39;callf&#39;,
+        Pars =&gt; &#39;a(n); [t] tmp(n); [o] b()&#39;,
+        Code =&gt; &#39;PDL_Indx ns = $SIZE(n);
+                 f($P(a),$P(b),$P(tmp),ns);
+                &#39;
+  );</code></pre>
+
+<p>Another possible qualifier is <code>[phys]</code>. If given, this means the pdl will have <a href="./Core.html#make_physical">&quot;make_physical&quot; in PDL::Core</a> called on it.</p>
+
+<p>Additionally, if it has a specified dimension <code>d</code> that has value 1, <code>d</code> will not magically be grown if <code>d</code> is larger in another pdl with specified dimension <code>d</code>, and instead an exception will be thrown. E.g.:</p>
+
+<pre><code>  pp_def(&#39;callf&#39;,
+        Pars =&gt; &#39;a(n); [phys] b(n); [o] c()&#39;,
+        # ...
+  );</code></pre>
+
+<p>If <code>a</code> had lead dimension of 2 and <code>b</code> of 3, an exception will always be thrown. However, if <code>b</code> has lead dimension of 1, it would be silently repeated as if it were 2, if it were not a <code>phys</code> parameter.</p>
+
+<h2 id="Argument-dimensions-and-the-signature">Argument dimensions and the signature</h2>
+
+<p>Now we have just talked about dimensions of pdls and the signature. How are they related? Let&#39;s say that we want to add a scalar + the index number to a vector:</p>
+
+<pre><code>        pp_def(&#39;add2&#39;,
+                Pars =&gt; &#39;a(n); b(); [o]c(n);&#39;,
+                Code =&gt; &#39;loop(n) %{
+                                $c() = $a() + $b() + n;
+                         %}&#39;
+        );</code></pre>
+
+<p>There are several points to notice here: first, the <code>Pars</code> argument now contains the <i>n</i> arguments to show that we have a single dimensions in <i>a</i> and <i>c</i>. It is important to note that dimensions are actual entities that are accessed by name so this declares <i>a</i> and <i>c</i> to have the <b>same</b> first dimensions. In most PP definitions the size of named dimensions will be set from the respective dimensions of non-output pdls (those with no <code>[o]</code> flag) but sometimes you might want to set the size of a named dimension explicitly through an integer parameter. See below in the description of the <code>OtherPars</code> section how that works.</p>
+
+<h2 id="Constant-argument-dimensions-in-the-signature">Constant argument dimensions in the signature</h2>
+
+<p>Suppose you want an output ndarray to be created automatically and you know that on every call its dimension will have the same size (say 9) regardless of the dimensions of the input ndarrays. In this case you use the following syntax in the Pars section to specify the size of the dimension:</p>
+
+<pre><code>    &#39; [o] y(n=9); &#39;</code></pre>
+
+<p>As expected, extra dimensions required by broadcasting will be created if necessary. If you need to assign a named dimension according to a more complicated formula (than a constant) you must use the <code>RedoDimsCode</code> key described below.</p>
+
+<h2 id="Type-conversions-and-the-signature">Type conversions and the signature</h2>
+
+<p>The signature also determines the type conversions that will be performed when a PP function is invoked. So what happens when we invoke one of our previously defined functions with pdls of different type, e.g.</p>
+
+<pre><code>  add2($x,$y,($ret=null));</code></pre>
+
+<p>where $x is of type <code>PDL_Float</code> and $y of type <code>PDL_Short</code>? With the signature as shown in the definition of <code>add2</code> above the datatype of the operation (as determined at runtime) is that of the pdl with the &#39;highest&#39; type (sequence is byte &lt; short &lt; ushort &lt; long &lt; float &lt; double). In the add2 example the datatype of the operation is float ($x has that datatype). All pdl arguments are then type converted to that datatype (they are not converted inplace but a copy with the right type is created if a pdl argument doesn&#39;t have the type of the operation). Null pdls don&#39;t contribute a type in the determination of the type of the operation. However, they will be created with the datatype of the operation; here, for example, $ret will be of type float. You should be aware of these rules when calling PP functions with pdls of different types to take the additional storage and runtime requirements into account.</p>
+
+<p>These type conversions are correct for most functions you normally define with <code>pp_def</code>. However, there are certain cases where slightly modified type conversion behaviour is desired. For these cases additional qualifiers in the signature can be used to specify the desired properties with regard to type conversion. These qualifiers can be combined with those we have encountered already (the <i>creation qualifiers</i> <code>[o]</code> and <code>[t]</code>). Let&#39;s go through the list of qualifiers that change type conversion behaviour.</p>
+
+<p>The most important is the <code>indx</code> qualifier which comes in handy when a pdl argument represents indices into another pdl. Let&#39;s take a look at an example from <code>PDL::Ufunc</code>:</p>
+
+<pre><code>   pp_def(&#39;maximum_ind&#39;,
+          Pars =&gt; &#39;a(n); indx [o] b()&#39;,
+          Code =&gt; &#39;$GENERIC() cur;
+                   PDL_Indx curind;
+                   loop(n) %{
+                    if (!n || $a() &gt; cur) {cur = $a(); curind = n;}
+                   %}
+                   $b() = curind;&#39;,
+   );</code></pre>
+
+<p>The function <code>maximum_ind</code> finds the index of the largest element of a vector. If you look at the signature you notice that the output argument <code>b</code> has been declared with the additional <code>indx</code> qualifier. This has the following consequences for type conversions: regardless of the type of the input pdl <code>a</code> the output pdl <code>b</code> will be of type <code>PDL_Indx</code> which makes sense since <code>b</code> will represent an index into <code>a</code>.</p>
+
+<p>Note that &#39;curind&#39; is declared as type <code>PDL_Indx</code> and not <code>indx</code>. While most datatype declarations in the &#39;Pars&#39; section use the same name as the underlying C type, <code>indx</code> is a type which is sufficient to handle PDL indexing operations. For 32-bit installs, it can be a 32-bit integer type. For 64-bit installs, it will be a 64-bit integer type.</p>
+
+<p>Furthermore, if you call the function with an existing output pdl <code>b</code> its type will not influence the datatype of the operation (see above). Hence, even if <code>a</code> is of a smaller type than <code>b</code> it will not be converted to match the type of <code>b</code> but stays untouched, which saves memory and CPU cycles and is the right thing to do when <code>b</code> represents indices. Also note that you can use the &#39;indx&#39; qualifier together with other qualifiers (the <code>[o]</code> and <code>[t]</code> qualifiers). Order is significant -- type qualifiers precede creation qualifiers (<code>[o]</code> and <code>[t]</code>).</p>
+
+<p>The above example also demonstrates typical usage of the <code>$GENERIC()</code> macro. It expands to the current type in a so called generic loop. What is a generic loop? As you already heard a PP function has a runtime datatype as determined by the type of the pdl arguments it has been invoked with. The PP generated XS code for this function therefore contains a switch like <code>switch (type) {case PDL_Byte: ... case PDL_Double: ...}</code> that selects a case based on the runtime datatype of the function (it&#39;s called a type ``loop&#39;&#39; because there is a loop in PP code that generates the cases). In any case your code is inserted once for each PDL type into this switch statement. The <code>$GENERIC()</code> macro just expands to the respective type in each copy of your parsed code in this <code>switch</code> statement, e.g., in the <code>case PDL_Byte</code> section <code>cur</code> will expand to <code>PDL_Byte</code> and so on for the other case statements. I guess you realise that this is a useful macro to hold values of pdls in some code.</p>
+
+<p>There are a couple of other qualifiers with similar effects as <code>indx</code>. For your convenience there are the <code>float</code> and <code>double</code> qualifiers with analogous consequences on type conversions as <code>indx</code>. Let&#39;s assume you have a <i>very</i> large array for which you want to compute row and column sums with an equivalent of the <code>sumover</code> function. However, with the normal definition of <code>sumover</code> you might run into problems when your data is, e.g. of type short. A call like</p>
+
+<pre><code>  sumover($large_pdl,($sums = null));</code></pre>
+
+<p>will result in <code>$sums</code> be of type short and is therefore prone to overflow errors if <code>$large_pdl</code> is a very large array. On the other hand calling</p>
+
+<pre><code>  @dims = $large_pdl-&gt;dims; shift @dims;
+  sumover($large_pdl,($sums = zeroes(double,@dims)));</code></pre>
+
+<p>is not a good alternative either. Now we don&#39;t have overflow problems with <code>$sums</code> but at the expense of a type conversion of <code>$large_pdl</code> to double, something bad if this is really a large pdl. That&#39;s where <code>double</code> comes in handy:</p>
+
+<pre><code>  pp_def(&#39;sumoverd&#39;,
+         Pars =&gt; &#39;a(n); double [o] b()&#39;,
+         Code =&gt; &#39;double tmp=0;
+                  loop(n) %{ tmp += a(); %}
+                  $b() = tmp;&#39;,
+  );</code></pre>
+
+<p>This gets us around the type conversion and overflow problems. Again, analogous to the <code>indx</code> qualifier <code>double</code> results in <code>b</code> always being of type double regardless of the type of <code>a</code> without leading to a type conversion of <code>a</code> as a side effect.</p>
+
+<p>There is also a special type, <code>real</code>. The others above are all actual PDL/C datatypes, but <code>real</code> is a modifier; if the operation type is real, it has no effect; if it is complex, then the parameter will be the real version - so <code>cdouble</code> becomes <code>double</code>, etc.</p>
+
+<p>There is also the converse, <code>complex</code>. If the operation is already complex, there is no effect; if not, the output will be promoted to the type&#39;s <a>&quot;complexversion&quot; in PDL::Type</a>, which defaults to <code>cfloat</code>. Note this is controlled both by the <a href="./Types.html">PDL::Types</a> data, and the code in <a href="./PP.html">PDL::PP</a>. <b>NB</b> Because this outputs floating-point data, the inputs will by definition be turned into such. Therefore, it only makes sense to have floating-point <code>GenericTypes</code> inputs. If you want to default to coercing inputs to <code>float</code>, give that as the last <code>GenericTypes</code> as the generated XS function defaults to the last-given one. Hence (with the <code>PMCode</code> and <code>Doc</code> omitted):</p>
+
+<pre><code>  pp_def(&#39;r2C&#39;,
+    GenericTypes=&gt;[reverse qw(F D G C)], # last one is default so here = F
+    Pars =&gt; &#39;r(); complex [o]c()&#39;,
+    Code =&gt; &#39;$c() = $r();&#39;
+  );</code></pre>
+
+<p>Finally, there are the <code>type+</code> qualifiers where type is one of <code>int</code> or <code>float</code>. What shall that mean. Let&#39;s illustrate the <code>int+</code> qualifier with the actual definition of sumover:</p>
+
+<pre><code>  pp_def(&#39;sumover&#39;,
+         Pars =&gt; &#39;a(n); int+ [o] b()&#39;,
+         Code =&gt; &#39;$GENERIC(b) tmp=0;
+                  loop(n) %{ tmp += a(); %}
+                  $b() = tmp;&#39;,
+  );</code></pre>
+
+<p>As we had already seen for the <code>int</code>, <code>float</code> and <code>double</code> qualifiers, a pdl marked with a <code>type+</code> qualifier does not influence the datatype of the pdl operation. Its meaning is &quot;make this pdl at least of type <code>type</code> or higher, as required by the type of the operation&quot;. In the sumover example this means that when you call the function with an <code>a</code> of type PDL_Short the output pdl will be of type PDL_Long (just as would have been the case with the <code>int</code> qualifier). This again tries to avoid overflow problems when using small datatypes (e.g. byte images). However, when the datatype of the operation is higher than the type specified in the <code>type+</code> qualifier <code>b</code> will be created with the datatype of the operation, e.g. when <code>a</code> is of type double then <code>b</code> will be double as well. We hope you agree that this is sensible behaviour for <code>sumover</code>. It should be obvious how the <code>float+</code> qualifier works by analogy. It may become necessary to be able to specify a set of alternative types for the parameters. However, this will probably not be implemented until someone comes up with a reasonable use for it.</p>
+
+<p>Note that we now had to specify the <code>$GENERIC</code> macro with the name of the pdl to derive the type from that argument. Why is that? If you carefully followed our explanations you will have realised that in some cases <code>b</code> will have a different type than the type of the operation. Calling the &#39;$GENERIC&#39; macro with <code>b</code> as argument makes sure that the type will always the same as that of <code>b</code> in that part of the generic loop.</p>
+
+<p>This is about all there is to say about the <code>Pars</code> section in a <code>pp_def</code> call. You should remember that this section defines the <i>signature</i> of a PP defined function, you can use several options to qualify certain arguments as output and temporary args and all dimensions that you can later refer to in the <code>Code</code> section are defined by name.</p>
+
+<p>It is important that you understand the meaning of the signature since in the latest PDL versions you can use it to define broadcasting functions from within Perl, i.e. what we call <i>Perl level broadcasting</i>. Please check <a href="./Indexing.html">PDL::Indexing</a> for details.</p>
+
+<h2 id="The-Code-section">The Code section</h2>
+
+<p>The <code>Code</code> section contains the actual XS code that will be in the innermost part of a broadcast loop (if you don&#39;t know what a broadcast loop is then you still haven&#39;t read <a href="./Indexing.html">PDL::Indexing</a>; do it now ;) after any PP macros (like <code>$GENERIC</code>) and PP functions have been expanded (like the <code>loop</code> function we are going to explain next).</p>
+
+<p>Let&#39;s quickly reiterate the <code>sumover</code> example:</p>
+
+<pre><code>  pp_def(&#39;sumover&#39;,
+         Pars =&gt; &#39;a(n); int+ [o] b()&#39;,
+         Code =&gt; &#39;$GENERIC(b) tmp=0;
+                  loop(n) %{ tmp += a(); %}
+                  $b() = tmp;&#39;,
+  );</code></pre>
+
+<p>The <code>loop</code> construct in the <code>Code</code> section also refers to the dimension name so you don&#39;t need to specify any limits: the loop is correctly sized and everything is done for you, again.</p>
+
+<p>Next, there is the surprising fact that <code>$a()</code> and <code>$b()</code> do <b>not</b> contain the index. This is not necessary because we&#39;re looping over <i>n</i> and both variables know which dimensions they have so they automatically know they&#39;re being looped over.</p>
+
+<p>This feature comes in very handy in many places and makes for much shorter code. Of course, there are times when you want to circumvent this; here is a function which make a matrix symmetric and serves as an example of how to code explicit looping:</p>
+
+<pre><code>        pp_def(&#39;symm&#39;,
+                Pars =&gt; &#39;a(n,n); [o]c(n,n);&#39;,
+                Code =&gt; &#39;loop(n) %{
+                                int n2;
+                                for(n2=n; n2&lt;$SIZE(n); n2++) {
+                                        $c(n0 =&gt; n, n1 =&gt; n2) =
+                                        $c(n0 =&gt; n2, n1 =&gt; n) =
+                                         $a(n0 =&gt; n, n1 =&gt; n2);
+                                }
+                        %}
+                &#39;
+        );</code></pre>
+
+<p>Let&#39;s dissect what is happening. Firstly, what is this function supposed to do? From its signature you see that it takes a 2D matrix with equal numbers of columns and rows and outputs a matrix of the same size. From a given input matrix $a it computes a symmetric output matrix $c (symmetric in the matrix sense that A^T = A where ^T means matrix transpose, or in PDL parlance $c == $c-&gt;transpose). It does this by using only the values on and below the diagonal of $a. In the output matrix $c all values on and below the diagonal are the same as those in $a while those above the diagonal are a mirror image of those below the diagonal (above and below are here interpreted in the way that PDL prints 2D pdls). If this explanation still sounds a bit strange just go ahead, make a little file into which you write this definition, build the new PDL extension (see section on Makefiles for PP code) and try it out with a couple of examples.</p>
+
+<p>Having explained what the function is supposed to do there are a couple of points worth noting from the syntactical point of view. First, we get the size of the dimension named <code>n</code> again by using the <code>$SIZE</code> macro. Second, there are suddenly these funny <code>n0</code> and <code>n1</code> index names in the code though the signature defines only the dimension <code>n</code>. Why this? The reason becomes clear when you note that both the first and second dimension of $a and $b are named <code>n</code> in the signature of <code>symm</code>. This tells PDL::PP that the first and second dimension of these arguments should have the same size. Otherwise the generated function will raise a runtime error. However, now in an access to <code>$a</code> and <code>$c</code> PDL::PP cannot figure out which index <code>n</code> refers to any more just from the name of the index. Therefore, the indices with equal dimension names get numbered from left to right starting at 0, e.g. in the above example <code>n0</code> refers to the first dimension of <code>$a</code> and <code>$c</code>, <code>n1</code> to the second and so on.</p>
+
+<p>In all examples so far, we have only used the <code>Pars</code> and <code>Code</code> members of the hash that was passed to <code>pp_def</code>. There are certainly other keys that are recognised by PDL::PP and we will hear about some of them in the course of this document. Find a (non-exhaustive) list of keys in Appendix A. A list of macros and PPfunctions (we have only encountered some of those in the examples above yet) that are expanded in values of the hash argument to <code>pp_def</code> is summarised in Appendix B.</p>
+
+<p>At this point, it might be appropriate to mention that PDL::PP is not a completely static, well designed set of routines (as Tuomas puts it: &quot;stop thinking of PP as a set of routines carved in stone&quot;) but rather a collection of things that the PDL::PP author (Tuomas J. Lukka) considered he would have to write often into his PDL extension routines. PP tries to be expandable so that in the future, as new needs arise, new common code can be abstracted back into it. If you want to learn more on why you might want to change PDL::PP and how to do it check the section on PDL::PP internals.</p>
+
+<h2 id="Handling-bad-values">Handling bad values</h2>
+
+<p>There are several keys and macros used when writing code to handle bad values. The first one is the <code>HandleBad</code> key:</p>
+
+<dl>
+
+<dt id="HandleBad-0">HandleBad =&gt; 0</dt>
+<dd>
+
+<p>This flags a pp-routine as <i>NOT</i> handling bad values. If this routine is sent ndarrays with their <code>badflag</code> set, then a warning message is printed to STDOUT and the ndarrays are processed as if the value used to represent bad values is a valid number. The <code>badflag</code> value is not propagated to the output ndarrays.</p>
+
+<p>An example of when this is used is for FFT routines, which generally do not have a way of ignoring part of the data.</p>
+
+</dd>
+<dt id="HandleBad-1">HandleBad =&gt; 1</dt>
+<dd>
+
+<p>This causes PDL::PP to write extra code that ensures the BadCode section is used, and that the <code>$ISBAD()</code> macro (and its brethren) work. If no <code>BadCode</code> is supplied, the <code>Code</code> section will be used, on the assumption it will use <code>PDL_IF_BAD</code> to handle bad values.</p>
+
+</dd>
+<dt id="HandleBad-is-not-given">HandleBad is not given</dt>
+<dd>
+
+<p>If any of the input ndarrays have their <code>badflag</code> set, then the output ndarrays will have their <code>badflag</code> set, but any supplied BadCode is ignored.</p>
+
+</dd>
+</dl>
+
+<p>The value of <code>HandleBad</code> is used to define the contents of the <code>BadDoc</code> key, if it is not given.</p>
+
+<p>To handle bad values, code must be written somewhat differently; for instance,</p>
+
+<pre><code> $c() = $a() + $b();</code></pre>
+
+<p>becomes something like</p>
+
+<pre><code> if ( $a() != BADVAL &amp;&amp; $b() != BADVAL ) {
+    $c() = $a() + $b();
+ } else {
+    $c() = BADVAL;
+ }</code></pre>
+
+<p>However, we only want the second version if bad values are present in the input ndarrays (and that bad-value support is wanted!) - otherwise we actually want the original code. This is where the <code>BadCode</code> key comes in; you use it to specify the code to execute if bad values may be present, and PP uses both it and the <code>Code</code> section to create something like:</p>
+
+<pre><code> if ( bad_values_are_present ) {
+    fancy_broadcastloop_stuff {
+       BadCode
+    }
+ } else {
+    fancy_broadcastloop_stuff {
+       Code
+    }
+ }</code></pre>
+
+<p>This approach means that there is virtually no overhead when bad values are not present (i.e. the <a href="./Bad.html#badflag">badflag</a> routine returns 0).</p>
+
+<p>The C preprocessor symbol <code>PDL_BAD_CODE</code> is defined when the bad code is compiled, so that you can reduce the amount of code you write. The BadCode section can use the same macros and looping constructs as the Code section. As of 2.073, you can also use <code>PDL_IF_BAD(iftrue,iffalse)</code>.</p>
+
+<h2 id="Other-bad-value-macros">Other bad-value macros</h2>
+
+<p>However, it wouldn&#39;t be much use without the following additional macros:</p>
+
+<h3 id="ISBAD-var">$ISBAD(var)</h3>
+
+<p>To check whether an ndarray&#39;s value is bad, use the <code>$ISBAD</code> macro:</p>
+
+<pre><code> if ( $ISBAD(a()) ) { printf(&quot;a() is bad\n&quot;); }</code></pre>
+
+<p>You can also access given elements of an ndarray:</p>
+
+<pre><code> if ( $ISBAD(a(n=&gt;l)) ) { printf(&quot;element %d of a() is bad\n&quot;, l); }</code></pre>
+
+<h3 id="ISGOOD-var">$ISGOOD(var)</h3>
+
+<p>This is the opposite of the <code>$ISBAD</code> macro.</p>
+
+<h3 id="SETBAD-var">$SETBAD(var)</h3>
+
+<p>For when you want to set an element of an ndarray bad.</p>
+
+<h3 id="ISBADVAR-c_var-pdl">$ISBADVAR(c_var,pdl)</h3>
+
+<p>If you have cached the value of an ndarray <code>$a()</code> into a c-variable (<code>foo</code> say), then to check whether it is bad, use <code>$ISBADVAR(foo,a)</code>.</p>
+
+<h3 id="ISGOODVAR-c_var-pdl">$ISGOODVAR(c_var,pdl)</h3>
+
+<p>As above, but this time checking that the cached value isn&#39;t bad.</p>
+
+<h3 id="SETBADVAR-c_var-pdl">$SETBADVAR(c_var,pdl)</h3>
+
+<p>To copy the bad value for an ndarray into a c variable, use <code>$SETBADVAR(foo,a)</code>.</p>
+
+<p><i>TODO:</i> mention <code>$PPISBAD()</code> etc macros.</p>
+
+<h2 id="PDL-STATE-macros">PDL STATE macros</h2>
+
+<p>If you want access to the value of the badflag for a given ndarray, you can use the PDL STATE macros, for use in <a href="#CopyBadStatusCode">&quot;CopyBadStatusCode&quot;</a> and <a href="#FindBadStatusCode">&quot;FindBadStatusCode&quot;</a>.</p>
+
+<dl>
+
+<dt id="ISPDLSTATEBAD-pdl">$ISPDLSTATEBAD(pdl)</dt>
+<dd>
+
+</dd>
+<dt id="ISPDLSTATEGOOD-pdl">$ISPDLSTATEGOOD(pdl)</dt>
+<dd>
+
+</dd>
+<dt id="SETPDLSTATEBAD-pdl">$SETPDLSTATEBAD(pdl)</dt>
+<dd>
+
+</dd>
+<dt id="SETPDLSTATEGOOD-pdl">$SETPDLSTATEGOOD(pdl)</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>And for use in <code>Code</code> sections:</p>
+
+<dl>
+
+<dt id="PDLSTATEISBAD-pdl">$PDLSTATEISBAD(pdl)</dt>
+<dd>
+
+</dd>
+<dt id="PDLSTATEISGOOD-pdl">$PDLSTATEISGOOD(pdl)</dt>
+<dd>
+
+</dd>
+<dt id="PDLSTATESETBAD-pdl">$PDLSTATESETBAD(pdl)</dt>
+<dd>
+
+</dd>
+<dt id="PDLSTATESETGOOD-pdl">$PDLSTATESETGOOD(pdl)</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h2 id="Bad-value-examples">Bad-value examples</h2>
+
+<p>Using these macros, the above code could be specified as:</p>
+
+<pre><code> Code =&gt; &#39;$c() = $a() + $b();&#39;,
+ BadCode =&gt; &#39;
+    if ( $ISBAD(a()) || $ISBAD(b()) ) {
+       $SETBAD(c());
+    } else {
+       $c() = $a() + $b();
+    }&#39;,</code></pre>
+
+<p>Since this is Perl, TMTOWTDI, so you could also write:</p>
+
+<pre><code> BadCode =&gt; &#39;
+    if ( $ISGOOD(a()) &amp;&amp; $ISGOOD(b()) ) {
+       $c() = $a() + $b();
+    } else {
+       $SETBAD(c());
+    }&#39;,</code></pre>
+
+<p>You can reduce code repetition using the C <code>PDL_BAD_CODE</code> macro, supplying only the <code>Code</code> section:</p>
+
+<pre><code> Code =&gt; &#39;
+    #ifdef PDL_BAD_CODE
+    if ( $ISGOOD(a()) &amp;&amp; $ISGOOD(b()) ) {
+    #endif PDL_BAD_CODE
+       $c() = $a() + $b();
+    #ifdef PDL_BAD_CODE
+    } else {
+       $SETBAD(c());
+    }
+    #endif PDL_BAD_CODE
+ &#39;,</code></pre>
+
+<p>As of 2.073, you can also use <code>PDL_IF_BAD(iftrue,iffalse)</code>:</p>
+
+<pre><code> Code =&gt; &#39;
+    PDL_IF_BAD(if ( $ISGOOD(a()) &amp;&amp; $ISGOOD(b()) ) {,)
+       $c() = $a() + $b();
+    PDL_IF_BAD(} else $SETBAD(c());,)
+ &#39;,</code></pre>
+
+<h2 id="Interfacing-your-own-library-functions-using-PP">Interfacing your own/library functions using PP</h2>
+
+<p>Now, consider the following: you have your own C function (that may in fact be part of some library you want to interface to PDL) which takes as arguments two pointers to vectors of double:</p>
+
+<pre><code>        void myfunc(int n,double *v1,double *v2);</code></pre>
+
+<p>The correct way of defining the PDL function is</p>
+
+<pre><code>        pp_def(&#39;myfunc&#39;,
+                Pars =&gt; &#39;a(n); [o]b(n);&#39;,
+                GenericTypes =&gt; [&#39;D&#39;],
+                Code =&gt; &#39;myfunc($SIZE(n),$P(a),$P(b));&#39;
+        );</code></pre>
+
+<p>The <code>$P(</code><i>par</i><code>)</code> syntax returns a pointer to the first element and the other elements are guaranteed to lie after that.</p>
+
+<p>Notice that here it is possible to make many mistakes. First, <code>$SIZE(n)</code> must be used instead of <code>n</code>. Second, you shouldn&#39;t put any loops in this code. Third, here we encounter a new hash key recognised by PDL::PP : the <code>GenericTypes</code> declaration tells PDL::PP to ONLY GENERATE THE TYPELOOP FOP THE LIST OF TYPES SPECIFIED. In this case <code>double</code>. This has two advantages. Firstly the size of the compiled code is reduced vastly, secondly if non-double arguments are passed to <code>myfunc()</code> PDL will automatically convert them to double before passing to the external C routine and convert them back afterwards.</p>
+
+<p>One can also use <code>Pars</code> to qualify the types of individual arguments. Thus one could also write this as:</p>
+
+<pre><code>        pp_def(&#39;myfunc&#39;,
+                Pars =&gt; &#39;double a(n); double [o]b(n);&#39;,
+                Code =&gt; &#39;myfunc($SIZE(n),$P(a),$P(b));&#39;
+        );</code></pre>
+
+<p>The type specification in <code>Pars</code> exempts the argument from variation in the typeloop - rather it is automatically converted to and from the type specified. This is obviously useful in a more general example, e.g.:</p>
+
+<pre><code>        void myfunc(int n,float *v1,long *v2);
+
+        pp_def(&#39;myfunc&#39;,
+                Pars =&gt; &#39;float a(n); long [o]b(n);&#39;,
+                GenericTypes =&gt; [&#39;F&#39;],
+                Code =&gt; &#39;myfunc($SIZE(n),$P(a),$P(b));&#39;
+        );</code></pre>
+
+<p>Note we still use <code>GenericTypes</code> to reduce the size of the type loop, obviously PP could in principle spot this and do it automatically though the code has yet to attain that level of sophistication!</p>
+
+<p>Finally note when types are converted automatically one MUST use the <code>[o]</code> qualifier for output variables or you hard-won changes will get optimised away by PP!</p>
+
+<p>If you interface a large library you can automate the interfacing even further. Perl can help you again(!) in doing this. In many libraries you have certain calling conventions. This can be exploited. In short, you can write a little parser (which is really not difficult in Perl) that then generates the calls to <code>pp_def</code> from parsed descriptions of the functions in that library. For an example, please check the <i>Slatec</i> interface in the <code>Lib</code> tree of the PDL distribution. If you want to check (during debugging) which calls to PP functions your Perl code generated a little helper package comes in handy which replaces the PP functions by identically named ones that dump their arguments to stdout.</p>
+
+<p>Just say</p>
+
+<pre><code>   perl -MPDL::PP::Dump myfile.pd</code></pre>
+
+<p>to see the calls to <code>pp_def</code> and friends. Try it with <i>ops.pd</i> and <i>slatec.pd</i>. If you&#39;re interested (or want to enhance it), the source is in Basic/Gen/PP/Dump.pm</p>
+
+<h2 id="Other-macros-in-the-Code-section">Other macros in the Code section</h2>
+
+<p>Macros: So far we have encountered the <code>$SIZE</code>, <code>$GENERIC</code> and <code>$P</code> macros. Now we are going to quickly explain the other macros that are expanded in the <code>Code</code> section of PDL::PP along with examples of their usage.</p>
+
+<h3 id="T">$T</h3>
+
+<p>The <code>$T</code> macro is used for type switches. This is very useful when you have to use different external (e.g. library) functions depending on the input type of arguments. The general syntax is</p>
+
+<pre><code>        $Ttypeletters(type_alternatives)</code></pre>
+
+<p>where <code>typeletters</code> is a permutation of a subset of the letters <code>BSULNQFDGC</code> which stand for Byte, Short, Ushort, etc. and <code>type_alternatives</code> are the expansions when the type of the PP operation is equal to that indicated by the respective letter. Let&#39;s illustrate this incomprehensible description by an example. Assuming you have two C functions with prototypes</p>
+
+<pre><code>  void float_func(float *in, float *out);
+  void double_func(double *in, double *out);</code></pre>
+
+<p>which do basically the same thing but one accepts float and the other double pointers. You could interface them to PDL by defining a generic function <code>foofunc</code> (which will call the correct function depending on the type of the transformation):</p>
+
+<pre><code>  pp_def(&#39;foofunc&#39;,
+        Pars =&gt; &#39; a(n); [o] b();&#39;,
+        Code =&gt; &#39; $TFD(float,double)_func ($P(a),$P(b));&#39;
+        GenericTypes =&gt; [qw(F D)],
+  );</code></pre>
+
+<p>There is a limitation that the comma-separated values cannot have parentheses.</p>
+
+<h3 id="PP">$PP</h3>
+
+<p>The <code>$PP</code> macro is used for a so called <i>physical pointer access</i>. The <i>physical</i> refers to some internal optimisations of PDL (for those who are familiar with the PDL core we are talking about the vaffine optimisations). This macro is mainly for internal use and you shouldn&#39;t need to use it in any of your normal code.</p>
+
+<h3 id="PPSYM">$PPSYM</h3>
+
+<p>The <code>$PPSYM()</code> macro is replaced by the value of <a href="./Types.html#ppsym">&quot;ppsym&quot; in PDL::Types</a> for the loop type, or that of the given parameter, similar to <code>$GENERIC()</code>. This is useful for e.g. macros that vary by that, avoiding the need for things like <code>$TXY(X,Y)</code>. Another benefit is that if an operation&#39;s GenericTypes get extended, this macro will still be correct.</p>
+
+<h3 id="COMP-and-the-OtherPars-section">$COMP (and the OtherPars section)</h3>
+
+<p>The <code>$COMP</code> macro is used to access non-pdl values in the code section. Its name is derived from the implementation of transformations in PDL. The variables you can refer to using <code>$COMP</code> are members of the ``compiled&#39;&#39; structure that represents the PDL transformation in question but does not yet contain any information about dimensions (for further details check <a href="./Internals.html">PDL::Internals</a>). However, you can treat <code>$COMP</code> just as a black box without knowing anything about the implementation of transformations in PDL. So when would you use this macro? Its main usage is to access values of arguments that are declared in the <code>OtherPars</code> section of a <code>pp_def</code> definition. But then you haven&#39;t heard about the <code>OtherPars</code> key yet?! Let&#39;s have another example that illustrates typical usage of both new features:</p>
+
+<pre><code>  pp_def(&#39;pnmout&#39;,
+        Pars =&gt; &#39;a(m)&#39;,
+        OtherPars =&gt; &quot;PerlIO *fp&quot;,
+        GenericTypes =&gt; [qw(B U S L)],
+        Code =&gt; &#39;
+                 if (PerlIO_write($COMP(fp),$P(a),len) != len)
+                                $CROAK(&quot;Error writing pnm file&quot;);
+  &#39;);</code></pre>
+
+<p>This function is used to write data from a pdl to a file. The file descriptor is passed as a string into this function. This parameter does not go into the <code>Pars</code> section since it cannot be usefully treated like a pdl but rather into the aptly named <code>OtherPars</code> section. Parameters in the <code>OtherPars</code> section follow those in the <code>Pars</code> section when invoking the function, i.e.</p>
+
+<pre><code>   open FILE,&quot;&gt;out.dat&quot; or die &quot;couldn&#39;t open out.dat&quot;;
+   pnmout($pdl,&#39;FILE&#39;);</code></pre>
+
+<p>When you want to access this parameter inside the code section you have to tell PP by using the <code>$COMP</code> macro, i.e. you write <code>$COMP(fp)</code> as in the example. Otherwise PP wouldn&#39;t know that the <code>fp</code> you are referring to is the same as that specified in the <code>OtherPars</code> section.</p>
+
+<p>Another use for the <code>OtherPars</code> section is to set a named dimension in the signature. Let&#39;s have an example how that is done:</p>
+
+<pre><code>  pp_def(&#39;setdim&#39;,
+        Pars =&gt; &#39;[o] a(n)&#39;,
+        OtherPars =&gt; &#39;int ns =&gt; n&#39;,
+        Code =&gt; &#39;loop(n) %{ $a() = n; %}&#39;,
+  );</code></pre>
+
+<p>This says that the named dimension <code>n</code> will be initialised from the value of the <i>other parameter</i> <code>ns</code> which is of integer type (I guess you have realised that we use the <code>CType From =&gt; named_dim</code> syntax). Now you can call this function in the usual way:</p>
+
+<pre><code>  setdim(($x=null),5);
+  print $x;
+    [ 0 1 2 3 4 ]</code></pre>
+
+<p>Admittedly this function is not very useful but it demonstrates how it works. If you call the function with an existing pdl and you don&#39;t need to explicitly specify the size of <code>n</code> since PDL::PP can figure it out from the dimensions of the non-null pdl. In that case you just give the dimension parameter as <code>-1</code>:</p>
+
+<pre><code>  $x = hist($y);
+  setdim($x,-1);</code></pre>
+
+<p>The default values available via <code>$COMP()</code> are the <code>OtherPars</code> as noted above, which get copied in. However, this can be added to (previous to 2.058, replaced) by supplying <code>Comp</code> and/or <code>MakeComp</code> keys (the defaults will happen first):</p>
+
+<pre><code>  pp_def(
+    &#39;diagonal&#39;,
+    OtherPars =&gt; &#39;SV *list&#39;,
+    Comp =&gt; &#39;PDL_Indx whichdims_count; PDL_Indx whichdims[$COMP(whichdims_count)];&#39;,
+    MakeComp =&gt; &#39;
+      PDL_Indx i;
+      PDL_Indx *tmp= PDL-&gt;packdims(list,&amp;($COMP(whichdims_count)));
+      if (!tmp) $CROAK(&quot;Failed to packdims for creating&quot;);
+      if ($COMP(whichdims_count) &lt; 1)
+        $CROAK(&quot;Diagonal: must have at least 1 dimension&quot;);
+      $DOCOMPALLOC(); /* malloc()s the whichdims */
+      for(i=0; i&lt;$COMP(whichdims_count); i++)
+        $COMP(whichdims)[i] = tmp[i];
+      free(tmp);
+      /* ... */
+    &#39;,
+    # ...
+  );</code></pre>
+
+<p>The <code>MakeComp</code> code is placed in the <code>pdl_(funcname)_run</code>, so access to <code>Pars</code> (which will just be <code>pdl *</code>s)/<code>OtherPars</code> values is just via their names, not a macro.</p>
+
+<p>As of 2.058, you can instead give a C99 &quot;incomplete array&quot; type parameter as an <code>OtherPars</code> entry:</p>
+
+<pre><code>  pp_def(
+    &#39;diagonal&#39;,
+    OtherPars =&gt; &#39;PDL_Indx whichdims[]&#39;,
+    MakeComp =&gt; &#39;
+      if ($COMP(whichdims_count) &lt; 1)
+        $CROAK(&quot;Diagonal: must have at least 1 dimension&quot;);
+      /* ... */
+    &#39;,
+    # ...
+  );</code></pre>
+
+<p>There is an XS <i>typemap</i> entry (only for <code>PDL_Indx</code> array types for now) that adds a <code>(varname)_count</code> variable having extracted the index numbers from an array-ref parameter, and sets the count variable to the right value. PP then makes a copy of the data available. The C function (here, <code>pdl_diagonal_run</code>)&#39;s caller (here, the generated XS function) is responsible for freeing the array passed in (here, PDL&#39;s <code>smalloc</code> function is used, so the user need do nothing different).</p>
+
+<h2 id="Other-functions-in-the-Code-section">Other functions in the Code section</h2>
+
+<p>The only PP function that we have used in the examples so far is <code>loop</code>. Additionally, there are currently two other functions which are recognised in the <code>Code</code> section:</p>
+
+<h3 id="broadcastloop">broadcastloop</h3>
+
+<p>As we heard above the signature of a PP defined function defines the dimensions of all the pdl arguments involved in a <i>primitive</i> operation. However, you often call the functions that you defined with PP with pdls that have more dimensions than those specified in the signature. In this case the primitive operation is performed on all subslices of appropriate dimensionality in what is called a <i>broadcast loop</i> (see also overview above and <a href="./Indexing.html">PDL::Indexing</a>). Assuming you have some notion of this concept you will probably appreciate that the operation specified in the code section should be optimised since this is the tightest loop inside a broadcast loop. However, if you revisit the example where we define the <code>pnmout</code> function, you will quickly realise that looking up the <code>IO</code> file descriptor in the inner broadcast loop is not very efficient when writing a pdl with many rows. A better approach would be to look up the <code>IO</code> descriptor once outside the broadcast loop and use its value then inside the tightest broadcast loop. This is exactly where the <code>broadcastloop</code> function comes in handy. Here is an improved definition of <code>pnmout</code> which uses this function:</p>
+
+<pre><code>  pp_def(&#39;pnmout&#39;,
+        Pars =&gt; &#39;a(m)&#39;,
+        OtherPars =&gt; &quot;PerlIO *fp&quot;,
+        GenericTypes =&gt; [qw(B U S L)],
+        Code =&gt; &#39;
+                 int len;
+                 len = $SIZE(m) * sizeof($GENERIC());
+                 broadcastloop %{
+                    if (PerlIO_write($COMP(fp),$P(a),len) != len)
+                                $CROAK(&quot;Error writing pnm file&quot;);
+                 %}
+  &#39;);</code></pre>
+
+<p>This works as follows. Normally the C code you write inside the <code>Code</code> section is placed inside a broadcast loop (i.e. PP generates the appropriate wrapping C code around it). However, when you explicitly use the <code>broadcastloop</code> function, PDL::PP recognises this and doesn&#39;t wrap your code with an additional broadcast loop. This has the effect that code you write outside the broadcast loop is only executed once per transformation and just the code with in the surrounding <code>%{ ... %}</code> pair is placed within the tightest broadcast loop. This also comes in handy when you want to perform a decision (or any other code, especially CPU intensive code) only once per thread, i.e.</p>
+
+<pre><code>  pp_addhdr(&#39;
+    #define RAW 0
+    #define ASCII 1
+  &#39;);
+  pp_def(&#39;do_raworascii&#39;,
+         Pars =&gt; &#39;a(); b(); [o]c()&#39;,
+         OtherPars =&gt; &#39;int mode&#39;,
+       Code =&gt; &#39; switch ($COMP(mode)) {
+                    case RAW:
+                        broadcastloop %{
+                            /* do raw stuff */
+                        %}
+                        break;
+                    case ASCII:
+                        broadcastloop %{
+                            /* do ASCII stuff */
+                        %}
+                        break;
+                    default:
+                        $CROAK(&quot;unknown mode&quot;);
+                   }&#39;
+   );</code></pre>
+
+<h3 id="types">types</h3>
+
+<p>The types function works similar to the <code>$T</code> macro. However, with the <code>types</code> function the code in the following block (delimited by <code>%{</code> and <code>%}</code> as usual) is executed for all those cases in which the datatype of the operation is <i>any of</i> the types represented by the letters in the argument to <code>type</code>, e.g.</p>
+
+<pre><code>     Code =&gt; &#39;...
+
+             types(BSUL) %{
+                 /* do integer type operation */
+             %}
+             types(FD) %{
+                 /* do floating point operation */
+             %}
+             ...&#39;</code></pre>
+
+<p>You are encouraged to use this idiom (from <a href="./Math.html">PDL::Math</a>) in order to minimise effort needed to make your code work with new types:</p>
+
+<pre><code>  use PDL::Types qw(types);
+  my @Rtypes = grep $_-&gt;real, types();
+  my @Ctypes = grep !$_-&gt;real, types();
+  # ...
+    my $got_complex = PDL::Core::Dev::got_complex_version($name, 2);
+    my $complex_bit = join &quot;\n&quot;,
+      map &#39;types(&#39;.$_-&gt;ppsym.&#39;) %{$&#39;.$c.&#39;() = c&#39;.$name.$_-&gt;floatsuffix.&#39;($&#39;.$x.&#39;(),$&#39;.$y.&#39;());%}&#39;,
+      @Ctypes;
+    my $real_bit = join &quot;\n&quot;,
+      map &#39;types(&#39;.$_-&gt;ppsym.&#39;) %{$&#39;.$c.&#39;() = &#39;.$name.&#39;($&#39;.$x.&#39;(),$&#39;.$y.&#39;());%}&#39;,
+      @Rtypes;
+    ($got_complex ? $complex_bit : &#39;&#39;) . $real_bit;</code></pre>
+
+<p>(although you should first check whether <i>tgmath.h</i> already has a type-generic version of the function you want to call, in which case the above becomes unnecessary).</p>
+
+<h2 id="The-RedoDimsCode-Section">The RedoDimsCode Section</h2>
+
+<p>The <code>RedoDimsCode</code> key is an optional key that is used to compute dimensions of ndarrays at runtime in case the standard rules for computing dimensions from the signature are not sufficient. The contents of the <code>RedoDimsCode</code> entry is interpreted in the same way that the Code section is interpreted-- <i>i.e.</i>, PP macros are expanded and the result is interpreted as C code. The purpose of the code is to set the size of some dimensions that appear in the signature. Storage allocation and broadcastloops and so forth will be set up as if the computed dimension had appeared in the signature. In your code, you first compute the desired size of a named dimension in the signature according to your needs and then assign that value to it via the $SIZE() macro.</p>
+
+<p>As an example, consider the following situation. You are interfacing an external library routine that requires an temporary array for workspace to be passed as an argument. Two input data arrays that are passed are <code>p(m)</code> and <code>x(n)</code>. The output data array is <code>y(n)</code>. The routine requires a workspace array with a length of n+m*m, and you&#39;d like the storage created automatically just like it would be for any ndarray flagged with [t] or [o]. What you&#39;d like is to say something like</p>
+
+<pre><code> pp_def( &quot;myexternalfunc&quot;,
+  Pars =&gt; &quot; p(m);  x(n);  [o] y; [t] work(n+m*m); &quot;, ...</code></pre>
+
+<p>but that won&#39;t work, because PP can&#39;t interpret expressions with arithmetic in the signature. Instead you write</p>
+
+<pre><code>  pp_def(
+      &quot;myexternalfunc&quot;,
+      Pars         =&gt; &#39; p(m);  x(n);  [o] y(); [t] work(wn); &#39;,
+      RedoDimsCode =&gt; &#39;$SIZE(wn) = $SIZE(n) + $SIZE(m) * $SIZE(m);&#39;,
+      Code =&gt; &#39;
+        externalfunc( $P(p), $P(x), $SIZE(m), $SIZE(n), $P(work) );
+      &#39;
+  );</code></pre>
+
+<p>As of 2.075, you can use the dimensions of passed-in ndarrays as they are available when the <code>RedoDimsCode</code> is run. Before the code in the Code section is executed PP will create the proper storage for <code>work</code> if it does not exist. Note that you only took the first dimension of <code>p</code> and <code>x</code> because the user may have sent ndarrays with extra broadcasting dimensions. Of course, the temporary ndarray <code>work</code> (note the [t] flag) should not be given any broadcast dimensions anyway.</p>
+
+<p>You can also use <code>RedoDimsCode</code> to set the dimension of a ndarray flagged with [o]. In this case you set the dimensions for the named dimension in the signature using $SIZE() as in the preceding example. However, because the ndarray is flagged with [o] instead of [t], broadcasting dimensions will be added if required just as if the size of the dimension were computed from the signature according to the usual rules. Here is an example from PDL::Math</p>
+
+<pre><code> pp_def(&quot;polyroots&quot;,
+      Pars =&gt; &#39;cr(n); ci(n); [o]rr(m); [o]ri(m);&#39;,
+      RedoDimsCode =&gt; &#39;$SIZE(m) = $SIZE(n)-1;&#39;,</code></pre>
+
+<p>The input ndarrays are the real and imaginary parts of complex coefficients of a polynomial. The output ndarrays are real and imaginary parts of the roots. There are <code>n</code> roots to an <code>n</code>th order polynomial and such a polynomial has <code>n+1</code> coefficients (the zero-th through the <code>n</code>th). In this example, broadcasting will work correctly. That is, the first dimension of the output ndarray with have its dimension adjusted, but other broadcasting dimensions will be assigned just as if there were no <code>RedoDimsCode</code>.</p>
+
+<h3 id="RedoDims-passed-directly">RedoDims passed directly</h3>
+
+<p>A <code>RedoDimsCode</code> value as above gets processed, including expanding macros, and adding type-generic loops. For very specific purposes, you may not want this processing done to your dimension-updating code, probably in &quot;slice&quot;-like functions.</p>
+
+<p>Then, instead of passing a <code>RedoDimsCode</code> value, you can pass a <code>RedoDims</code> value (which the <code>RedoDimsCode</code> would otherwise get processed into). Because you will probably want to access the ndarrays, the following macros are provided. They are named assuming you will have the first parameter as <code>PARENT</code> and the second as <code>CHILD</code>, which is the case if you passed a true <code>P2Child</code> value, which you will basically always want to do for this scenario.</p>
+
+<h3 id="RedoDims-generated-from-EquivPDimExpr-and-EquivDimCheck">RedoDims generated from EquivPDimExpr and EquivDimCheck</h3>
+
+<p>Another way to generate the <code>RedoDims</code> code is to supply a <code>EquivPDimExpr</code> and maybe a <code>EquivDimCheck</code>:</p>
+
+<pre><code>  pp_def(
+    &#39;xchg&#39;,
+    OtherPars =&gt; &#39;PDL_Indx n1; PDL_Indx n2;&#39;,
+    TwoWay =&gt; 1,
+    P2Child =&gt; 1,
+    AffinePriv =&gt; 1,
+    EquivDimCheck =&gt; &#39;
+      if ($COMP(n1) &lt;0) $COMP(n1) += $PARENT(broadcastids[0]);
+      if ($COMP(n2) &lt;0) $COMP(n2) += $PARENT(broadcastids[0]);
+      if (PDLMIN($COMP(n1),$COMP(n2)) &lt;0 ||
+          PDLMAX($COMP(n1),$COMP(n2)) &gt;= $PARENT(broadcastids[0]))
+            $CROAK(&quot;One of dims %d, %d out of range: should be 0&lt;=dim&lt;%d&quot;,
+                $COMP(n1),$COMP(n2),$PARENT(broadcastids[0]));&#39;,
+    EquivPDimExpr =&gt; &#39;
+      (($CDIM == $COMP(n1)) ? $COMP(n2) :
+       ($CDIM == $COMP(n2)) ? $COMP(n1) :
+       $CDIM)
+    &#39;,
+  );</code></pre>
+
+<p><code>EquivPDimExpr</code> is evaluated within a loop, and the value of the relevant dimension is available using the macro <code>$CDIM</code> as shown above.</p>
+
+<h2 id="Typemap-handling-in-the-OtherPars-section">Typemap handling in the OtherPars section</h2>
+
+<p>The <code>OtherPars</code> section discussed above is very often absolutely crucial when you interface external libraries with PDL. However in many cases the external libraries either use derived types or pointers of various types.</p>
+
+<p>The standard way to handle this in Perl is to use a <i>typemap</i> file. This is discussed in some detail in <a>perlxs</a> in the standard Perl documentation. In PP the functionality is very similar, so you can create a <i>typemap</i> file in the directory where your PP file resides and when it is built it is automatically read in to figure out the appropriate translation between the C type and Perl&#39;s built-in type.</p>
+
+<p>For instance the <code>gsl_spline_init</code> function has the following C declaration:</p>
+
+<pre><code>    int  gsl_spline_init(gsl_spline * spline,
+          const double xa[], const double ya[], size_t size);</code></pre>
+
+<p>Clearly the <code>xa</code> and <code>ya</code> arrays are candidates for being passed in as ndarrays and the <code>size</code> argument is just the length of these ndarrays so that can be handled by the <code>$SIZE()</code> macro in PP. Write an <code>OtherPars</code> declaration of the form</p>
+
+<pre><code>    OtherPars =&gt; &#39;gsl_spline *spl&#39;</code></pre>
+
+<p>and write a short <i>typemap</i> file which handles this type:</p>
+
+<pre><code>    TYPEMAP
+    gsl_spline * T_PTR</code></pre>
+
+<p>and use it in the code:</p>
+
+<pre><code>    pp_def(&#39;init_meat&#39;,
+      Pars =&gt; &#39;double x(n); double y(n);&#39;,
+      OtherPars =&gt; &#39;gsl_spline *spl&#39;,
+      Code =&gt;&#39;gsl_spline_init,($COMP(spl),$P(x),$P(y),$SIZE(n)));&#39;
+    );</code></pre>
+
+<p>where I have removed a macro wrapper call, but that would obscure the discussion.</p>
+
+<h2 id="Other-useful-PP-keys-in-data-operation-definitions">Other useful PP keys in data operation definitions</h2>
+
+<p>You have already heard about the <code>OtherPars</code> key. Currently, there are not many other keys for a data operation that will be useful in normal (whatever that is) PP programming. In fact, it would be interesting to hear about a case where you think you need more than what is provided at the moment. Please speak up on one of the PDL mailing lists. Most other keys recognised by <code>pp_def</code> are only really useful for what we call <i>slice operations</i> (see also above).</p>
+
+<p>One thing that is strongly being planned is variable number of arguments, which will be a little tricky.</p>
+
+<p>An incomplete list of the available keys:</p>
+
+<h3 id="Inplace">Inplace</h3>
+
+<p>Setting this key marks the routine as working inplace - ie the input and output ndarrays are the same. An example is <code>$x-&gt;inplace-&gt;sqrt()</code> (or <code>sqrt(inplace($x))</code>).</p>
+
+<dl>
+
+<dt id="Inplace-1">Inplace =&gt; 1</dt>
+<dd>
+
+<p>Use when the routine is a unary function, such as <code>sqrt</code>.</p>
+
+</dd>
+<dt id="Inplace-a">Inplace =&gt; [&#39;a&#39;]</dt>
+<dd>
+
+<p>If there are more than one input ndarrays, specify the name of the one that can be changed inplace using an array reference.</p>
+
+</dd>
+<dt id="Inplace-a-b">Inplace =&gt; [&#39;a&#39;,&#39;b&#39;]</dt>
+<dd>
+
+<p>If there are more than one output ndarray, specify the name of the input ndarray and output ndarray in a 2-element array reference. This probably isn&#39;t needed, but left in for completeness.</p>
+
+</dd>
+</dl>
+
+<p>If bad values are being used, care must be taken to ensure the propagation of the badflag when inplace is being used; consider this excerpt from <i>Basic/Bad/bad.pd</i>:</p>
+
+<pre><code>  pp_def(&#39;setbadtoval&#39;,HandleBad =&gt; 1,
+    Pars =&gt; &#39;a(); [o]b();&#39;,
+    OtherPars =&gt; &#39;double newval&#39;,
+    Inplace =&gt; 1,
+    CopyBadStatusCode =&gt; &#39;PDL-&gt;propagate_badflag( b, 0 );&#39;,
+    ...</code></pre>
+
+<p>Since this routine removes all bad values, the output ndarray had its bad flag cleared. This is then propagated to both parents and children.</p>
+
+<p>NOTE: one idea is that the documentation for the routine could be automatically flagged to indicate that it can be executed inplace, ie something similar to how <code>HandleBad</code> sets <code>BadDoc</code> if it&#39;s not supplied (it&#39;s not an ideal solution).</p>
+
+<h3 id="FTypes">FTypes</h3>
+
+<pre><code>  # in slices.pd
+  FTypes =&gt; {CHILD =&gt; &#39;$COMP(totype)&#39;},</code></pre>
+
+<p>The value is a hash-ref mapping parameter-names to an expression giving an override of the type for that parameter. The example above shows the type being overridden to the <code>OtherPars</code> &quot;totype&quot;.</p>
+
+<h3 id="OtherParsDefaults">OtherParsDefaults</h3>
+
+<pre><code>  OtherPars =&gt; &#39;int a; int b&#39;,
+  OtherParsDefaults =&gt; { b =&gt; 0 },</code></pre>
+
+<p>Allows specifying default values for <code>OtherPars</code>. It is an error to specify a default for one that is before another that does not have a default.</p>
+
+<h2 id="Other-PDL::PP-functions-to-support-concise-package-definition">Other PDL::PP functions to support concise package definition</h2>
+
+<p>So far, we have described the <code>pp_def</code> and <code>pp_done</code> functions. PDL::PP exports a few other functions to aid you in writing concise PDL extension package definitions.</p>
+
+<h3 id="pp_addhdr1">pp_addhdr</h3>
+
+<p>Often when you interface library functions as in the above example you have to include additional C include files. Since the XS file is generated by PP we need some means to make PP insert the appropriate include directives in the right place into the generated XS file. To this end there is the <code>pp_addhdr</code> function. This is also the function to use when you want to define some C functions for internal use by some of the XS functions (which are mostly functions defined by <code>pp_def</code>). By including these functions here you make sure that PDL::PP inserts your code before the point where the actual XS module section begins and will therefore be left untouched by xsubpp (cf. <i>perlxs</i> and <i>perlxstut</i> man pages).</p>
+
+<p>A typical call would be</p>
+
+<pre><code>  pp_addhdr(&#39;
+  #include &lt;unistd.h&gt;       /* we need defs of XXXX */
+  #include &quot;libprotos.h&quot;    /* prototypes of library functions */
+  #include &quot;mylocaldecs.h&quot;  /* Local decs */
+
+  static void do_the real_work(PDL_Byte * in, PDL_Byte * out, int n)
+  {
+        /* do some calculations with the data */
+  }
+  &#39;);</code></pre>
+
+<p>This ensures that all the constants and prototypes you need will be properly included and that you can use the internal functions defined here in the <code>pp_def</code>s, e.g.:</p>
+
+<pre><code>  pp_def(&#39;barfoo&#39;,
+         Pars =&gt; &#39; a(n); [o] b(n)&#39;,
+         GenericTypes =&gt; [&#39;B&#39;],
+         Code =&gt; &#39; PDL_Indx ns = $SIZE(n);
+                   do_the_real_work($P(a),$P(b),ns);
+                 &#39;,
+  );</code></pre>
+
+<h3 id="pp_addpm1">pp_addpm</h3>
+
+<p>In many cases the actual PP code (meaning the arguments to <code>pp_def</code> calls) is only part of the package you are currently implementing. Often there is additional Perl code and XS code you would normally have written into the pm and XS files which are now automatically generated by PP. So how to get this stuff into those dynamically generated files? Fortunately, there are a couple of functions, generally called <code>pp_addXXX</code> that assist you in doing this.</p>
+
+<p>Let&#39;s assume you have additional Perl code that should go into the generated <b>pm</b>-file. This is easily achieved with the <code>pp_addpm</code> command:</p>
+
+<pre><code>   pp_addpm(&lt;&lt;&#39;EOD&#39;);
+
+   =head1 NAME
+
+   PDL::Lib::Mylib -- a PDL interface to the Mylib library
+
+   =head1 DESCRIPTION
+
+   This package implements an interface to the Mylib package with full
+   broadcasting and indexing support (see L&lt;PDL::Indexing&gt;).
+
+   =cut
+
+   use PGPLOT;
+
+   =head2 use_myfunc
+        this function applies the myfunc operation to all the
+        elements of the input pdl regardless of dimensions
+        and returns the sum of the result
+   =cut
+
+   sub use_myfunc {
+        my $pdl = shift;
+
+        myfunc($pdl-&gt;clump(-1),($res=null));
+
+        return $res-&gt;sum;
+   }
+
+   EOD</code></pre>
+
+<h3 id="pp_add_exported1">pp_add_exported</h3>
+
+<p>You have probably got the idea. In some cases you also want to export your additional functions. To avoid getting into trouble with PP which also messes around with the <code>@EXPORT</code> array you just tell PP to add your functions to the list of exported functions:</p>
+
+<pre><code>  pp_add_exported(&#39;use_myfunc gethynx&#39;);</code></pre>
+
+<h3 id="pp_add_isa1">pp_add_isa</h3>
+
+<p>The <code>pp_add_isa</code> command works like the the <code>pp_add_exported</code> function. The arguments to <code>pp_add_isa</code> are added the @ISA list, e.g.</p>
+
+<pre><code>  pp_add_isa(&#39; Some::Other::Class &#39;);</code></pre>
+
+<h3 id="pp_bless1">pp_bless</h3>
+
+<p>If your pp_def routines are to be used as object methods use <code>pp_bless</code> to specify the package (i.e. class) to which your <i>pp_def</i>ed methods will be added. For example, <code>pp_bless(&#39;PDL::MyClass&#39;)</code>. The default is <code>PDL</code> if this is omitted.</p>
+
+<h3 id="pp_addxs1">pp_addxs</h3>
+
+<p>Sometimes you want to add extra XS code of your own (that is generally not involved with any broadcasting/indexing issues but supplies some other functionality you want to access from the Perl side) to the generated XS file, for example</p>
+
+<pre><code>  pp_addxs(&#39;&#39;,&#39;
+
+  # Determine endianness of machine
+
+  int
+  isbigendian()
+     CODE:
+       unsigned short i;
+       PDL_Byte *b;
+
+       i = 42; b = (PDL_Byte*) (void*) &amp;i;
+
+       if (*b == 42)
+          RETVAL = 0;
+       else if (*(b+1) == 42)
+          RETVAL = 1;
+       else
+          croak(&quot;Impossible - machine is neither big nor little endian!!\n&quot;);
+       OUTPUT:
+         RETVAL
+  &#39;);</code></pre>
+
+<p>Especially <code>pp_add_exported</code> and <code>pp_addxs</code> should be used with care. PP uses PDL::Exporter, hence letting PP export your function means that they get added to the standard list of function exported by default (the list defined by the export tag ``:Func&#39;&#39;). If you use <code>pp_addxs</code> you shouldn&#39;t try to do anything that involves broadcasting or indexing directly. PP is much better at generating the appropriate code from your definitions.</p>
+
+<h3 id="pp_add_boot1">pp_add_boot</h3>
+
+<p>Finally, you may want to add some code to the BOOT section of the XS file (if you don&#39;t know what that is check <i>perlxs</i>). This is easily done with the <code>pp_add_boot</code> command:</p>
+
+<pre><code>  pp_add_boot(&lt;&lt;EOB);
+        descrip = mylib_initialize(KEEP_OPEN);
+
+        if (descrip == NULL)
+           croak(&quot;Can&#39;t initialize library&quot;);
+
+        GlobalStruc-&gt;descrip = descrip;
+        GlobalStruc-&gt;maxfiles = 200;
+  EOB</code></pre>
+
+<h3 id="pp_export_nothing1">pp_export_nothing</h3>
+
+<p>By default, PP.pm puts all subs defined using the pp_def function into the output .pm file&#39;s EXPORT list. This can create problems if you are creating a subclassed object where you don&#39;t want any methods exported. (i.e. the methods will only be called using the $object-&gt;method syntax).</p>
+
+<p>For these cases you can call pp_export_nothing() to clear out the export list. Example (At the end of the .pd file):</p>
+
+<pre><code>  pp_export_nothing();
+  pp_done();</code></pre>
+
+<h3 id="pp_core_importList1">pp_core_importList</h3>
+
+<p>By default, PP.pm puts the &#39;use Core;&#39; line into the output .pm file. This imports Core&#39;s exported names into the current namespace, which can create problems if you are over-riding one of Core&#39;s methods in the current file. You end up getting messages like &quot;Warning: sub sumover redefined in file subclass.pm&quot; when running the program.</p>
+
+<p>For these cases the pp_core_importList can be used to change what is imported from Core.pm. For example:</p>
+
+<pre><code>  pp_core_importList(&#39;()&#39;) </code></pre>
+
+<p>This would result in</p>
+
+<pre><code>  use Core();</code></pre>
+
+<p>being generated in the output .pm file. This would result in no names being imported from Core.pm. Similarly, calling</p>
+
+<pre><code>  pp_core_importList(&#39; qw/ barf /&#39;)</code></pre>
+
+<p>would result in</p>
+
+<pre><code>  use Core qw/ barf/;</code></pre>
+
+<p>being generated in the output .pm file. This would result in just &#39;barf&#39; being imported from Core.pm.</p>
+
+<h3 id="pp_setversion">pp_setversion</h3>
+
+<p>Simultaneously set the <i>.pm</i> and <i>.xs</i> files&#39; versions, thus avoiding unnecessary version-skew between the two. To use this, simply do this in your .pd file, probably near the top:</p>
+
+<pre><code> our $VERSION = &#39;0.0.3&#39;;
+ pp_setversion($VERSION);
+
+ # Then, in your Makefile.PL:
+ my @package = qw(FFTW3.pd FFTW3 PDL::FFTW3);
+ my %descriptor = pdlpp_stdargs(\@package);
+ $descriptor{VERSION_FROM} = &#39;FFTW3.pd&#39;; # EUMM can parse the format above</code></pre>
+
+<p>However, don&#39;t use this if you use <a>Module::Build::PDL</a>. See that module&#39;s documentation for details.</p>
+
+<h3 id="pp_deprecate_module1">pp_deprecate_module</h3>
+
+<p>If a particular module is deemed obsolete, this function can be used to mark it as deprecated. This has the effect of emitting a warning when a user tries to <code>use</code> the module. The generated POD for this module also carries a deprecation notice. The replacement module can be passed as an argument like this:</p>
+
+<pre><code> pp_deprecate_module( infavor =&gt; &quot;PDL::NewNonDeprecatedModule&quot; );</code></pre>
+
+<p>Note that function affects <i>only</i> the runtime warning and the POD.</p>
+
+<h1 id="MAKING-YOUR-PP-FUNCTION-PRIVATE">MAKING YOUR PP FUNCTION PRIVATE</h1>
+
+<p>Let&#39;s say that you have a function in your module called PDL::foo that uses the PP function <code>bar_pp</code> to do the heavy lifting. But you don&#39;t want to advertise that <code>bar_pp</code> exists. To do this, you must move your PP function to the top of your module file, then call</p>
+
+<pre><code> pp_export_nothing()</code></pre>
+
+<p>to clear the <code>EXPORT</code> list. To ensure that no documentation (even the default PP docs) is generated, set</p>
+
+<pre><code> Doc =&gt; undef</code></pre>
+
+<p>and to prevent the function from being added to the symbol table, set</p>
+
+<pre><code> PMFunc =&gt; &#39;&#39;</code></pre>
+
+<p>in your pp_def declaration (see Image2D.pd for an example). This will effectively make your PP function &quot;private.&quot; However, it is <i>always</i> accessible via PDL::bar_pp due to Perl&#39;s module design. But making it private will cause the user to go very far out of their way to use it, so they shoulder the consequences!</p>
+
+<h1 id="SLICE-OPERATION">SLICE OPERATION</h1>
+
+<p>The slice operations require a much more intimate knowledge of PDL internals than the data operations. Furthermore, the complexity of the issues involved is considerably higher than that in the average data operation. Nevertheless, functions generated using the slice operations are at the heart of the index manipulation and dataflow capabilities of PDL. You can get started by reading the section on <a href="#P2Child">&quot;P2Child&quot;</a>.</p>
+
+<p>Also, there are a lot of dirty issues with virtual ndarrays and vaffines which we shall entirely skip here.</p>
+
+<h2 id="Slices-and-bad-values">Slices and bad values</h2>
+
+<p>Slice operations need to be able to handle bad values. The easiest thing to do is look at <i>Basic/Slices/slices.pd</i> to see how this works.</p>
+
+<p>Along with <code>BadCode</code>, there are also the <code>BadBackCode</code> and <code>BadRedoDimsCode</code> keys for <code>pp_def</code>. However, any <code>EquivCPOffsCode</code> should <i>not</i> need changing, since any changes are absorbed into the definition of the <code>$EQUIVCPOFFS()</code> macro (i.e. it is handled automatically by PDL::PP).</p>
+
+<h1 id="Handling-of-warn-and-barf-in-PP-Code">Handling of <code>warn</code> and <code>barf</code> in PP Code</h1>
+
+<p>For printing warning messages or aborting/dieing, you can call <code>warn</code> or <code>barf</code> from PP code. However, you should be aware that these calls have been redefined using C preprocessor macros to <code>PDL-&gt;barf</code> and <code>PDL-&gt;warn</code>. These redefinitions are in place to keep you from inadvertently calling perl&#39;s <code>warn</code> or <code>barf</code> directly, which can cause segfaults during pthreading (i.e. processor multi-threading).</p>
+
+<p>PDL&#39;s own versions of <code>barf</code> and <code>warn</code> will queue-up warning or barf messages until after pthreading is completed, and then call the perl versions of these routines.</p>
+
+<p>See <a href="./ParallelCPU.html">PDL::ParallelCPU</a> for more information on pthreading.</p>
+
+<p><b>NB</b> As of 2.064, it is <b>highly recommended</b> that you do not call <code>barf</code> at all in PP code, but instead use <code>$CROAK()</code>. This will return a <code>pdl_error</code> which will transparently be used to throw the correct exception in Perl code, but can be handled suitably by non-Perl callers.</p>
+
+<h1 id="MAKEFILES-FOR-PP-FILES">MAKEFILES FOR PP FILES</h1>
+
+<p>If you are going to generate a package from your PP file (typical file extensions are <code>.pd</code> or <code>.pp</code> for the files containing PP code) it is easiest and safest to leave generation of the appropriate commands to the Makefile. In the following we will outline the typical format of a Perl Makefile to automatically build and install your package from a description in a PP file. Most of the rules to build the xs, pm and other required files from the PP file are already predefined in the PDL::Core::Dev package. We just have to tell MakeMaker to use it.</p>
+
+<p>In most cases you can define your Makefile like</p>
+
+<pre><code>  use PDL::Core::Dev;            # Pick up development utilities
+  use ExtUtils::MakeMaker;
+
+  $package = [&quot;mylib.pd&quot;,Mylib,PDL::Lib::Mylib,&#39;&#39;,1];
+  %hash = pdlpp_stdargs($package);
+  $hash{OBJECT} .= &#39; additional_Ccode$(OBJ_EXT) &#39;;
+  WriteMakefile(%hash);
+
+  sub MY::postamble { pdlpp_postamble($package); }
+
+  # additional_Ccode.c
+  #include &quot;pdl.h&quot;
+  void ppcp(PDL_Byte *dst, PDL_Byte *src, int len)
+  {
+    int i;
+    for (i=0;i&lt;len;i++) *dst++=*src++;
+  }</code></pre>
+
+<p>Here, the list in <code>$package</code> is: first: PP source file name, then the prefix for the produced files, the whole package name, the package to add XS functions to (empty string to use the same as the PP functions), and a boolean to dictate whether to have PDL generate a separate C file for each PP function (for faster compilation). The last feature is opt-in as you have to avoid duplicate symbols when linking the library (so separate out C functions into their own file). You can modify the hash in whatever way you like but it would be reasonable to stay within some limits so that your package will continue to work with later versions of PDL.</p>
+
+<p>To make life even easier PDL::Core::Dev defines the function <code>pdlpp_stdargs</code> that returns a hash with default values that can be passed (either directly or after appropriate modification) to a call to WriteMakefile. Currently, <code>pdlpp_stdargs</code> returns a hash where the keys are filled in as follows:</p>
+
+<pre><code>        (
+         &#39;NAME&#39;         =&gt; $mod,
+         VERSION_FROM   =&gt; $src,
+         &#39;TYPEMAPS&#39;     =&gt; [&amp;PDL_TYPEMAP()],
+         &#39;OBJECT&#39;       =&gt; &quot;$pref\$(OBJ_EXT)&quot;,
+         PM     =&gt; {&quot;$pref.pm&quot; =&gt; &quot;\$(INST_LIBDIR)/$pref.pm&quot;},
+         MAN3PODS =&gt; {&quot;$pref.pm&quot; =&gt; &quot;\$(INST_MAN3DIR)/$mod.\$(MAN3EXT)&quot;},
+         &#39;INC&#39;          =&gt; &amp;PDL_INCLUDE(),
+         &#39;LIBS&#39;         =&gt; [&#39;&#39;],
+         &#39;clean&#39;        =&gt; {&#39;FILES&#39;  =&gt; &quot;$pref.xs $pref.pm $pref\$(OBJ_EXT)&quot;},
+        )</code></pre>
+
+<p>Here, <code>$src</code> is the name of the source file with PP code, <code>$pref</code> the prefix for the generated .pm and .xs files and <code>$mod</code> the name of the extension module to generate.</p>
+
+<p>If your <code>VERSION_FROM</code> provides a version, PP will use that to set the <code>XS_VERSION</code>. If you need to influence the value of that variable so that <a>XSLoader</a> etc don&#39;t reject the loaded dynamic library, you can use this workaround in a <code>pp_addpm</code> (the <code>BEGIN</code> is because the <code>bootstrap</code> happens at runtime, and your code appears after that call, but with a <code>BEGIN</code> it will take place beforehand):</p>
+
+<pre><code>  our $VERSION; BEGIN { $VERSION = &#39;2.019106&#39; };
+  our $XS_VERSION; BEGIN { $XS_VERSION = $VERSION };</code></pre>
+
+<h1 id="INTERNALS">INTERNALS</h1>
+
+<p>The internals of the current version consist of a large table which gives the rules according to which things are translated and the subs which implement these rules.</p>
+
+<p>Later on, it would be good to make the table modifiable by the user so that different things may be tried.</p>
+
+<p>[Meta comment: here will hopefully be more in the future; currently, your best bet will be to read the source code :-( or ask on the list (try the latter first) ]</p>
+
+<h1 id="C-PREPROCESSOR-MACROS">C PREPROCESSOR MACROS</h1>
+
+<p>As well as the above-mentioned <code>PDL_BAD_CODE</code> and <code>PDL_IF_BAD(iftrue,iffalse)</code>, there are also <code>PDL_IF_GENTYPE_REAL(iftrue,iffalse)</code>, <code>PDL_IF_GENTYPE_UNSIGNED</code>, and <code>PDL_IF_GENTYPE_INTEGER</code>:</p>
+
+<pre><code>  $b() = PDL_IF_GENTYPE_INTEGER(0,NAN);</code></pre>
+
+<h1 id="Appendix-A:-Some-keys-recognised-by-PDL::PP">Appendix A: Some keys recognised by PDL::PP</h1>
+
+<p>Unless otherwise specified, the arguments are strings.</p>
+
+<h3 id="Pars">Pars</h3>
+
+<p>define the signature of your function</p>
+
+<h3 id="OtherPars">OtherPars</h3>
+
+<p>arguments which are not pdls. Default: nothing. This is a semi-colon separated list of arguments, e.g., <code>OtherPars=&gt;&#39;int k; double value; PerlIO *fp&#39;</code>. See <code>$COMP(x)</code> and also the same entry in <a href="#Appendix-B:-PP-macros-and-functions">Appendix B</a>.</p>
+
+<h3 id="Code">Code</h3>
+
+<p>the actual code that implements the functionality; several PP macros and PP functions are recognised in the string value</p>
+
+<h3 id="HandleBad">HandleBad</h3>
+
+<p>If set to 1, the routine is assumed to support bad values and the code in the BadCode key is used if bad values are present; it also sets things up so that the <code>$ISBAD()</code> etc macros can be used. If set to 0, cause the routine to print a warning if any of the input ndarrays have their bad flag set.</p>
+
+<h3 id="BadCode">BadCode</h3>
+
+<p>Give the code to be used if bad values may be present in the input ndarrays. Only used if <code>HandleBad =&gt; 1</code>. If <code>HandleBad</code> is true and <code>BadCode</code> is not supplied, the <code>Code</code> section will be reused, on the assumption it will use <code>#ifdef PDL_BAD_CODE</code> to handle bad values. As of 2.073, you can, and are recommended to, use <code>PDL_IF_BAD(iftrue,iffalse)</code>.</p>
+
+<h3 id="CopyBadStatusCode">CopyBadStatusCode</h3>
+
+<p>As of 2.079, this is deprecated due to being largely unnecessary; instead, just use <code>$PDLSTATESETBAD(pdlname)</code> in your <code>Code</code> section and the badflag setting will be propagated to all its parents and children.</p>
+
+<p>The default code here sets the bad flag of the output ndarrays if <code>$BADFLAGCACHE()</code> is true after the code has been evaluated. Sometimes <code>CopyBadStatusCode</code> is set to an empty string, with the responsibility of setting the badflag of the output ndarray left to the <code>BadCode</code> section (e.g. the <code>xxxover</code> routines in <i>Basic/Primitive/primitive.pd</i>).</p>
+
+<h3 id="GenericTypes">GenericTypes</h3>
+
+<p>An array reference. The array may contain any subset of the one-character strings given below, which specify which types your operation will accept. The meaning of each type is:</p>
+
+<pre><code> B - signed byte (i.e. signed char)
+ S - signed short (two-byte integer)
+ U - unsigned short
+ L - signed long (four-byte integer, int on 32 bit systems)
+ N - signed integer for indexing ndarray elements (platform &amp; Perl-dependent size)
+ Q - signed long long (eight byte integer)
+ F - float
+ D - double
+ G - complex float
+ C - complex double</code></pre>
+
+<p>This is very useful (and important!) when interfacing an external library. Default: [qw/B S U L N Q F D/]</p>
+
+<h3 id="Inplace1">Inplace</h3>
+
+<p>Mark a function as being able to work inplace.</p>
+
+<pre><code> Inplace =&gt; 1          if  Pars =&gt; &#39;a(); [o]b();&#39;
+ Inplace =&gt; [&#39;a&#39;]      if  Pars =&gt; &#39;a(); b(); [o]c();&#39;
+ Inplace =&gt; [&#39;a&#39;,&#39;c&#39;]  if  Pars =&gt; &#39;a(); b(); [o]c(); [o]d();&#39;</code></pre>
+
+<p>If bad values are being used, care must be taken to ensure the propagation of the badflag when inplace is being used; for instance see the code for <code>setbadtoval</code> in <i>Basic/Bad/bad.pd</i>.</p>
+
+<h3 id="Doc">Doc</h3>
+
+<p>Used to specify a documentation string in Pod format. See PDL::Doc for information on PDL documentation conventions. Note: in the special case where the PP &#39;Doc&#39; string is one line this is implicitly used for the quick reference AND the documentation!</p>
+
+<p>If the Doc field is omitted PP will generate default documentation (after all it knows about the Signature).</p>
+
+<p>If you really want the function NOT to be documented in any way at this point (e.g. for an internal routine, or because you are doing it elsewhere in the code) explicitly specify <code>Doc=&gt;undef</code>.</p>
+
+<h3 id="BadDoc">BadDoc</h3>
+
+<p>Contains the text returned by the <code>badinfo</code> command (in <code>perldl</code>) or the <code>-b</code> switch to the <code>pdldoc</code> shell script. In many cases, you will not need to specify this, since the information can be automatically created by PDL::PP. However, as befits computer-generated text, it&#39;s rather stilted; it may be much better to do it yourself!</p>
+
+<h3 id="NoPthread">NoPthread</h3>
+
+<p>Optional flag to indicate the PDL function should <b>not</b> use processor threads (i.e. pthreads or POSIX threads) to split up work across multiple CPU cores. This option is typically set to 1 if the underlying PDL function is not threadsafe. If this option isn&#39;t present, then the function is assumed to be threadsafe. This option only applies if PDL has been compiled with POSIX threads enabled.</p>
+
+<h3 id="PMCode">PMCode</h3>
+
+<pre><code>  pp_def(&#39;funcname&#39;,
+    Pars =&gt; &#39;a(); [o] b();&#39;,
+    PMCode =&gt; &#39;sub PDL::funcname {
+      return PDL::_funcname_int(@_) if @_ == 2; # output arg &quot;b&quot; supplied
+      PDL::_funcname_int(@_, my $out = PDL-&gt;null);
+      $out;
+    }&#39;,
+    # ...
+  );</code></pre>
+
+<p>PDL functions allow <code>[o]</code> ndarray arguments into which you want the output saved. This is handy because you can allocate an output ndarray once and reuse it many times; the alternative would be for PDL to create a new ndarray each time, which may waste compute cycles or, more likely, RAM.</p>
+
+<p>PDL functions check the number of arguments they are given, and call <code>croak</code> if given the wrong number. By default (with no <code>PMCode</code> supplied), any output arguments may be omitted, and PDL::PP provides code that can handle this by creating <code>null</code> objects, passing them to your code, then returning them on the stack.</p>
+
+<p>If you <i>do</i> supply <code>PMCode</code>, the rest of PDL::PP assumes it will be a string that defines a Perl function with the function&#39;s name in the <code>pp_bless</code> package (<code>PDL</code> by default). As the example implies, the PP-generated function name will change from <code>&lt;funcname&gt;</code>, to <code>_&lt;funcname&gt;_int</code>. As also shown above, you will need to supply all ndarrays in the exact order specified in the signature: output ndarrays are not optional, and the PP-generated function will not return anything.</p>
+
+<h3 id="PMFunc">PMFunc</h3>
+
+<p>When pp_def generates functions, it typically defines them in the PDL package. Then, in the .pm file that it generates for your module, it typically adds a line that essentially copies that function into your current package&#39;s symbol table with code that looks like this:</p>
+
+<pre><code> *func_name = \&amp;PDL::func_name;</code></pre>
+
+<p>It&#39;s a little bit smarter than that (it knows when to wrap that sort of thing in a BEGIN block, for example, and if you specified something different for pp_bless), but that&#39;s the gist of it. If you don&#39;t care to import the function into your current package&#39;s symbol table, you can specify</p>
+
+<pre><code> PMFunc =&gt; &#39;&#39;,</code></pre>
+
+<p>PMFunc has no other side-effects, so you could use it to insert arbitrary Perl code into your module if you like. However, you should use pp_addpm if you want to add Perl code to your module.</p>
+
+<h3 id="ReadDataFuncName">ReadDataFuncName</h3>
+
+<p>Allows overriding the default function-name, for reading data transformed by this operation. Mainly used internally to set it to <code>NULL</code>, in which case a default affine-orientated function will be called instead.</p>
+
+<h3 id="WriteBackDataFuncName">WriteBackDataFuncName</h3>
+
+<p>As above, but for writing transformed data from a child of this transformation back to the parent when <code>BackCode</code> is supplied.</p>
+
+<h3 id="AffinePriv">AffinePriv</h3>
+
+<p>Flag to indicate this is an affine transformation whose <code>Priv</code> (contents of the <code>pdl_trans</code>) contains data that will need allocating and freeing.</p>
+
+<h3 id="GlobalNew">GlobalNew</h3>
+
+<p>If supplied, will prevent generation of an XS function, and assigns the generated C &quot;run&quot; function into the named slot in the <code>Core</code> struct. This is not used as of 2.058, and instead the relevant C functions are in <i>pdlaffine.c</i>.</p>
+
+<h3 id="P2Child">P2Child</h3>
+
+<p>Forces <code>Pars</code> to be <code>PARENT</code> and <code>CHILD</code>, the function&#39;s <code>GenericTypes</code> to be all of them, no <code>HaveBroadcasting</code> or <code>CallCopy</code>, and turns on <code>DefaultFlow</code> (so do not supply any of those args). Intended for affine transformations with dataflow.</p>
+
+<h3 id="DefaultFlow">DefaultFlow</h3>
+
+<p>If true, sets in the <code>pdl_transvtable</code> (see <a href="./Internals.html">PDL::Internals</a>) the <code>iflags</code> such that the trans will start with dataflow both forwards and backwards.</p>
+
+<h3 id="HaveBroadcasting">HaveBroadcasting</h3>
+
+<p>Default true. If so, generate code implementing broadcasting (see <a href="./Indexing.html">PDL::Indexing</a>).</p>
+
+<h3 id="CallCopy">CallCopy</h3>
+
+<p>For parameters that get created, normally the <code>PDL-&gt;initialize</code> will be used (or on a subclass). If this is true (which is the default for simple functions i.e. 2-arg with 0-dim signatures), instead the first argument&#39;s <code>copy</code> method will be used.</p>
+
+<h3 id="TwoWay">TwoWay</h3>
+
+<p>If true, sets in the <code>pdl_transvtable</code> (see <a href="./Internals.html">PDL::Internals</a>) the <code>iflags</code> such as to inform the trans&#39;s error checks connected to dataflow.</p>
+
+<h3 id="Identity">Identity</h3>
+
+<p>If true, sets <code>RedoDims</code> <code>EquivCPOffsCode</code> <code>HandleBad</code> <code>P2Child</code> <code>TwoWay</code> such that the function is a dataflowing identity transformation.</p>
+
+<h3 id="BackCode">BackCode</h3>
+
+<p>For dataflowing functions, this value (which gets parsed) overrides the operation of that from children ndarrays to parents.</p>
+
+<h3 id="BadBackCode">BadBackCode</h3>
+
+<p>Same but taking account of bad values.</p>
+
+<h3 id="EquivCPOffsCode">EquivCPOffsCode</h3>
+
+<p>If supplied, allows concise control of copying to Child from Parent the data considered Equivalent at each given Offset (hence the name); the <code>Code</code> and <code>BackCode</code> will be generated from this.</p>
+
+<p>Example:</p>
+
+<pre><code>  pp_def(
+    &#39;_clump_int&#39;,
+    OtherPars =&gt; &#39;int n&#39;,
+    P2Child =&gt; 1,
+    RedoDims =&gt; # omitted
+    EquivCPOffsCode =&gt; &#39;
+      PDL_Indx i;
+      for(i=0; i&lt;$PDL(CHILD)-&gt;nvals; i++) $EQUIVCPOFFS(i,i);
+    &#39;,
+  );</code></pre>
+
+<h1 id="Appendix-B:-PP-macros-and-functions">Appendix B: PP macros and functions</h1>
+
+<h2 id="Macros">Macros</h2>
+
+<h3 id="variablename_from_sig">$<i>variablename_from_sig</i>()</h3>
+
+<p>access a pdl (by its name) that was specified in the signature</p>
+
+<h3 id="COMP-x">$COMP(x)</h3>
+
+<p>access a value in the private data structure of this transformation (mainly used to use an argument that is specified in the <code>OtherPars</code> section)</p>
+
+<h3 id="SIZE-n">$SIZE(n)</h3>
+
+<p>replaced at runtime by the actual size of a <i>named</i> dimension (as specified in the <i>signature</i>)</p>
+
+<h3 id="GENERIC">$GENERIC()</h3>
+
+<p>replaced by the C type that is equal to the runtime type of the operation</p>
+
+<h3 id="P-a">$P(a)</h3>
+
+<p>a pointer to the data of the PDL named <code>a</code> in the signature. Useful for interfacing to C functions</p>
+
+<h3 id="PP-a">$PP(a)</h3>
+
+<p>a physical pointer access to pdl <code>a</code>; mainly for internal use</p>
+
+<h3 id="TXYZ-AlternativeX-AlternativeY-AlternativeZ">$TXYZ(AlternativeX,AlternativeY,AlternativeZ)</h3>
+
+<p>expansion alternatives according to runtime type of operation, where XXX is some string that is matched by <code>/[BSULNQFD+]/</code>.</p>
+
+<h3 id="PDL-a">$PDL(a)</h3>
+
+<p>return a pointer to the pdl data structure (pdl *) of ndarray <code>a</code></p>
+
+<h3 id="ISBAD-a">$ISBAD(a())</h3>
+
+<p>returns true if the value stored in <code>a()</code> equals the bad value for this ndarray. Requires <code>HandleBad</code> being set to 1.</p>
+
+<h3 id="ISGOOD-a">$ISGOOD(a())</h3>
+
+<p>returns true if the value stored in <code>a()</code> does not equal the bad value for this ndarray. Requires <code>HandleBad</code> being set to 1.</p>
+
+<h3 id="SETBAD-a">$SETBAD(a())</h3>
+
+<p>Sets <code>a()</code> to equal the bad value for this ndarray. Requires <code>HandleBad</code> being set to 1.</p>
+
+<h3 id="PRIV">$PRIV()</h3>
+
+<p>To access fields in the <code>pdl_trans</code>, eg <code>$PRIV(offs)</code>.</p>
+
+<h3 id="CROAK">$CROAK()</h3>
+
+<p>Returns a <code>pdl_error</code> with the supplied (var-args) message, adding the function name at the start, which will cause a <code>barf</code> within the Perl code. This is (as of 2.064) a change in PDL functions&#39; API, so that callers can handle exceptions in their preferred way, which may not use Perl at all.</p>
+
+<h3 id="EQUIVCPOFFS">$EQUIVCPOFFS()</h3>
+
+<p>Copy from the <code>PARENT</code> parameter at the first given offset, to the <code>CHILD</code> parameter at the second given offset.</p>
+
+<h3 id="EQUIVCPTRUNC">$EQUIVCPTRUNC()</h3>
+
+<p>Similar, but if the expression given as the third parameter is false, instead set the <code>CHILD</code>&#39;s value to 0.</p>
+
+<h3 id="DOCOMPALLOC">$DOCOMPALLOC()</h3>
+
+<p>Allocates memory for any <code>Comp</code> arrays, after their size has been determined, e.g. here after <code>$COMP(whichdims_count)</code> has been set:</p>
+
+<pre><code>    Comp =&gt; &#39;PDL_Indx whichdims[$COMP(whichdims_count)]&#39;,</code></pre>
+
+<h3 id="DOPRIVALLOC">$DOPRIVALLOC()</h3>
+
+<p>As above, except the key is <code>Priv</code>; because it is &quot;Priv&quot;, this is only for entries in the <code>pdl_trans</code> itself, and almost certainly only for operations where <code>AffinePriv</code> is true.</p>
+
+<h3 id="SETNDIMS">$SETNDIMS()</h3>
+
+<p>For affine transformations (specifically, ones which set P2Child to true), set the child&#39;s <code>ndims</code> to the given value and allocate a suitably-sized array of dimension values.</p>
+
+<h3 id="SETDIMS">$SETDIMS()</h3>
+
+<p>Similarly for affine transformations, after the above and then the actual dimension sizes are set, use this to resize the child ndarray to the right size.</p>
+
+<h3 id="SETDELTABROADCASTIDS">$SETDELTABROADCASTIDS()</h3>
+
+<p>Similarly again, this sets the child&#39;s <code>nbroadcastids</code> to the same as the parent&#39;s, allocates space for the <code>broadcastids</code>, then sets the child&#39;s ones to the same as the parent&#39;s plus the given value.</p>
+
+<p>To get a flavour of what <code>broadcastids</code> are for, in the normal way of things the first (0th) one in the parent is the highest dimension-number in it. See <a href="./Indexing.html">PDL::Indexing</a> for more.</p>
+
+<h2 id="functions">functions</h2>
+
+<h3 id="loop-DIMS"><code>loop(DIMS) %{ ... %}</code></h3>
+
+<p>loop over named dimensions; limits are generated automatically by PP</p>
+
+<h3 id="broadcastloop1"><code>broadcastloop %{ ... %}</code></h3>
+
+<p>enclose following code in a broadcast loop</p>
+
+<p>As of 2.075, <code>threadloop</code> is a deprecated alias for this.</p>
+
+<h3 id="types-TYPES"><code>types(TYPES) %{ ... %}</code></h3>
+
+<p>execute following code if type of operation is any of <code>TYPES</code></p>
+
+<h1 id="Appendix-C:-Functions-imported-by-PDL::PP">Appendix C: Functions imported by PDL::PP</h1>
+
+<p>A number of functions are imported when you <code>use PDL::PP</code>. These include functions that control the generated C or XS code, functions that control the generated Perl code, and functions that manipulate the packages and symbol tables into which the code is created.</p>
+
+<h2 id="Generating-C-and-XS-Code">Generating C and XS Code</h2>
+
+<p>PDL::PP&#39;s main purpose is to make it easy for you to wrap the broadcasting engine around your own C code, but you can do some other things, too.</p>
+
+<h3 id="pp_def1">pp_def</h3>
+
+<p>Used to wrap the broadcasting engine around your C code. Virtually all of this document discusses the use of pp_def.</p>
+
+<h3 id="pp_done1">pp_done</h3>
+
+<p>Indicates you are done with PDL::PP and that it should generate its .xs and .pm files based upon the other pp_* functions that you have called. This function takes no arguments.</p>
+
+<h3 id="pp_addxs2">pp_addxs</h3>
+
+<p>This lets you add XS code to your .xs file. This is useful if you want to create Perl-accessible functions that invoke C code but cannot or should not invoke the broadcasting engine. XS is the standard means by which you wrap Perl-accessible C code. You can learn more at <a>perlxs</a>.</p>
+
+<h3 id="pp_add_boot2">pp_add_boot</h3>
+
+<p>This function adds whatever string you pass to the XS BOOT section. The BOOT section is C code that gets called by Perl when your module is loaded and is useful for automatic initialization. You can learn more about XS and the BOOT section at <a>perlxs</a>.</p>
+
+<h3 id="pp_addhdr2">pp_addhdr</h3>
+
+<p>Adds pure-C code to your XS file. XS files are structured such that pure C code must come before XS specifications. This allows you to specify such C code.</p>
+
+<h3 id="pp_boundscheck1">pp_boundscheck</h3>
+
+<p>PDL normally checks the bounds of your accesses before making them. You can turn that on or off at runtime by setting MyPackage::set_boundscheck. This function allows you to remove that runtime flexibility and <b>never</b> do bounds checking. It also returns the current boundschecking status if called without any argumens.</p>
+
+<p>NOTE: I have not found anything about bounds checking in other documentation. That needs to be addressed.</p>
+
+<h2 id="Generating-Perl-Code">Generating Perl Code</h2>
+
+<p>Many functions imported when you use PDL::PP allow you to modify the contents of the generated .pm file. In addition to pp_def and pp_done, the role of these functions is primarily to add code to various parts of your generated .pm file.</p>
+
+<h3 id="pp_addpm2">pp_addpm</h3>
+
+<p>Adds Perl code to the generated .pm file. PDL::PP actually keeps track of three different sections of generated code: the Top, the Middle, and the Bottom. You can add Perl code to the Middle section using the one-argument form, where the argument is the Perl code you want to supply. In the two-argument form, the first argument is an anonymous hash with only one key that specifies where to put the second argument, which is the string that you want to add to the .pm file. The hash is one of these three:</p>
+
+<pre><code> {At =&gt; &#39;Top&#39;}
+ {At =&gt; &#39;Middle&#39;}
+ {At =&gt; &#39;Bot&#39;}</code></pre>
+
+<p>For example:</p>
+
+<pre><code> pp_addpm({At =&gt; &#39;Bot&#39;}, &lt;&lt;POD);
+ 
+ =head1 Some documentation
+ 
+ I know I&#39;m typing this in the middle of my file, but it&#39;ll go at
+ the bottom.
+ 
+ =cut
+ 
+ POD</code></pre>
+
+<p>Warning: If, in the middle of your .pd file, you put documentation meant for the bottom of your pod, you will thoroughly confuse CPAN. On the other hand, if in the middle of your .pd file, you add some Perl code destined for the bottom or top of your .pm file, you only have yourself to confuse. :-)</p>
+
+<h3 id="pp_beginwrap1">pp_beginwrap</h3>
+
+<p>Adds BEGIN-block wrapping. Certain declarations can be wrapped in BEGIN blocks, though the default behavior is to have no such wrapping.</p>
+
+<h3 id="pp_addbegin1">pp_addbegin</h3>
+
+<p>Sets code to be added to the top of your .pm file, even above code that you specify with <code>pp_addpm({At =&gt; &#39;Top&#39;}, ...)</code>. Unlike pp_addpm, calling this overwrites whatever was there before. Generally, you probably shouldn&#39;t use it.</p>
+
+<h2 id="Tracking-Line-Numbers">Tracking Line Numbers</h2>
+
+<p>When you get compile errors, either from your C-like code or your Perl code, it can help to make those errors back to the line numbers in the source file at which the error occurred.</p>
+
+<h3 id="pp_line_numbers1">pp_line_numbers</h3>
+
+<p>Takes a line number and a (usually long) string of code. The line number should indicate the line at which the quote begins. This is usually Perl&#39;s <code>__LINE__</code> literal, unless you are using heredocs, in which case it is <code>__LINE__ + 1</code>. The returned string has #line directives interspersed to help the compiler report errors on the proper line.</p>
+
+<h2 id="Modifying-the-Symbol-Table-and-Export-Behavior">Modifying the Symbol Table and Export Behavior</h2>
+
+<p>PDL::PP usually exports all functions generated using pp_def, and usually installs them into the PDL symbol table. However, you can modify this behavior with these functions.</p>
+
+<h3 id="pp_bless2">pp_bless</h3>
+
+<p>Sets the package (symbol table) to which the XS code is added. The default is PDL, which is generally what you want. If you use the default blessing and you create a function myfunc, then you can do the following:</p>
+
+<pre><code> $ndarray-&gt;myfunc(&lt;args&gt;);
+ PDL::myfunc($ndarray, &lt;args&gt;);</code></pre>
+
+<p>On the other hand, if you bless your functions into another package, you cannot invoke them as PDL methods, and must invoke them as:</p>
+
+<pre><code> MyPackage::myfunc($ndarray, &lt;args&gt;);</code></pre>
+
+<p>Of course, you could always use the PMFunc key to add your function to the PDL symbol table, but why do that?</p>
+
+<h3 id="pp_add_isa2">pp_add_isa</h3>
+
+<p>Adds to the list of modules from which your <b>module</b> inherits. The default list is</p>
+
+<pre><code> qw(PDL::Exporter DynaLoader)</code></pre>
+
+<h3 id="pp_core_importlist">pp_core_importlist</h3>
+
+<p>At the top of your generated .pm file is a line that looks like this:</p>
+
+<pre><code> use PDL::Core;</code></pre>
+
+<p>You can modify that by specifying a string to pp_core_importlist. For example,</p>
+
+<pre><code> pp_core_importlist(&#39;::Blarg&#39;);</code></pre>
+
+<p>will result in</p>
+
+<pre><code> use PDL::Core::Blarg;</code></pre>
+
+<p>You can use this, for example, to add a list of symbols to import from PDL::Core. For example:</p>
+
+<pre><code> pp_core_importlist(&quot; &#39;:Internal&#39;&quot;);</code></pre>
+
+<p>will lead to the following use statement:</p>
+
+<pre><code> use PDL::Core &#39;:Internal&#39;;</code></pre>
+
+<h3 id="pp_setversion1">pp_setversion</h3>
+
+<p>Sets your module&#39;s version. The version must be consistent between the .xs and the .pm file, and is used to ensure that your Perl&#39;s libraries do not suffer from version skew.</p>
+
+<h3 id="pp_add_exported2">pp_add_exported</h3>
+
+<p>Adds to the export list whatever names you give it. Functions created using pp_def are automatically added to the list. This function is useful if you define any Perl functions using pp_addpm or pp_addxs that you want exported as well.</p>
+
+<h3 id="pp_export_nothing2">pp_export_nothing</h3>
+
+<p>This resets the list of exported symbols to nothing. This is probably better called <code>pp_export_clear</code>, since you can add exported symbols after calling <code>pp_export_nothing</code>. When called just before calling pp_done, this ensures that your module does not export anything, for example, if you only want programmers to use your functions as methods.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>For the concepts of broadcasting and slicing check <a href="./Indexing.html">PDL::Indexing</a>.</p>
+
+<p><a href="./Internals.html">PDL::Internals</a></p>
+
+<p><a href="./BadValues.html">PDL::BadValues</a> for information on bad values</p>
+
+<p><a>perlxs</a>, <a>perlxstut</a></p>
+
+<p><a href="https://arxiv.org/abs/1702.07753">Practical Magick with C, PDL, and PDL::PP -- a guide to compiled add-ons for PDL</a></p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Although PDL::PP is quite flexible and thoroughly used, there are surely bugs. First amongst them: this documentation needs a thorough revision.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright(C) 1997 Tuomas J. Lukka (lukka@fas.harvard.edu), Karl Glaazebrook (kgb@aaocbn1.aao.GOV.AU) and Christian Soeller (c.soeller@auckland.ac.nz). All rights reserved. Documentation updates Copyright(C) 2011 David Mertens (dcmertens.perl@gmail.com). This documentation is licensed under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

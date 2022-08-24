@@ -1,0 +1,139 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::IO::IDL -- I/O of IDL Save Files</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#ridl">ridl</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-LICENSE-NO-WARRANTY">AUTHOR, LICENSE, NO WARRANTY</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::IO::IDL -- I/O of IDL Save Files</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>PDL::IO::IDL allows you to read and write IDL(tm) data files.</p>
+
+<p>Currently, only reading is implemented. Scalars, arrays, and structures are all supported. Heap pointers, compiled code, and objects are not supported. Of those three, only heap pointers are likely to be supported in the future.</p>
+
+<p>This code was not developed by RSI, makers of IDL.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>These things seem to work:</p>
+
+<dl>
+
+<dt id="BYTE-SHORT-LONG-FLOAT-and-DOUBLE-numeric-types-and-arrays">BYTE, SHORT, LONG, FLOAT, and DOUBLE numeric types and arrays</dt>
+<dd>
+
+<p>All of these types seem to work fine. The corresponding variable is stored as a PDL in the hash element with the same name as the original variable in the file. Arrays are byteswapped as needed and are read in so that the dim list has the same indexing order within PDL as it did within IDL.</p>
+
+</dd>
+<dt id="STRINGs-and-arrays-of-STRINGs">STRINGs and arrays of STRINGs</dt>
+<dd>
+
+<p>String types are stored as Perl list refs, in the hash element with the same name as the original variable in the file.</p>
+
+</dd>
+<dt id="Structures">Structures</dt>
+<dd>
+
+<p>Structures are stored as hash refs. The elements of the hash may be accessed as values within the hash.</p>
+
+</dd>
+<dt id="Common-blocks">Common blocks</dt>
+<dd>
+
+<p>Variables that are notated as being in a common block are read as normal. Common-block names are collected in the special hash value &#39;+common&#39;, which contains a hash each keyword of which is the name of a common block and each value of which is an array of variable names.</p>
+
+</dd>
+</dl>
+
+<p>These things are known to be not working and may one day be fixed:</p>
+
+<dl>
+
+<dt id="COMPLEX-numbers">COMPLEX numbers</dt>
+<dd>
+
+<p>These could be implemented as 2-arrays or as PDL::Complex values, but aren&#39;t yet.</p>
+
+</dd>
+<dt id="PTR-types">PTR types</dt>
+<dd>
+
+<p>These could be implemented as perl refs but currently aren&#39;t.</p>
+
+</dd>
+<dt id="writing">writing</dt>
+<dd>
+
+<p>Maybe one day -- but why bother writing a broken file format? NetCDF is better.</p>
+
+</dd>
+</dl>
+
+<p>These things are known to be not working and will probably never be fixed</p>
+
+<dl>
+
+<dt id="Compiled-code">Compiled code</dt>
+<dd>
+
+<p>Decompiling IDL code is a violation of the IDL end-user license. To implement this, someone who does not hold an IDL license would have to reverse-engineer a set of .SAV files sent to that person by someone else with an IDL license.</p>
+
+</dd>
+<dt id="Objects">Objects</dt>
+<dd>
+
+<p>IDL objects contain compiled code.</p>
+
+</dd>
+</dl>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="ridl">ridl</h2>
+
+<p>$x = ridl(&quot;foo.sav&quot;);</p>
+
+<p>Read an IDL save file from a file.</p>
+
+<p>Upon successful completion, $x is a hash ref containing all of the variables that are present in the save file, indexed by original variable name.</p>
+
+<p>IDL identifiers are case insensitive; they&#39;re all converted to upper-case in the hash that gets returned. This may be adjustable at a future date. Furthermore, because IDL identifiers can&#39;t contain special characters, some fields that start with &#39;+&#39; are used to store metadata about the file itself.</p>
+
+<p>Numeric arrays are stored as PDLs, structures are stored as hashes, and string and structure arrays are stored as perl lists. Named structure types don&#39;t exist in perl in the same way that they do in IDL, so named structures are described in the &#39;structs&#39; field of the global metadata. Anonymous structures are treated as simple hashes. Named structures are also simple hashes, but they also contain a field &#39;+name&#39; that refers to the name of the structure type.</p>
+
+<h1 id="AUTHOR-LICENSE-NO-WARRANTY">AUTHOR, LICENSE, NO WARRANTY</h1>
+
+<p>THIS CODE IS PROVIDED WITH NO WARRANTY and may be distributed and/or modified under the same terms as PDL itself.</p>
+
+<p>This code is based on the analysis of the IDL save file format published by Craig Markwardt in 2002.</p>
+
+<p>IDL is a trademark of Research Systems Incorporated (RSI). The PDL development team, and authors of this code, are not affiliated with RSI.</p>
+
+
+</body>
+
+</html>
+
+

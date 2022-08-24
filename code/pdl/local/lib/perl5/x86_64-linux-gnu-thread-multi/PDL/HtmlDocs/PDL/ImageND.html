@@ -1,0 +1,184 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::ImageND - useful image processing in N dimensions</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#convolve">convolve</a></li>
+      <li><a href="#ninterpol">ninterpol()</a></li>
+      <li><a href="#rebin">rebin</a></li>
+      <li><a href="#circ_mean_p">circ_mean_p</a></li>
+      <li><a href="#circ_mean">circ_mean</a></li>
+      <li><a href="#kernctr">kernctr</a></li>
+      <li><a href="#convolveND">convolveND</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::ImageND - useful image processing in N dimensions</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>These routines act on PDLs as N-dimensional objects, not as broadcasted sets of 0-D or 1-D objects. The file is sort of a catch-all for broadly functional routines, most of which could legitimately be filed elsewhere (and probably will, one day).</p>
+
+<p>ImageND is not a part of the PDL core (v2.4) and hence must be explicitly loaded.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use PDL::ImageND;
+
+ $y = $x-&gt;convolveND($kernel,{bound=&gt;&#39;periodic&#39;});
+ $y = $x-&gt;rebin(50,30,10);
+ </code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="convolve">convolve</h2>
+
+<pre><code>  Signature: (a(m); b(n); indx adims(p); indx bdims(q); [o]c(m))</code></pre>
+
+<p>N-dimensional convolution (Deprecated; use convolveND)</p>
+
+<pre><code>  $new = convolve $x, $kernel</code></pre>
+
+<p>Convolve an array with a kernel, both of which are N-dimensional. This routine does direct convolution (by copying) but uses quasi-periodic boundary conditions: each dim &quot;wraps around&quot; to the next higher row in the next dim.</p>
+
+<p>This routine is kept for backwards compatibility with earlier scripts; for most purposes you want <a href="./ImageND.html#convolveND">convolveND</a> instead: it runs faster and handles a variety of boundary conditions.</p>
+
+<p>convolve does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="ninterpol">ninterpol()</h2>
+
+<p>N-dimensional interpolation routine</p>
+
+<pre><code> Signature: ninterpol(point(),data(n),[o]value())</code></pre>
+
+<pre><code>      $value = ninterpol($point, $data);</code></pre>
+
+<p><code>ninterpol</code> uses <code>interpol</code> to find a linearly interpolated value in N dimensions, assuming the data is spread on a uniform grid. To use an arbitrary grid distribution, need to find the grid-space point from the indexing scheme, then call <code>ninterpol</code> -- this is far from trivial (and ill-defined in general).</p>
+
+<p>See also <a href="./Primitive.html#interpND">interpND</a>, which includes boundary conditions and allows you to switch the method of interpolation, but which runs somewhat slower.</p>
+
+<h2 id="rebin">rebin</h2>
+
+<pre><code>  Signature: (a(m); [o]b(n); int ns =&gt; n)</code></pre>
+
+<p>N-dimensional rebinning algorithm</p>
+
+<pre><code>  $new = rebin $x, $dim1, $dim2,..;.
+  $new = rebin $x, $template;
+  $new = rebin $x, $template, {Norm =&gt; 1};</code></pre>
+
+<p>Rebin an N-dimensional array to newly specified dimensions. Specifying `Norm&#39; keeps the sum constant, otherwise the intensities are kept constant. If more template dimensions are given than for the input pdl, these dimensions are created; if less, the final dimensions are maintained as they were.</p>
+
+<p>So if <code>$x</code> is a 10 x 10 pdl, then <code>rebin($x,15)</code> is a 15 x 10 pdl, while <code>rebin($x,15,16,17)</code> is a 15 x 16 x 17 pdl (where the values along the final dimension are all identical).</p>
+
+<p>Expansion is performed by sampling; reduction is performed by averaging. If you want different behavior, use <a href="./Transform.html#map">PDL::Transform::map</a> instead. PDL::Transform::map runs slower but is more flexible.</p>
+
+<p>rebin does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h2 id="circ_mean_p">circ_mean_p</h2>
+
+<p>Calculates the circular mean of an n-dim image and returns the projection. Optionally takes the center to be used.</p>
+
+<pre><code>   $cmean=circ_mean_p($im);
+   $cmean=circ_mean_p($im,{Center =&gt; [10,10]});</code></pre>
+
+<h2 id="circ_mean">circ_mean</h2>
+
+<p>Smooths an image by applying circular mean. Optionally takes the center to be used.</p>
+
+<pre><code>   circ_mean($im);
+   circ_mean($im,{Center =&gt; [10,10]});</code></pre>
+
+<h2 id="kernctr">kernctr</h2>
+
+<p>`centre&#39; a kernel (auxiliary routine to fftconvolve)</p>
+
+<pre><code>        $kernel = kernctr($image,$smallk);
+        fftconvolve($image,$kernel);</code></pre>
+
+<p>kernctr centres a small kernel to emulate the behaviour of the direct convolution routines.</p>
+
+<h2 id="convolveND">convolveND</h2>
+
+<pre><code>  Signature: (k0(); SV *k; SV *aa; SV *a)</code></pre>
+
+<p>Speed-optimized convolution with selectable boundary conditions</p>
+
+<pre><code>  $new = convolveND($x, $kernel, [ {options} ]);</code></pre>
+
+<p>Conolve an array with a kernel, both of which are N-dimensional.</p>
+
+<p>If the kernel has fewer dimensions than the array, then the extra array dimensions are broadcasted over. There are options that control the boundary conditions and method used.</p>
+
+<p>The kernel&#39;s origin is taken to be at the kernel&#39;s center. If your kernel has a dimension of even order then the origin&#39;s coordinates get rounded up to the next higher pixel (e.g. (1,2) for a 3x4 kernel). This mimics the behavior of the earlier <a href="#convolve">&quot;convolve&quot;</a> and <a href="./FFT.html#fftconvolve">fftconvolve</a> routines, so convolveND is a drop-in replacement for them.</p>
+
+<p>The kernel may be any size compared to the image, in any dimension.</p>
+
+<p>The kernel and the array are not quite interchangeable (as in mathematical convolution): the code is inplace-aware only for the array itself, and the only allowed boundary condition on the kernel is truncation.</p>
+
+<p>convolveND is inplace-aware: say <code>convolveND(inplace $x ,$k)</code> to modify a variable in-place. You don&#39;t reduce the working memory that way -- only the final memory.</p>
+
+<p>OPTIONS</p>
+
+<p>Options are parsed by PDL::Options, so unique abbreviations are accepted.</p>
+
+<dl>
+
+<dt id="boundary-default:-truncate">boundary (default: &#39;truncate&#39;)</dt>
+<dd>
+
+<p>The boundary condition on the array, which affects any pixel closer to the edge than the half-width of the kernel.</p>
+
+<p>The boundary conditions are the same as those accepted by <a href="./Slices.html#range">range</a>, because this option is passed directly into <a href="./Slices.html#range">range</a>. Useful options are &#39;truncate&#39; (the default), &#39;extend&#39;, and &#39;periodic&#39;. You can select different boundary conditions for different axes -- see <a href="./Slices.html#range">range</a> for more detail.</p>
+
+<p>The (default) truncate option marks all the near-boundary pixels as BAD if you have bad values compiled into your PDL and the array&#39;s badflag is set.</p>
+
+</dd>
+<dt id="method-default:-auto">method (default: &#39;auto&#39;)</dt>
+<dd>
+
+<p>The method to use for the convolution. Acceptable alternatives are &#39;direct&#39;, &#39;fft&#39;, or &#39;auto&#39;. The direct method is an explicit copy-and-multiply operation; the fft method takes the Fourier transform of the input and output kernels. The two methods give the same answer to within double-precision numerical roundoff. The fft method is much faster for large kernels; the direct method is faster for tiny kernels. The tradeoff occurs when the array has about 400x more pixels than the kernel.</p>
+
+<p>The default method is &#39;auto&#39;, which chooses direct or fft convolution based on the size of the input arrays.</p>
+
+</dd>
+</dl>
+
+<p>NOTES</p>
+
+<p>At the moment there&#39;s no way to broadcast over kernels. That could/should be fixed.</p>
+
+<p>The broadcasting over input is cheesy and should probably be fixed: currently the kernel just gets dummy dimensions added to it to match the input dims. That does the right thing tersely but probably runs slower than a dedicated broadcastloop.</p>
+
+<p>The direct copying code uses PP primarily for the generic typing: it includes its own broadcastloops.</p>
+
+<p>convolveND does not process bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Copyright (C) Karl Glazebrook and Craig DeForest, 1997, 2003 All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+
+</body>
+
+</html>
+
+

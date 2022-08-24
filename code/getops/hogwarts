@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use Getopt::Long;
+use experimental 'signatures';
+use Data::Dumper;
+use Switch;
+
+=pod
+
+=head1 NAME 
+
+  say_hello
+
+=head1 SYNOPSIS
+
+  A utility that takes takes as argument names of people as input arguments
+  and says hello. There are also flags that you can set to print to a 
+  file.
+
+=head1 USAGE
+
+ hogwarts [OPTION] [Student First Name]
+
+ -s, --spell   favorite spell. 
+ -h, --house   the house of the school
+ -e, --enemy   The person who the named character will attac
+
+=head1 DESCRIPTION
+
+  This utility is limited to a few characters from the Harry Potter universe.
+
+  Harry who is in Gryffindor House and likes to use Expelliarmus. 
+  Hermione who is in Gryffindor House and likes Wingardium Leviosa. 
+  Voldemort who is in Sytherin House and likes Avada Kedavra. 
+
+=cut
+
+if (!$ARGV[0]) {
+  die "Error! USAGE: hogwarts [OPTION] [Student First Name]\n";
+}
+
+my $spell = "";
+my $house = "";
+my $enemy = "";
+
+GetOptions("spell" => \$spell,
+           "house" => \$house,
+           "enemy=s" => \$enemy);
+
+my $name = $ARGV[0];
+
+switch($name) {
+  case "Harry" {
+    $spell = "Expelliarmus";
+    $house = "Gryffindor";
+  }
+  case "Hermione" {
+    $spell = "Wingardium Leviosa";
+    $house = "Gryffindor";
+  }
+  case "Voldemort" {
+    $spell = "Avada Kedavra";
+    $house = "Slytherin";
+  }
+}
+
+if 
+print "$name from $house house attacked $enemy with the $spell spell\n";

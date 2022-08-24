@@ -1,0 +1,12 @@
+# carton snapshot format: version 1.0
+DISTRIBUTIONS
+  Switch-2.17
+    pathname: C/CH/CHORNY/Switch-2.17.tar.gz
+    provides:
+      Switch 2.17
+    requirements:
+      ExtUtils::MakeMaker 0
+      Filter::Util::Call 0
+      Text::Balanced 2
+      if 0
+      perl 5.005

@@ -1,0 +1,374 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Options - simplifies option passing by hash in PerlDL</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#Utility-functions">Utility functions</a>
+    <ul>
+      <li><a href="#ifhref">ifhref</a></li>
+    </ul>
+  </li>
+  <li><a href="#NON-OO-INTERFACE">NON-OO INTERFACE</a>
+    <ul>
+      <li><a href="#Default-Synonyms">Default Synonyms</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#EXAMPLE">EXAMPLE</a></li>
+  <li><a href="#Non-OO">Non-OO</a></li>
+  <li><a href="#Object-oriented">Object oriented</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Options - simplifies option passing by hash in PerlDL</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use PDL::Options;
+
+  %hash = parse( \%defaults, \%user_options);
+
+  use PDL::Options ();
+
+  $opt = new PDL::Options;
+  $opt = new PDL::Options ( \%defaults );
+
+  $opt-&gt;defaults ( \%defaults );
+  $opt-&gt;synonyms ( { &#39;COLOR&#39; =&gt; &#39;COLOUR&#39; } );
+
+  $hashref = $opt-&gt;defaults;
+
+  $opt-&gt;options ( \%user_options );
+
+  $hashref = $opt-&gt;options;
+
+  $opt-&gt;incremental(1);
+  $opt-&gt;full_options(0);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Object to simplify option passing for PerlDL subroutines. Allows you to merge a user defined options with defaults. A simplified (non-OO) interface is provided.</p>
+
+<h1 id="Utility-functions">Utility functions</h1>
+
+<h2 id="ifhref">ifhref</h2>
+
+<pre><code>  parse({Ext =&gt; &#39;TIF&#39;, ifhref($opt)});</code></pre>
+
+<p>just return the argument if it is a hashref otherwise return an empty hashref. Useful in conjunction with parse to return just the default values if argument is not a hash ref</p>
+
+<h1 id="NON-OO-INTERFACE">NON-OO INTERFACE</h1>
+
+<p>A simplified non-object oriented interface is provided. These routines are exported into the callers namespace by default.</p>
+
+<dl>
+
+<dt id="parse-defaults-user_options">parse( \%defaults, \%user_options)</dt>
+<dd>
+
+<p>This will parse user options by using the defaults. The following settings are used for parsing: The options are case-sensitive, a default synonym table is consulted (see <a href="#Default-Synonyms">&quot;Default Synonyms&quot;</a>), minimum-matching is turned on, and translation of values is not performed.</p>
+
+<p>A hash (not hash reference) containing the processed options is returned.</p>
+
+<pre><code>  %options = parse( { LINE =&gt; 1, COLOUR =&gt; &#39;red&#39;}, { COLOR =&gt; &#39;blue&#39;});</code></pre>
+
+</dd>
+<dt id="iparse-defaults-user_options">iparse( \%defaults, \%user_options)</dt>
+<dd>
+
+<p>Same as <code>parse</code> but matching is case insensitive</p>
+
+</dd>
+</dl>
+
+<h2 id="Default-Synonyms">Default Synonyms</h2>
+
+<p>The following default synonyms are available in the non-OO interface:</p>
+
+<pre><code>  COLOR  =&gt; COLOUR
+  COLOUR =&gt; COLOR
+  CENTER =&gt; CENTRE
+  CENTRE =&gt; CENTER</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>The following methods are available to PDL::Options objects.</p>
+
+<dl>
+
+<dt id="new">new()</dt>
+<dd>
+
+<p>Constructor. Creates the object. With an optional argument can also set the default options.</p>
+
+</dd>
+<dt id="extend-options">extend (\%options)</dt>
+<dd>
+
+<p>This will copy the existing options object and extend it with the requested extra options.</p>
+
+</dd>
+<dt id="defaults-defaults">defaults( \%defaults )</dt>
+<dd>
+
+<p>Method to set or return the current defaults. The argument should be a reference to a hash. The hash reference is returned if no arguments are supplied.</p>
+
+<p>The current values are reset whenever the defaults are changed.</p>
+
+</dd>
+<dt id="add_synonym-synonyms">add_synonym (\%synonyms)</dt>
+<dd>
+
+<p>Method to add another synonym to an option set The argument should be a reference to a hash.</p>
+
+</dd>
+<dt id="add_translation-translation">add_translation (\%translation)</dt>
+<dd>
+
+<p>Method to add another translation rule to an option set. The argument should be a reference to a hash.</p>
+
+</dd>
+<dt id="synonyms-synonyms">synonyms( \%synonyms )</dt>
+<dd>
+
+<p>Method to set or return the current synonyms. The argument should be a reference to a hash. The hash reference is returned if no arguments are supplied.</p>
+
+<p>This allows you to provide alternate keywords (such as allowing &#39;COLOR&#39; as an option when your defaults uses &#39;COLOUR&#39;).</p>
+
+</dd>
+<dt id="current">current</dt>
+<dd>
+
+<p>Returns the current state of the options. This is returned as a hash reference (although it is not a reference to the actual hash stored in the object). If full_options() is true the full options hash is returned, if full_options() is false only the modified options are returned (as set by the last call to options()).</p>
+
+</dd>
+<dt id="clear_current">clear_current</dt>
+<dd>
+
+<p>This routine clears the &#39;state&#39; of the <code>PDL::Options</code> object so that the next call to current will return an empty list</p>
+
+</dd>
+<dt id="translation">translation</dt>
+<dd>
+
+<p>Provide translation of options to more specific values that are recognised by the program. This allows, for example, the automatic translation of the string &#39;red&#39; to &#39;#ff0000&#39;.</p>
+
+<p>This method can be used to setup the dictionary and is hash reference with the following structure:</p>
+
+<pre><code>    OPTIONA =&gt; {
+                &#39;string1&#39; =&gt; decode1,
+                &#39;string2&#39; =&gt; decode2
+                },
+    OPTIONB =&gt; {
+                &#39;s4&#39; =&gt; decodeb1,
+               }
+    etc....</code></pre>
+
+<p>Where OPTION? corresponds to the top level option name as stored in the defaults array (eg LINECOLOR) and the anonymous hashes provide the translation from string1 (&#39;red&#39;) to decode1 (&#39;#ff0000&#39;).</p>
+
+<p>An options string will be translated automatically during the main options() processing if autotrans() is set to true. Else translation can be initiated by the user using the translate() method.</p>
+
+</dd>
+<dt id="incremental">incremental</dt>
+<dd>
+
+<p>Specifies whether the user defined options will be treated as additions to the current state of the object (1) or modifications to the default values only (0).</p>
+
+<p>Can be used to set or return this value. Default is false.</p>
+
+</dd>
+<dt id="full_options">full_options</dt>
+<dd>
+
+<p>Governs whether a complete set of options is returned (ie defaults + expanded user options), true, or if just the expanded user options are returned, false (ie the values specified by the user).</p>
+
+<p>This can be useful when you are only interested in the changes to the options rather than knowing the full state. (For example, if defaults contains keys for COLOUR and LINESTYLE and the user supplied a key of COL, you may simply be interested in the modification to COLOUR rather than the state of LINESTYLE and COLOUR.)</p>
+
+<p>Default is true.</p>
+
+</dd>
+<dt id="casesens">casesens</dt>
+<dd>
+
+<p>Specifies whether the user defined options will be processed independent of case (0) or not (1). Default is to be case insensitive.</p>
+
+<p>Can be used to set or return this value.</p>
+
+</dd>
+<dt id="minmatch">minmatch</dt>
+<dd>
+
+<p>Specifies whether the user defined options will be minimum matched with the defaults (1) or whether the user defined options should match the default keys exactly. Defaults is true (1).</p>
+
+<p>If a particular key matches exactly (within the constraints imposed bby case sensitivity) this key will always be taken as correct even if others are similar. For example COL would match COL and COLOUR but this implementation will always return COL in this case (note that for CO it will return both COL and COLOUR and pick one at random.</p>
+
+<p>Can be used to set or return this value.</p>
+
+</dd>
+<dt id="autotrans">autotrans</dt>
+<dd>
+
+<p>Specifies whether the user defined options will be processed via the translate() method immediately following the main options parsing. Default is to autotranslate (1).</p>
+
+<p>Can be used to set or return this value.</p>
+
+</dd>
+<dt id="casesenstrans">casesenstrans</dt>
+<dd>
+
+<p>Specifies whether the keys in the options hash will be matched insensitive of case (0) during translation() or not (1). Default is to be case insensitive.</p>
+
+<p>Can be used to set or return this value.</p>
+
+</dd>
+<dt id="minmatchtrans">minmatchtrans</dt>
+<dd>
+
+<p>Specifies whether the keys in the options hash will be minimum matched during translation(). Default is false (0).</p>
+
+<p>If a particular key matches exactly (within the constraints imposed bby case sensitivity) this key will always be taken as correct even if others are similar. For example COL would match COL and COLOUR but this implementation will always return COL in this case (note that for CO it will return both COL and COLOUR and pick one at random.</p>
+
+<p>Can be used to set or return this value.</p>
+
+</dd>
+<dt id="warnonmissing">warnonmissing</dt>
+<dd>
+
+<p>Turn on or off the warning message printed when an options is not in the options hash. This can be convenient when a user passes a set of options that has to be parsed by several different option objects down the line.</p>
+
+</dd>
+<dt id="debug">debug</dt>
+<dd>
+
+<p>Turn on or off debug messages. Default is off (0). Can be used to set or return this value.</p>
+
+</dd>
+<dt id="options">options</dt>
+<dd>
+
+<p>Takes a set of user-defined options (as a reference to a hash) and merges them with the current state (or the defaults; depends on the state of incremental()).</p>
+
+<p>The user-supplied keys will be compared with the defaults. Case sensitivity and minimum matching can be configured using the mimatch() and casesens() methods.</p>
+
+<p>A warning is raised if keys present in the user options are not present in the defaults unless warnonmissing is set.</p>
+
+<p>A reference to a hash containing the merged options is returned.</p>
+
+<pre><code>  $merged = $opt-&gt;options( { COL =&gt; &#39;red&#39;, Width =&gt; 1});</code></pre>
+
+<p>The state of the object can be retrieved after this by using the current() method or by using the options() method with no arguments. If full_options() is true, all options are returned (options plus overrides), if full_options() is false then only the modified options are returned.</p>
+
+<p>Synonyms are supported if they have been configured via the synonyms() method.</p>
+
+</dd>
+<dt id="translate">translate</dt>
+<dd>
+
+<p>Translate the current option values (eg those set via the options() method) using the provided translation().</p>
+
+<p>This method updates the current state of the object and returns the updated options hash as a reference.</p>
+
+<pre><code>    $ref = $opt-&gt;translate;</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="EXAMPLE">EXAMPLE</h1>
+
+<p>Two examples are shown. The first uses the simplified interface and the second uses the object-oriented interface.</p>
+
+<h1 id="Non-OO">Non-OO</h1>
+
+<pre><code>   use PDL::Options (&#39;:Func&#39;);
+
+   %options = parse( {
+                   LINE =&gt; 1,
+                   COLOUR =&gt; &#39;red&#39;,
+                  },
+                  {
+                   COLOR =&gt; &#39;blue&#39;
+                  }
+                );</code></pre>
+
+<p>This will return a hash containing</p>
+
+<pre><code>    %options = (
+                 LINE =&gt; 1,
+                 COLOUR =&gt; &#39;blue&#39;
+               )</code></pre>
+
+<h1 id="Object-oriented">Object oriented</h1>
+
+<p>The following example will try to show the main points:</p>
+
+<pre><code>   use PDL::Options ();
+
+   # Create new object and supply defaults
+   $opt = new PDL::Options(   { Colour =&gt; &#39;red&#39;,
+                                LineStyle =&gt; &#39;dashed&#39;,
+                                LineWidth =&gt; 1
+                              }
+                           );
+
+   # Create synonyms
+   $opt-&gt;synonyms( { Color =&gt; &#39;Colour&#39; } );
+
+   # Create translation dictionary
+   $opt-&gt;translation( { Colour =&gt; {
+                         &#39;blue&#39; =&gt; &#39;#0000ff&#39;,
+                         &#39;red&#39;  =&gt; &#39;#ff0000&#39;,
+                         &#39;green&#39;=&gt; &#39;#00ff00&#39;
+                                },
+                        LineStyle =&gt; {
+                         &#39;solid&#39; =&gt; 1,
+                         &#39;dashed&#39; =&gt; 2,
+                         &#39;dotted&#39; =&gt; 3
+                         }
+                      }
+                    );
+
+   # Generate and parse test hash
+   $options = $opt-&gt;options( { Color =&gt; &#39;green&#39;,
+                               lines =&gt; &#39;solid&#39;,
+                              }
+                           );</code></pre>
+
+<p>When this code is run, $options will be the reference to a hash containing the following:</p>
+
+<pre><code>   Colour =&gt; &#39;#00ff00&#39;,
+   LineStyle =&gt; 1,
+   LineWidth =&gt; 1</code></pre>
+
+<p>If full_options() was set to false (0), $options would be a reference to a hash containing:</p>
+
+<pre><code>   Colour =&gt; &#39;#00ff00&#39;,
+   LineStyle =&gt; 1</code></pre>
+
+<p>Minimum matching and case insensitivity can be configured for both the initial parsing and for the subsequent translating. The translation can be turned off if not desired.</p>
+
+<p>Currently synonyms are not available for the translation although this could be added quite simply.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) Tim Jenness 1998 (t.jenness@jach.hawaii.edu). All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+
+</body>
+
+</html>
+
+

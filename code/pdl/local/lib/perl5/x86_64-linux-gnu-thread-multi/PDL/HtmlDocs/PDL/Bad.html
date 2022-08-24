@@ -1,0 +1,410 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Bad - PDL always processes bad values</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#VARIABLES">VARIABLES</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#badflag">badflag</a></li>
+      <li><a href="#badvalue">badvalue</a></li>
+      <li><a href="#orig_badvalue">orig_badvalue</a></li>
+      <li><a href="#check_badflag">check_badflag</a></li>
+      <li><a href="#isbad">isbad</a></li>
+      <li><a href="#isgood">isgood</a></li>
+      <li><a href="#nbadover">nbadover</a></li>
+      <li><a href="#ngoodover">ngoodover</a></li>
+      <li><a href="#nbad">nbad</a></li>
+      <li><a href="#ngood">ngood</a></li>
+      <li><a href="#setbadat">setbadat</a></li>
+      <li><a href="#setbadif">setbadif</a></li>
+      <li><a href="#setvaltobad">setvaltobad</a></li>
+      <li><a href="#setnantobad">setnantobad</a></li>
+      <li><a href="#setinftobad">setinftobad</a></li>
+      <li><a href="#setnonfinitetobad">setnonfinitetobad</a></li>
+      <li><a href="#setbadtonan">setbadtonan</a></li>
+      <li><a href="#setbadtoval">setbadtoval</a></li>
+      <li><a href="#badmask">badmask</a></li>
+      <li><a href="#copybad">copybad</a></li>
+      <li><a href="#locf">locf</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Bad - PDL always processes bad values</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is loaded when you do <code>use PDL</code>, <code>Use PDL::Lite</code> or <code>PDL::LiteF</code>.</p>
+
+<p>Implementation details are given in <a href="./BadValues.html">PDL::BadValues</a>.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use PDL::Bad;
+ print &quot;\nBad value per PDL support in PDL is turned &quot; .
+     $PDL::Bad::PerPdl ? &quot;on&quot; : &quot;off&quot; . &quot;.\n&quot;;</code></pre>
+
+<h1 id="VARIABLES">VARIABLES</h1>
+
+<dl>
+
+<dt id="PDL::Bad::UseNaN">$PDL::Bad::UseNaN</dt>
+<dd>
+
+<p>Set to 0 as of PDL 2.040, as no longer available, though NaN can be used as a badvalue for a given PDL object.</p>
+
+</dd>
+<dt id="PDL::Bad::PerPdl">$PDL::Bad::PerPdl</dt>
+<dd>
+
+<p>Set to 1 as of PDL 2.040 as always available.</p>
+
+</dd>
+<dt id="PDL::Bad::Status">$PDL::Bad::Status</dt>
+<dd>
+
+<p>Set to 1 as of PDL 2.035 as always available.</p>
+
+</dd>
+</dl>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="badflag">badflag</h2>
+
+<p>getter/setter for the bad data flag</p>
+
+<pre><code>  if ( $x-&gt;badflag() ) {
+    print &quot;Data may contain bad values.\n&quot;;
+  }
+  $x-&gt;badflag(1);      # set bad data flag
+  $x-&gt;badflag(0);      # unset bad data flag</code></pre>
+
+<p>When called as a setter, this modifies the ndarray on which it is called. This always returns a Perl scalar with the final value of the bad flag.</p>
+
+<p>A return value of 1 does not guarantee the presence of bad data in an ndarray; all it does is say that we need to <i>check</i> for the presence of such beasties. To actually find out if there are any bad values present in an ndarray, use the <a href="#check_badflag">&quot;check_badflag&quot;</a> method.</p>
+
+<p>This function works with ndarrays that have bad values. It always returns a Perl scalar, so it never returns bad values.</p>
+
+<h2 id="badvalue">badvalue</h2>
+
+<p>returns the value used to indicate a missing (or bad) element for the given ndarray type. You can give it an ndarray, a PDL::Type object, or one of <code>$PDL_B</code>, <code>$PDL_S</code>, etc.</p>
+
+<pre><code>   $badval = badvalue( float );
+   $x = ones(ushort,10);
+   print &quot;The bad data value for ushort is: &quot;,
+      $x-&gt;badvalue(), &quot;\n&quot;;</code></pre>
+
+<p>This can act as a setter (e.g. <code>$x-&gt;badvalue(23)</code>), including with the value <code>NaN</code> for floating-point types. Note that this <b>never touches the data in the ndarray</b>. That is, if <code>$x</code> already has bad values, they will not be changed to use the given number and if any elements of <code>$x</code> have that value, they will unceremoniously be marked as bad data. See <a href="#setvaltobad">&quot;setvaltobad&quot;</a>, <a href="#setbadtoval">&quot;setbadtoval&quot;</a>, and <a href="#setbadif">&quot;setbadif&quot;</a> for ways to actually modify the data in ndarrays</p>
+
+<p>It is possible to change the bad value on a per-ndarray basis, so</p>
+
+<pre><code>    $x = sequence (10);
+    $x-&gt;badvalue (3); $x-&gt;badflag (1);
+    $y = sequence (10);
+    $y-&gt;badvalue (4); $y-&gt;badflag (1);</code></pre>
+
+<p>will set $x to be <code>[0 1 2 BAD 4 5 6 7 8 9]</code> and $y to be <code>[0 1 2 3 BAD 5 6 7 8 9]</code>.</p>
+
+<p>This method does not care if you call it on an input ndarray that has bad values. It always returns a Perl scalar with the current or new bad value.</p>
+
+<h2 id="orig_badvalue">orig_badvalue</h2>
+
+<p>returns the original value used to represent bad values for a given type.</p>
+
+<p>This routine operates the same as <a href="#badvalue">&quot;badvalue&quot;</a>, except you can not change the values.</p>
+
+<p>It also has an <i>awful</i> name.</p>
+
+<pre><code>   $orig_badval = orig_badvalue( float );
+   $x = ones(ushort,10);
+   print &quot;The original bad data value for ushort is: &quot;, 
+      $x-&gt;orig_badvalue(), &quot;\n&quot;;</code></pre>
+
+<p>This method does not care if you call it on an input ndarray that has bad values. It always returns a Perl scalar with the original bad value for the associated type.</p>
+
+<h2 id="check_badflag">check_badflag</h2>
+
+<p>Clear the badflag of an ndarray if it does not contain any bad values</p>
+
+<p>Given an ndarray whose bad flag is set, check whether it actually contains any bad values and, if not, clear the flag. It returns the final state of the badflag.</p>
+
+<pre><code> print &quot;State of bad flag == &quot;, $pdl-&gt;check_badflag;</code></pre>
+
+<p>This method accepts ndarrays with or without bad values. It returns an ndarray with the final badflag.</p>
+
+<h2 id="isbad">isbad</h2>
+
+<pre><code>  Signature: (a(); int [o]b())</code></pre>
+
+<p>Returns a binary mask indicating which values of the input are bad values</p>
+
+<p>Returns a 1 if the value is bad, 0 otherwise. Similar to <a href="./Math.html#isfinite">isfinite</a>.</p>
+
+<pre><code> $x = pdl(1,2,3);
+ $x-&gt;badflag(1);
+ set($x,1,$x-&gt;badvalue);
+ $y = isbad($x);
+ print $y, &quot;\n&quot;;
+ [0 1 0]</code></pre>
+
+<p>This method works with input ndarrays that are bad. The output ndarray will never contain bad values, but its bad value flag will be the same as the input ndarray&#39;s flag.</p>
+
+<h2 id="isgood">isgood</h2>
+
+<pre><code>  Signature: (a(); int [o]b())</code></pre>
+
+<p>Is a value good?</p>
+
+<p>Returns a 1 if the value is good, 0 otherwise. Also see <a href="./Math.html#isfinite">isfinite</a>.</p>
+
+<pre><code> $x = pdl(1,2,3);
+ $x-&gt;badflag(1);
+ set($x,1,$x-&gt;badvalue);
+ $y = isgood($x);
+ print $y, &quot;\n&quot;;
+ [1 0 1]</code></pre>
+
+<p>This method works with input ndarrays that are bad. The output ndarray will never contain bad values, but its bad value flag will be the same as the input ndarray&#39;s flag.</p>
+
+<h2 id="nbadover">nbadover</h2>
+
+<pre><code>  Signature: (a(n); indx [o] b())</code></pre>
+
+<p>Find the number of bad elements along the 1st dimension.</p>
+
+<p>This function reduces the dimensionality of an ndarray by one by finding the number of bad elements along the 1st dimension. In this sense it shares much in common with the functions defined in <a href="./Ufunc.html">PDL::Ufunc</a>. In particular, by using <a href="./Slices.html#xchg">xchg</a> and similar dimension rearranging methods, it is possible to perform this calculation over <i>any</i> dimension.</p>
+
+<pre><code> $x = nbadover($y);</code></pre>
+
+<pre><code> $spectrum = nbadover $image-&gt;transpose</code></pre>
+
+<p>nbadover processes input values that are bad. The output ndarray will not have any bad values, but the bad flag will be set if the input ndarray had its bad flag set.</p>
+
+<h2 id="ngoodover">ngoodover</h2>
+
+<pre><code>  Signature: (a(n); indx [o] b())</code></pre>
+
+<p>Find the number of good elements along the 1st dimension.</p>
+
+<p>This function reduces the dimensionality of an ndarray by one by finding the number of good elements along the 1st dimension.</p>
+
+<p>By using <a href="./Slices.html#xchg">xchg</a> etc. it is possible to use <i>any</i> dimension.</p>
+
+<pre><code> $x = ngoodover($y);</code></pre>
+
+<pre><code> $spectrum = ngoodover $image-&gt;transpose</code></pre>
+
+<p>ngoodover processes input values that are bad. The output ndarray will not have any bad values, but the bad flag will be set if the input ndarray had its bad flag set.</p>
+
+<h2 id="nbad">nbad</h2>
+
+<p>Returns the number of bad values in an ndarray</p>
+
+<pre><code> $x = nbad($data);</code></pre>
+
+<p>Accepts good and bad input ndarrays; output is a Perl scalar and therefore is always good.</p>
+
+<h2 id="ngood">ngood</h2>
+
+<p>Returns the number of good values in an ndarray</p>
+
+<pre><code> $x = ngood($data);</code></pre>
+
+<p>Accepts good and bad input ndarrays; output is a Perl scalar and therefore is always good.</p>
+
+<h2 id="setbadat">setbadat</h2>
+
+<p>Set the value to bad at a given position.</p>
+
+<pre><code> setbadat $ndarray, @position</code></pre>
+
+<p><code>@position</code> is a coordinate list, of size equal to the number of dimensions in the ndarray. This is a wrapper around <a href="./Core.html#set">set</a> and is probably mainly useful in test scripts!</p>
+
+<pre><code> pdl&gt; $x = sequence 3,4
+ pdl&gt; $x-&gt;setbadat 2,1
+ pdl&gt; p $x
+ [
+  [  0   1   2]
+  [  3   4 BAD]
+  [  6   7   8]
+  [  9  10  11]
+ ]</code></pre>
+
+<p>This method can be called on ndarrays that have bad values. The remainder of the arguments should be Perl scalars indicating the position to set as bad. The output ndarray will have bad values and will have its badflag turned on.</p>
+
+<h2 id="setbadif">setbadif</h2>
+
+<pre><code>  Signature: (a(); int mask(); [o]b())</code></pre>
+
+<p>Set elements bad based on the supplied mask, otherwise copy across the data.</p>
+
+<pre><code> pdl&gt; $x = sequence(5,5)
+ pdl&gt; $x = $x-&gt;setbadif( $x % 2 )
+ pdl&gt; p &quot;a badflag: &quot;, $x-&gt;badflag, &quot;\n&quot;
+ a badflag: 1
+ pdl&gt; p &quot;a is\n$x&quot;
+ [
+  [  0 BAD   2 BAD   4]
+  [BAD   6 BAD   8 BAD]
+  [ 10 BAD  12 BAD  14]
+  [BAD  16 BAD  18 BAD]
+  [ 20 BAD  22 BAD  24]
+ ]</code></pre>
+
+<p>Unfortunately, this routine can <i>not</i> be run inplace, since the current implementation can not handle the same ndarray used as <code>a</code> and <code>mask</code> (eg <code>$x-&gt;inplace-&gt;setbadif($x%2)</code> fails). Even more unfortunate: we can&#39;t catch this error and tell you.</p>
+
+<p>The output always has its bad flag set, even if it does not contain any bad values (use <a href="#check_badflag">&quot;check_badflag&quot;</a> to check whether there are any bad values in the output). The input ndarray can have bad values: any bad values in the input ndarrays are copied across to the output ndarray.</p>
+
+<p>Also see <a href="#setvaltobad">&quot;setvaltobad&quot;</a> and <a href="#setnantobad">&quot;setnantobad&quot;</a>.</p>
+
+<h2 id="setvaltobad">setvaltobad</h2>
+
+<pre><code>  Signature: (a(); [o]b(); double value)</code></pre>
+
+<p>Set bad all those elements which equal the supplied value.</p>
+
+<pre><code> $x = sequence(10) % 3;
+ $x-&gt;inplace-&gt;setvaltobad( 0 );
+ print &quot;$x\n&quot;;
+ [BAD 1 2 BAD 1 2 BAD 1 2 BAD]</code></pre>
+
+<p>This is a simpler version of <a href="#setbadif">&quot;setbadif&quot;</a>, but this function can be done inplace. See <a href="#setnantobad">&quot;setnantobad&quot;</a> if you want to convert NaN to the bad value.</p>
+
+<p>The output always has its bad flag set, even if it does not contain any bad values (use <a href="#check_badflag">&quot;check_badflag&quot;</a> to check whether there are any bad values in the output). Any bad values in the input ndarrays are copied across to the output ndarray.</p>
+
+<h2 id="setnantobad">setnantobad</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>Sets NaN values (for complex, where either is NaN) in the input ndarray bad (only relevant for floating-point ndarrays). Can be done inplace.</p>
+
+<pre><code> $y = $x-&gt;setnantobad;
+ $x-&gt;inplace-&gt;setnantobad;</code></pre>
+
+<p>This method can process ndarrays with bad values: those bad values are propagated into the output ndarray. Any value that is not a number (before version 2.040 the test was for &quot;not finite&quot;) is also set to bad in the output ndarray. If all values from the input ndarray are good, the output ndarray will <b>not</b> have its bad flag set.</p>
+
+<h2 id="setinftobad">setinftobad</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>Sets non-finite values (for complex, where either is non-finite) in the input ndarray bad (only relevant for floating-point ndarrays). Can be done inplace.</p>
+
+<pre><code> $y = $x-&gt;setinftobad;
+ $x-&gt;inplace-&gt;setinftobad;</code></pre>
+
+<p>This method can process ndarrays with bad values: those bad values are propagated into the output ndarray. Any value that is not finite is also set to bad in the output ndarray. If all values from the input ndarray are finite, the output ndarray will <b>not</b> have its bad flag set.</p>
+
+<h2 id="setnonfinitetobad">setnonfinitetobad</h2>
+
+<pre><code>  Signature: (a(); [o]b())</code></pre>
+
+<p>Sets non-finite values (for complex, where either is non-finite) in the input ndarray bad (only relevant for floating-point ndarrays). Can be done inplace.</p>
+
+<pre><code> $y = $x-&gt;setnonfinitetobad;
+ $x-&gt;inplace-&gt;setnonfinitetobad;</code></pre>
+
+<p>This method can process ndarrays with bad values: those bad values are propagated into the output ndarray. Any value that is not finite is also set to bad in the output ndarray. If all values from the input ndarray are finite, the output ndarray will <b>not</b> have its bad flag set.</p>
+
+<h2 id="setbadtonan">setbadtonan</h2>
+
+<pre><code>  Signature: (a(); [o] b();)</code></pre>
+
+<p>Sets Bad values to NaN</p>
+
+<p>This is only relevant for floating-point ndarrays. The input ndarray can be of any type, but if done inplace, the input must be floating point.</p>
+
+<pre><code> $y = $x-&gt;setbadtonan;
+ $x-&gt;inplace-&gt;setbadtonan;</code></pre>
+
+<p>This method processes input ndarrays with bad values. The output ndarrays will not contain bad values (insofar as NaN is not Bad as far as PDL is concerned) and the output ndarray does not have its bad flag set. As an inplace operation, it clears the bad flag.</p>
+
+<h2 id="setbadtoval">setbadtoval</h2>
+
+<pre><code>  Signature: (a(); [o]b(); double newval)</code></pre>
+
+<p>Replace any bad values by a (non-bad) value.</p>
+
+<p>Can be done inplace. Also see <a href="#badmask">&quot;badmask&quot;</a>.</p>
+
+<pre><code> $x-&gt;inplace-&gt;setbadtoval(23);
+ print &quot;a badflag: &quot;, $x-&gt;badflag, &quot;\n&quot;;
+ a badflag: 0</code></pre>
+
+<p>The output always has its bad flag cleared. If the input ndarray does not have its bad flag set, then values are copied with no replacement.</p>
+
+<h2 id="badmask">badmask</h2>
+
+<pre><code>  Signature: (a(); b(); [o]c())</code></pre>
+
+<p>Clears all <code>infs</code> and <code>nans</code> in <code>$a</code> to the corresponding value in <code>$b</code>.</p>
+
+<p>badmask can be run with <code>$x</code> inplace:</p>
+
+<pre><code>  badmask($x-&gt;inplace,0);
+  $x-&gt;inplace-&gt;badmask(0);</code></pre>
+
+<p>If bad values are present, these are also cleared.</p>
+
+<h2 id="copybad">copybad</h2>
+
+<pre><code>  Signature: (a(); mask(); [o]b())</code></pre>
+
+<p>Copies values from one ndarray to another, setting them bad if they are bad in the supplied mask.</p>
+
+<p>Can be done inplace.</p>
+
+<pre><code> $x = byte( [0,1,3] );
+ $mask = byte( [0,0,0] );
+ $mask-&gt;badflag(1);
+ set($mask,1,$mask-&gt;badvalue);
+ $x-&gt;inplace-&gt;copybad( $mask );
+ p $x;
+ [0 BAD 3]</code></pre>
+
+<p>It is equivalent to:</p>
+
+<pre><code> $c = $x + $mask * 0</code></pre>
+
+<p>This handles input ndarrays that are bad. If either <code>$x</code> or <code>$mask</code> have bad values, those values will be marked as bad in the output ndarray and the output ndarray will have its bad value flag set to true.</p>
+
+<h2 id="locf">locf</h2>
+
+<pre><code>  Signature: (a(n); [o]b(n))</code></pre>
+
+<p>Last Observation Carried Forward - replace every BAD value with the most recent non-BAD value prior to it. Any leading BADs will be set to 0.</p>
+
+<p>locf processes bad values. It will set the bad-value flag of all output ndarrays if the flag is set for any of the input ndarrays.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Doug Burke (djburke@cpan.org), 2000, 2001, 2003, 2006.</p>
+
+<p>The per-ndarray bad value support is by Heiko Klein (2006).</p>
+
+<p>CPAN documentation fixes by David Mertens (2010, 2013).</p>
+
+<p>All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Bugs - How to diagnose and report PDL problems</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#IF-YOU-HAVE-A-PDL-PROBLEM">IF YOU HAVE A PDL PROBLEM</a></li>
+  <li><a href="#REPORTING-BUGS">REPORTING BUGS</a></li>
+  <li><a href="#BEFORE-YOU-SEND-A-REPORT">BEFORE YOU SEND A REPORT</a></li>
+  <li><a href="#PATCHES">PATCHES</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Bugs - How to diagnose and report PDL problems</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 1.0000</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module explains how to get help with a PDL problem and how, when, and where to submit a bug report. In the future it may be extended to provide some sort of automated bug reporting capability.</p>
+
+<h1 id="IF-YOU-HAVE-A-PDL-PROBLEM">IF YOU HAVE A PDL PROBLEM</h1>
+
+<p>The primary resource for support for the Perl Data Language is via the PDL mailing lists. The pdl-general list is for general use and discussions and is the one to use for questions about problems with PDL or PDL use for computation. This <i>is almost always</i> the list to post to for PDL problems.</p>
+
+<p>The pdl-devel list is <i>specifically</i> for PDL development and often contains discussions of a rather technical nature relating to PDL internals. This is <i>not</i> the list for general PDL discussion or questions: <a href="http://pdl.perl.org/?page=mailing-lists">http://pdl.perl.org/?page=mailing-lists</a>.</p>
+
+<p><b>NOTE</b>: Both pdl-general and pdl-devel are read by the PDL developers so you don&#39;t save time or increase the probability of response by posting to pdl-devel or by cross-posting to pdl-devel. Please stick to pdl-general list posts unless you want to talk PDL implementation and development.</p>
+
+<p><b>NOTE</b>: There is also a PDL IRC channel which can be useful for immediate questions if populated. However, it has the big disadvantage of not being easily searched or routinely read by all PDL developers and users. As a result, if you get an answer there, it may be incorrect or incomplete depending on who happens to be chatting at the time. It is definitely not readily searchable.</p>
+
+<h1 id="REPORTING-BUGS">REPORTING BUGS</h1>
+
+<p>Please submit bug reports via the GitHub issue tracker at <a href="https://github.com/PDLPorters/pdl/issues">https://github.com/PDLPorters/pdl/issues</a>.</p>
+
+<p>where you can review the previously submitted bug reports. Click on <code>New issue</code> to generate a bug report. If you do not already have a GitHub account, you will need to create one to submit the report.</p>
+
+<p>Try to include any information you think might help someone isolate, reproduce, and fix your problem.</p>
+
+<p>At a <i>minimum</i>, include the following information:</p>
+
+<ul>
+
+<li><p>PDL version number (e.g. PDL-2.007)</p>
+
+</li>
+<li><p>Perl version information. Output from <code>perl -v</code> or <code>perl -V</code> (even better!)</p>
+
+</li>
+<li><p>Your operating System. You can run the <code>uname -a</code> command on many unix systems</p>
+
+</li>
+<li><p>The full output of <code>perldl -V</code></p>
+
+<p>If you are reporting a bug with an already installed PDL. If the PDL has compiled and built but not been installed, you may run <code>perl -Mblib perldl -V</code> from the top level of the PDL build directory.</p>
+
+</li>
+<li><p>The bug description and how to reproduce it.</p>
+
+<p>Short examples using the PDL shells, <code>pdl2</code> or <code>perldl</code>, are excellent! Don&#39;t forget to include needed input data (as small as possible) so that the code can be run with a cut and paste.</p>
+
+</li>
+</ul>
+
+<p>Other things that are often helpful:</p>
+
+<ul>
+
+<li><p>Details about your operating environment that might be related to the problem</p>
+
+</li>
+<li><p>Exact cut and pasted error or warning messages</p>
+
+</li>
+<li><p>The shortest, clearest code you can manage to write which reproduces the bug described.</p>
+
+</li>
+<li><p>A patch against the latest released version of this distribution which fixes this bug.</p>
+
+</li>
+</ul>
+
+<p>Alternatively, send an e-mail report with the above information (including the output of <code>perldl -V</code>) to the pdl-devel mailing list. See <a href="http://pdl.perl.org/?page=mailing-lists">http://pdl.perl.org/?page=mailing-lists</a> for info on how to subscribe to this list.</p>
+
+<h1 id="BEFORE-YOU-SEND-A-REPORT">BEFORE YOU SEND A REPORT</h1>
+
+<p>BEFORE you report a bug make sure you got the latest release version of PDL, always available from CPAN, check <a href="http://metacpan.org/pod/PDL">http://metacpan.org/pod/PDL</a>.</p>
+
+<p>Also, you can check the FAQ at <a href="http://pdl.perl.org/?docs=FAQ&amp;title=PDL::FAQ">http://pdl.perl.org/?docs=FAQ&amp;title=PDL::FAQ</a>. and the mailing list archives for hints. You can find links to the searchable archives at <a href="http://pdl.perl.org/?page=mailing-lists">http://pdl.perl.org/?page=mailing-lists</a>.</p>
+
+<p>and there is a Google enable search box on the top right of <a href="http://pdl.perl.org">http://pdl.perl.org</a> which usually gives the best results.</p>
+
+<h1 id="PATCHES">PATCHES</h1>
+
+<p>Patches can be submitted in several ways, in order of decreasing preference:</p>
+
+<ol>
+
+<li><p>Fork the pdl repository on GitHub, make and test your changes, and submit a pull request;</p>
+
+</li>
+<li><p>Edit (or suggesting an edit to) the files in-place on GitHub;</p>
+
+</li>
+<li><p>Email a patch to the pdl-devel mailing list.</p>
+
+</li>
+</ol>
+
+<p>Patches should be made against the latest released PDL or, ideally, against the current git sources which you can browse and check out at <a href="https://github.com/PDLPorters/pdl">https://github.com/PDLPorters/pdl</a>.</p>
+
+<p>Thanks, The PDL developers.</p>
+
+
+</body>
+
+</html>
+
+

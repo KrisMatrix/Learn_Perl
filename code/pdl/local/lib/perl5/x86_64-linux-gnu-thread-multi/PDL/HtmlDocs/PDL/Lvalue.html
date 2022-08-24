@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Lvalue - declare PDL lvalue subs</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#subs">subs</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Lvalue - declare PDL lvalue subs</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Declares a subset of PDL functions so that they can be used as lvalue subs. In particular, this allows simpler constructs such as</p>
+
+<pre><code>  $x-&gt;slice(&#39;,(0)&#39;) .= 1;</code></pre>
+
+<p>instead of the clumsy</p>
+
+<pre><code>  (my $tmp = $x-&gt;slice(&#39;,(0)&#39;)) .= 1;</code></pre>
+
+<p>This will only work if your perl supports lvalue subroutines (i.e. versions &gt;= v5.6.0). Note that lvalue subroutines are currently regarded experimental.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use PDL::Lvalue; # automatically done with all PDL loaders</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="subs">subs</h2>
+
+<p>test if routine is a known PDL lvalue sub</p>
+
+<pre><code>  print &quot;slice is an lvalue sub&quot; if PDL::Lvalue-&gt;subs(&#39;slice&#39;);</code></pre>
+
+<p>returns the list of PDL lvalue subs if no routine name is given, e.g.</p>
+
+<pre><code>  @lvfuncs = PDL::Lvalue-&gt;subs;</code></pre>
+
+<p>It can be used in scalar context to find out if your PDL has lvalue subs:</p>
+
+<pre><code>  print &#39;has lvalue subs&#39; if PDL::Lvalue-&gt;subs;</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) 2001 Christian Soeller (c.soeller@auckland.ac.nz). All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+
+</body>
+
+</html>
+
+

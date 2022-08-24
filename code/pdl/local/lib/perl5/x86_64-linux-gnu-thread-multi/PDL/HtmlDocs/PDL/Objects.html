@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Objects -- Object-Orientation, what is it and how to exploit it</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Inheritance">Inheritance</a></li>
+      <li><a href="#Examples">Examples</a></li>
+      <li><a href="#Output-Auto-Creation-and-Subclassed-Objects">Output Auto-Creation and Subclassed Objects</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Objects -- Object-Orientation, what is it and how to exploit it</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This still needs to be written properly. [Also, is there a good reason we don&#39;t recommend storing extra object data in the header hash?]</p>
+
+<h2 id="Inheritance">Inheritance</h2>
+
+<p>There are basically two reasons for subclassing ndarrays. The first is simply that you want to be able to use your own routines like</p>
+
+<pre><code>        $ndarray-&gt;something()</code></pre>
+
+<p>but don&#39;t want to mess up the PDL namespace (a worthy goal, indeed!). The other is that you wish to provide special handling of some functions or more information about the data the ndarray contains. In the first case, you can do with</p>
+
+<pre><code>        package BAR;
+        @ISA=qw/PDL/;
+        sub foo {my($this) = @_; fiddle;}
+
+        package main;
+        $x = PDL::pdl(BAR,5);
+        $x-&gt;foo();</code></pre>
+
+<p>However, because a PDL object is an opaque reference to a C struct, it is not possible to extend the PDL class by e.g. extra data via subclassing. To circumvent this problem PerlDL has built-in support to extent the PDL class via the <i>has-a</i> relation for blessed hashes. You can get the <i>HAS-A</i> behave like <i>IS-A</i> simply in that you assign the <code>PDL</code> object to the attribute named PDL and redefine the method initialize().</p>
+
+<pre><code>    package FOO;
+
+    @FOO::ISA = qw(PDL);
+    sub initialize {
+        my $class = shift;
+        my $self = {
+                creation_time =&gt; time(),  # necessary extension :-)
+                PDL =&gt; null,             # used to store PDL object
+                };
+        bless $self, $class;
+    }</code></pre>
+
+<p>All PDL constructors will call initialize() to make sure that your extensions are added by <i>all</i> PDL constructors automatically. The <code>PDL</code> attribute is used by perlDL to store the PDL object and all PDL methods use this attribute automatically if they are called with a blessed hash reference instead of a PDL object (a blessed scalar).</p>
+
+<p>Do remember that if you subclass a class that is subclassed from an ndarray, you need to call SUPER::initialize.</p>
+
+<p>NEED STUFF ABOUT CODE REFs!!</p>
+
+<h2 id="Examples">Examples</h2>
+
+<p>You can find some simple examples of PDL subclassing in the PDL distribution test-case files. Look in <code>t/subclass2.t</code>, <code>t/subclass3.t</code>, etc.</p>
+
+<h2 id="Output-Auto-Creation-and-Subclassed-Objects">Output Auto-Creation and Subclassed Objects</h2>
+
+<p>For PDL Functions where the output is created and returned, PDL will either call the subclassed object&#39;s <code>initialize</code> or <code>copy</code> method to create the output object. (See <a href="./Indexing.html#Output-auto-creation-and-PP-function-calling-conventions">PDL::Indexing</a> for a discussion on Output Auto-Creation.) This behavior is summarized as follows:</p>
+
+<ul>
+
+<li><p>For <i>Simple</i> functions, defined as having a signature of</p>
+
+<pre><code> func( a(), [o]b() )</code></pre>
+
+<p>PDL will call $a-&gt;copy to create the output object.</p>
+
+<p>In the spirit of the Perl philosophy of making <i>Easy Things Easy</i>, This behavior enables PDL-subclassed objects to be written without having to overload the many simple PDL functions in this category.</p>
+
+<p>The file t/subclass4.t in the PDL Distribution tests for this behavior. See that file for an example.</p>
+
+</li>
+<li><p>For other functions, PDL will call $class-&gt;initialize to create the output object. Where $class is the class name of the first argument supplied to the function.</p>
+
+<p>For these more complex cases, it is difficult to second-guess the subclassed object&#39;s designer to know if a <code>copy</code> or a <code>initialize</code> is appropriate. So for these cases, $class-&gt;initialize is called by default. If this is not appropriate for you, overload the function in your subclass and do whatever is appropriate is the overloaded function&#39;s code.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) Karl Glazebrook (kgb@aaoepp.aao.gov.au), Tuomas J. Lukka, (lukka@husc.harvard.edu) and Christian Soeller (c.soeller@auckland.ac.nz) 2000. All rights reserved. There is no warranty. You are allowed to copy this on the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

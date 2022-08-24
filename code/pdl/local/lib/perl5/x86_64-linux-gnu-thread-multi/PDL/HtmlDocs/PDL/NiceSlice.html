@@ -1,0 +1,545 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::NiceSlice - toward a nicer slicing syntax for PDL</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSYS">SYNOPSYS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#Use-in-scripts-and-perldl-or-pdl2-shell">Use in scripts and perldl or pdl2 shell</a>
+    <ul>
+      <li><a href="#evals-and-PDL::NiceSlice">evals and PDL::NiceSlice</a></li>
+    </ul>
+  </li>
+  <li><a href="#The-new-slicing-syntax">The new slicing syntax</a>
+    <ul>
+      <li><a href="#Parentheses-following-a-scalar-variable-name">Parentheses following a scalar variable name</a></li>
+      <li><a href="#The-default-method-syntax">The default method syntax</a></li>
+      <li><a href="#When-to-use-which-syntax">When to use which syntax?</a></li>
+      <li><a href="#The-argument-list">The argument list</a></li>
+      <li><a href="#Modifiers">Modifiers</a></li>
+      <li><a href="#Combining-modifiers">Combining modifiers</a></li>
+      <li><a href="#Argument-formats">Argument formats</a></li>
+      <li><a href="#ndarrays-as-indices-in-ranges">ndarrays as indices in ranges</a></li>
+    </ul>
+  </li>
+  <li><a href="#IMPLEMENTATION">IMPLEMENTATION</a></li>
+  <li><a href="#BUGS">BUGS</a>
+    <ul>
+      <li><a href="#Conditional-operator">Conditional operator</a></li>
+      <li><a href="#The-DATA-file-handle">The DATA file handle</a></li>
+      <li><a href="#Possible-interaction-with-Inline::Pdlpp">Possible interaction with Inline::Pdlpp</a></li>
+      <li><a href="#Bug-reports">Bug reports</a></li>
+    </ul>
+  </li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::NiceSlice - toward a nicer slicing syntax for PDL</p>
+
+<h1 id="SYNOPSYS">SYNOPSYS</h1>
+
+<pre><code>  use PDL::NiceSlice;
+
+  $x(1:4) .= 2;             # concise syntax for ranges
+  print $y((0),1:$end);     # use variables in the slice expression
+  $x-&gt;transpose-&gt;(($pos-1)) .= 0; # default method syntax
+
+  $idx = long 1, 7, 3, 0;   # an ndarray of indices
+  $x(-3:2:2,$idx) += 3;     # mix explicit indexing and ranges
+  $x-&gt;clump(1,2)-&gt;(0:30);   # &#39;default method&#39; syntax
+  $x(myfunc(0,$var),1:4)++; # when using functions in slice expressions
+                            # use parentheses around args!
+
+  $y = $x(*3);              # Add dummy dimension of order 3
+
+  # modifiers are specified in a ;-separated trailing block
+  $x($x!=3;?)++;            # short for $x-&gt;where($x!=3)++
+  $x(0:1114;_) .= 0;        # short for $x-&gt;flat-&gt;(0:1114)
+  $y = $x(0:-1:3;|);        # short for $x(0:-1:3)-&gt;sever
+  $n = sequence 3,1,4,1;
+  $y = $n(;-);              # drop all dimensions of size 1 (AKA squeeze)
+  $y = $n(0,0;-|);          # squeeze *and* sever
+  $c = $x(0,3,0;-);         # more compact way of saying $x((0),(3),(0))</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Slicing is a basic, extremely common operation, and PDL&#39;s <a href="./Slices.html#slice">&quot;slice&quot; in PDL::Slices</a> method would be cumbersome to use in many cases. <code>PDL::NiceSlice</code> rectifies that by incorporating new slicing syntax directly into the language via a perl <i>source filter</i> (see <a>perlfilter</a>). NiceSlice adds no new functionality, only convenient syntax.</p>
+
+<p>NiceSlice is loaded automatically in the perldl or pdl2 shell, but (to avoid conflicts with other modules) must be loaded explicitly in standalone perl/PDL scripts (see below). If you prefer not to use a prefilter on your standalone scripts, you can use the <a href="./Slices.html#slice">&quot;slice&quot; in PDL::Slices</a> method in those scripts, rather than the more compact NiceSlice constructs.</p>
+
+<h1 id="Use-in-scripts-and-perldl-or-pdl2-shell">Use in scripts and <code>perldl</code> or <code>pdl2</code> shell</h1>
+
+<p>The new slicing syntax can be switched on and off in scripts and perl modules by using or unloading <code>PDL::NiceSlice</code>.</p>
+
+<p>But now back to scripts and modules. Everything after <code>use PDL::NiceSlice</code> will be translated and you can use the new slicing syntax. Source filtering will continue until the end of the file is encountered. You can stop sourcefiltering before the end of the file by issuing a <code>no PDL::NiceSlice</code> statement.</p>
+
+<p>Here is an example:</p>
+
+<pre><code>  use PDL::NiceSlice;
+
+  # this code will be translated
+  # and you can use the new slicing syntax
+
+  no PDL::NiceSlice;
+
+  # this code won&#39;t
+  # and the new slicing syntax will raise errors!</code></pre>
+
+<p>See also <a>Filter::Simple</a> and <i>example</i> in this distribution for further examples.</p>
+
+<p>NOTE: Unlike &quot;normal&quot; modules you need to include a <code>use PDL::NiceSlice</code> call in each and every file that contains code that uses the new slicing syntax. Imagine the following situation: a file <i>test0.pl</i></p>
+
+<pre><code>   # start test0.pl
+   use PDL;
+   use PDL::NiceSlice;
+
+   $x = sequence 10;
+   print $x(0:4),&quot;\n&quot;;
+
+   require &#39;test1.pl&#39;;
+   # end test0.pl</code></pre>
+
+<p>that <code>require</code>s a second file <i>test1.pl</i></p>
+
+<pre><code>   # begin test1.pl
+   $aa = sequence 11;
+   print $aa(0:7),&quot;\n&quot;;
+   1;
+   # end test1.pl</code></pre>
+
+<p>Following conventional perl wisdom everything should be alright since we <code>use</code>d <code>PDL</code> and <code>PDL::NiceSlice</code> already from within <i>test0.pl</i> and by the time <i>test1.pl</i> is <code>require</code>d things should be defined and imported, etc. A quick test run will, however, produce something like the following:</p>
+
+<pre><code>  perl test0.pl
+ [0 1 2 3 4]
+ syntax error at test1.pl line 3, near &quot;0:&quot;
+ Compilation failed in require at test0.pl line 7.</code></pre>
+
+<p>This can be fixed by adding the line</p>
+
+<pre><code>  use PDL::NiceSlice;</code></pre>
+
+<p><code>before</code> the code in <i>test1.pl</i> that uses the new slicing syntax (to play safe just include the line near the top of the file), e.g.</p>
+
+<pre><code>   # begin corrected test1.pl
+   use PDL::NiceSlice;
+   $aa = sequence 11;
+   print $aa(0:7),&quot;\n&quot;;
+   1;
+   # end test1.pl</code></pre>
+
+<p>Now things proceed more smoothly</p>
+
+<pre><code>  perl test0.pl
+ [0 1 2 3 4]
+ [0 1 2 3 4 5 6 7]</code></pre>
+
+<p>Note that we don&#39;t need to issue <code>use PDL</code> again. <code>PDL::NiceSlice</code> is a somewhat <i>funny</i> module in that respect. It is a consequence of the way source filtering works in Perl (see also the IMPLEMENTATION section below).</p>
+
+<h2 id="evals-and-PDL::NiceSlice">evals and <code>PDL::NiceSlice</code></h2>
+
+<p>Due to <code>PDL::NiceSlice</code> being a source filter it won&#39;t work in the usual way within evals. The following will <i>not</i> do what you want:</p>
+
+<pre><code>  $x = sequence 10;
+  eval &lt;&lt; &#39;EOE&#39;;
+
+  use PDL::NiceSlice;
+  $y = $x(0:5);
+
+  EOE
+  print $y;</code></pre>
+
+<p>Instead say:</p>
+
+<pre><code>  use PDL::NiceSlice;
+  $x = sequence 10;
+  eval &lt;&lt; &#39;EOE&#39;;
+
+  $y = $x(0:5);
+
+  EOE
+  print $y;</code></pre>
+
+<p>Source filters <i>must</i> be executed at compile time to be effective. And <code>PDL::NiceSlice</code> is just a source filter (although it is not necessarily obvious for the casual user).</p>
+
+<h1 id="The-new-slicing-syntax">The new slicing syntax</h1>
+
+<p>Using <code>PDL::NiceSlice</code> slicing ndarrays becomes so much easier since, first of all, you don&#39;t need to make explicit method calls. No</p>
+
+<pre><code>  $pdl-&gt;slice(....);</code></pre>
+
+<p>calls, etc. Instead, <code>PDL::NiceSlice</code> introduces two ways in which to slice ndarrays without too much typing:</p>
+
+<ul>
+
+<li><p>using parentheses directly following a scalar variable name, for example</p>
+
+<pre><code>   $c = $y(0:-3:4,(0));</code></pre>
+
+</li>
+<li><p>using the so called <i>default method</i> invocation in which the ndarray object is treated as if it were a reference to a subroutine (see also <a>perlref</a>). Take this example that slices an ndarray that is part of a perl list <code>@b</code>:</p>
+
+<pre><code>  $c = $b[0]-&gt;(0:-3:4,(0));</code></pre>
+
+</li>
+</ul>
+
+<p>The format of the argument list is the same for both types of invocation and will be explained in more detail below.</p>
+
+<h2 id="Parentheses-following-a-scalar-variable-name">Parentheses following a scalar variable name</h2>
+
+<p>An arglist in parentheses following directly after a scalar variable name that is <i>not</i> preceded by <code>&amp;</code> will be resolved as a slicing command, e.g.</p>
+
+<pre><code>  $x(1:4) .= 2;         # only use this syntax on ndarrays
+  $sum += $x(,(1));</code></pre>
+
+<p>However, if the variable name is immediately preceded by a <code>&amp;</code>, for example</p>
+
+<pre><code>  &amp;$x(4,5);</code></pre>
+
+<p>it will not be interpreted as a slicing expression. Rather, to avoid interfering with the current subref syntax, it will be treated as an invocation of the code reference <code>$x</code> with argumentlist <code>(4,5)</code>.</p>
+
+<p>The $x(ARGS) syntax collides in a minor way with the perl syntax. In particular, ``foreach $var(LIST)&#39;&#39; appears like a PDL slicing call. NiceSlice avoids translating the ``for $var(LIST)&#39;&#39; and ``foreach $var(LIST)&#39;&#39; constructs for this reason. Since you can&#39;t use just any old lvalue expression in the &#39;foreach&#39; &#39;for&#39; constructs -- only a real perl scalar will do -- there&#39;s no functionality lost. If later versions of perl accept ``foreach &lt;lvalue-expr&gt; (LIST)&#39;&#39;, then you can use the code ref syntax, below, to get what you want.</p>
+
+<h2 id="The-default-method-syntax">The <i>default method</i> syntax</h2>
+
+<p>The second syntax that will be recognized is what I called the <i>default method</i> syntax. It is the method arrow <code>-&gt;</code> directly followed by an open parenthesis, e.g.</p>
+
+<pre><code>  $x-&gt;transpose-&gt;(($pos)) .= 0;</code></pre>
+
+<p>Note that this conflicts with the use of normal code references, since you can write in plain Perl</p>
+
+<pre><code>  $sub = sub { print join &#39;,&#39;, @_ };
+  $sub-&gt;(1,&#39;a&#39;);</code></pre>
+
+<p>NOTE: Once <code>use PDL::NiceSlice</code> is in effect (you can always switch it off with a line <code>no PDL::NiceSlice;</code> anywhere in the script) the source filter will incorrectly replace the above call to <code>$sub</code> with an invocation of the slicing method. This is one of the pitfalls of using a source filter that doesn&#39;t know anything about the runtime type of a variable (cf. the Implementation section).</p>
+
+<p>This shouldn&#39;t be a major problem in practice; a simple workaround is to use the <code>&amp;</code>-way of calling subrefs, e.g.:</p>
+
+<pre><code>  $sub = sub { print join &#39;,&#39;, @_ };
+  &amp;$sub(1,&#39;a&#39;);</code></pre>
+
+<h2 id="When-to-use-which-syntax">When to use which syntax?</h2>
+
+<p>Why are there two different ways to invoke slicing? The first syntax <code>$x(args)</code> doesn&#39;t work with chained method calls. E.g.</p>
+
+<pre><code>  $x-&gt;xchg(0,1)(0);</code></pre>
+
+<p>won&#39;t work. It can <i>only</i> be used directly following a valid perl variable name. Instead, use the <i>default method</i> syntax in such cases:</p>
+
+<pre><code>  $x-&gt;transpose-&gt;(0);</code></pre>
+
+<p>Similarly, if you have a list of ndarrays <code>@pdls</code>:</p>
+
+<pre><code>  $y = $pdls[5]-&gt;(0:-1);</code></pre>
+
+<h2 id="The-argument-list">The argument list</h2>
+
+<p>The argument list is a comma separated list. Each argument specifies how the corresponding dimension in the ndarray is sliced. In contrast to usage of the <a href="./Slices.html#slice">&quot;slice&quot; in PDL::Slices</a> method the arguments should <i>not</i> be quoted. Rather freely mix literals (1,3,etc), perl variables and function invocations, e.g.</p>
+
+<pre><code>  $x($pos-1:$end,myfunc(1,3)) .= 5;</code></pre>
+
+<p>There can even be other slicing commands in the arglist:</p>
+
+<pre><code>  $x(0:-1:$pdl($step)) *= 2;</code></pre>
+
+<p>NOTE: If you use function calls in the arglist make sure that you use parentheses around their argument lists. Otherwise the source filter will get confused since it splits the argument list on commas that are not protected by parentheses. Take the following example:</p>
+
+<pre><code>  sub myfunc { return 5*$_[0]+$_[1] }
+  $x = sequence 10;
+  $sl = $x(0:myfunc 1, 2);
+  print $sl;
+ PDL barfed: Error in slice:Too many dims in slice
+ Caught at file /usr/local/bin/perldl, line 232, pkg main</code></pre>
+
+<p>The simple fix is</p>
+
+<pre><code>  $sl = $x(0:myfunc(1, 2));
+  print $sl;
+ [0 1 2 3 4 5 6 7]</code></pre>
+
+<p>Note that using prototypes in the definition of myfunc does not help. At this stage the source filter is simply not intelligent enough to make use of this information. So beware of this subtlety.</p>
+
+<p>Another pitfall to be aware of: currently, you can&#39;t use the conditional operator in slice expressions (i.e., <code>?:</code>, since the parser confuses them with ranges). For example, the following will cause an error:</p>
+
+<pre><code>  $x = sequence 10;
+  $y = rand &gt; 0.5 ? 0 : 1; # this one is ok
+  print $x($y ? 1 : 2);    # error !
+ syntax error at (eval 59) line 3, near &quot;1,</code></pre>
+
+<p>For the moment, just try to stay clear of the conditional operator in slice expressions (or provide us with a patch to the parser to resolve this issue ;).</p>
+
+<h2 id="Modifiers">Modifiers</h2>
+
+<p>Following a suggestion originally put forward by Karl Glazebrook the latest versions of <code>PDL::NiceSlice</code> implement <i>modifiers</i> in slice expressions. Modifiers are convenient shorthands for common variations on PDL slicing. The general syntax is</p>
+
+<pre><code>    $pdl(&lt;slice&gt;;&lt;modifier&gt;)</code></pre>
+
+<p>Four modifiers are currently implemented:</p>
+
+<ul>
+
+<li><p><code>_</code> : <i>flatten</i> the ndarray before applying the slice expression. Here is an example</p>
+
+<pre><code>   $y = sequence 3, 3;
+   print $y(0:-2;_); # same as $y-&gt;flat-&gt;(0:-2)
+ [0 1 2 3 4 5 6 7]</code></pre>
+
+<p>which is quite different from the same slice expression without the modifier</p>
+
+<pre><code>   print $y(0:-2);
+ [
+  [0 1]
+  [3 4]
+  [6 7]
+ ]</code></pre>
+
+</li>
+<li><p><code>|</code> : <a href="./Core.html#sever">sever</a> the link to the ndarray, e.g.</p>
+
+<pre><code>   $x = sequence 10;
+   $y = $x(0:2;|)++;  # same as $x(0:2)-&gt;sever++
+   print $y;
+ [1 2 3]
+   print $x; # check if $x has been modified
+ [0 1 2 3 4 5 6 7 8 9]</code></pre>
+
+</li>
+<li><p><code>?</code> : short hand to indicate that this is really a <a href="./Primitive.html#where">where</a> expression</p>
+
+<p>As expressions like</p>
+
+<pre><code>  $x-&gt;where($x&gt;5)</code></pre>
+
+<p>are used very often you can write that shorter as</p>
+
+<pre><code>  $x($x&gt;5;?)</code></pre>
+
+<p>With the <code>?</code>-modifier the expression preceding the modifier is <i>not</i> really a slice expression (e.g. ranges are not allowed) but rather an expression as required by the <a href="./Primitive.html#where">where</a> method. For example, the following code will raise an error:</p>
+
+<pre><code>  $x = sequence 10;
+  print $x(0:3;?);
+ syntax error at (eval 70) line 3, near &quot;0:&quot;</code></pre>
+
+<p>That&#39;s about all there is to know about this one.</p>
+
+</li>
+<li><p><code>-</code> : <i>squeeze</i> out any singleton dimensions. In less technical terms: reduce the number of dimensions (potentially) by deleting all dims of size 1. It is equivalent to doing a <a href="./Core.html#reshape">reshape</a>(-1). That can be very handy if you want to simplify the results of slicing operations:</p>
+
+<pre><code>  $x = ones 3, 4, 5;
+  $y = $x(1,0;-); # easier to type than $x((1),(0))
+  print $y-&gt;info;
+ PDL: Double D [5]</code></pre>
+
+<p>It also provides a unique opportunity to have smileys in your code! Yes, PDL gives new meaning to smileys.</p>
+
+</li>
+</ul>
+
+<h2 id="Combining-modifiers">Combining modifiers</h2>
+
+<p>Several modifiers can be used in the same expression, e.g.</p>
+
+<pre><code>  $c = $x(0;-|); # squeeze and sever</code></pre>
+
+<p>Other combinations are just as useful, e.g. <code>;_|</code> to flatten and sever. The sequence in which modifiers are specified is not important.</p>
+
+<p>A notable exception is the <code>where</code> modifier (<code>?</code>) which must not be combined with other flags (let me know if you see a good reason to relax this rule).</p>
+
+<p>Repeating any modifier will raise an error:</p>
+
+<pre><code>  $c = $x(-1:1;|-|); # will cause error
+ NiceSlice error: modifier | used twice or more</code></pre>
+
+<p>Modifiers are still a new and experimental feature of <code>PDL::NiceSlice</code>. I am not sure how many of you are actively using them. <i>Please do so and experiment with the syntax</i>. I think modifiers are very useful and make life a lot easier. Feedback is welcome as usual. The modifier syntax will likely be further tuned in the future but we will attempt to ensure backwards compatibility whenever possible.</p>
+
+<h2 id="Argument-formats">Argument formats</h2>
+
+<p>In slice expressions you can use ranges and secondly, ndarrays as 1D index lists (although compare the description of the <code>?</code>-modifier above for an exception).</p>
+
+<ul>
+
+<li><p>ranges</p>
+
+<p>You can access ranges using the usual <code>:</code> separated format:</p>
+
+<pre><code>  $x($start:$stop:$step) *= 4;</code></pre>
+
+<p>Note that you can omit the trailing step which then defaults to 1. Double colons (<code>::</code>) are not allowed to avoid clashes with Perl&#39;s namespace syntax. So if you want to use steps different from the default you have to also at least specify the stop position. Examples:</p>
+
+<pre><code>  $x(::2);   # this won&#39;t work (in the way you probably intended)
+  $x(:-1:2); # this will select every 2nd element in the 1st dim</code></pre>
+
+<p>Just as with <a href="./Slices.html#slice">&quot;slice&quot; in PDL::Slices</a> negative indices count from the end of the dimension backwards with <code>-1</code> being the last element. If the start index is larger than the stop index the resulting ndarray will have the elements in reverse order between these limits:</p>
+
+<pre><code>  print $x(-2:0:2);
+ [8 6 4 2 0]</code></pre>
+
+<p>A single index just selects the given index in the slice</p>
+
+<pre><code>  print $x(5);
+ [5]</code></pre>
+
+<p>Note, however, that the corresponding dimension is not removed from the resulting ndarray but rather reduced to size 1:</p>
+
+<pre><code>  print $x(5)-&gt;info
+ PDL: Double D [1]</code></pre>
+
+<p>If you want to get completely rid of that dimension enclose the index in parentheses (again similar to the <a href="./Slices.html#slice">&quot;slice&quot; in PDL::Slices</a> syntax):</p>
+
+<pre><code>  print $x((5));
+ 5</code></pre>
+
+<p>In this particular example a 0D ndarray results. Note that this syntax is only allowed with a single index. All these will be errors:</p>
+
+<pre><code>  print $x((0,4));  # will work but not in the intended way
+  print $x((0:4));  # compile time error</code></pre>
+
+<p>An empty argument selects the whole dimension, in this example all of the first dimension:</p>
+
+<pre><code>  print $x(,(0));</code></pre>
+
+<p>Alternative ways to select a whole dimension are</p>
+
+<pre><code>  $x = sequence 5, 5; 
+  print $x(:,(0));
+  print $x(0:-1,(0));
+  print $x(:-1,(0));
+  print $x(0:,(0));</code></pre>
+
+<p>Arguments for trailing dimensions can be omitted. In that case these dimensions will be fully kept in the sliced ndarray:</p>
+
+<pre><code>  $x = random 3,4,5;
+  print $x-&gt;info;
+ PDL: Double D [3,4,5]
+  print $x((0))-&gt;info;
+ PDL: Double D [4,5]
+  print $x((0),:,:)-&gt;info;  # a more explicit way
+ PDL: Double D [4,5]
+  print $x((0),,)-&gt;info;    # similar
+ PDL: Double D [4,5]</code></pre>
+
+</li>
+<li><p>dummy dimensions</p>
+
+<p>As in <a href="./Slices.html#slice">&quot;slice&quot; in PDL::Slices</a>, you can insert a dummy dimension by preceding a single index argument with &#39;*&#39;. A lone &#39;*&#39; inserts a dummy dimension of order 1; a &#39;*&#39; followed by a number inserts a dummy dimension of that order.</p>
+
+</li>
+<li><p>ndarray index lists</p>
+
+<p>The second way to select indices from a dimension is via 1D ndarrays of indices. A simple example:</p>
+
+<pre><code>  $x = random 10;
+  $idx = long 3,4,7,0;
+  $y = $x($idx);</code></pre>
+
+<p>This way of selecting indices was previously only possible using <a href="./Slices.html#dice">&quot;dice&quot; in PDL::Slices</a> (<code>PDL::NiceSlice</code> attempts to unify the <code>slice</code> and <code>dice</code> interfaces). Note that the indexing ndarrays must be 1D or 0D. Higher dimensional ndarrays as indices will raise an error:</p>
+
+<pre><code>  $x = sequence 5, 5;
+  $idx2 = ones 2,2;
+  $sum = $x($idx2)-&gt;sum;
+ ndarray must be &lt;= 1D at /home/XXXX/.perldlrc line 93</code></pre>
+
+<p>Note that using index ndarrays is not as efficient as using ranges. If you can represent the indices you want to select using a range use that rather than an equivalent index ndarray. In particular, memory requirements are increased with index ndarrays (and execution time <i>may</i> be longer). That said, if an index ndarray is the way to go use it!</p>
+
+</li>
+</ul>
+
+<p>As you might have expected ranges and index ndarrays can be freely mixed in slicing expressions:</p>
+
+<pre><code>  $x = random 5, 5;
+  $y = $x(-1:2,pdl(3,0,1));</code></pre>
+
+<h2 id="ndarrays-as-indices-in-ranges">ndarrays as indices in ranges</h2>
+
+<p>You can use ndarrays to specify indices in ranges. No need to turn them into proper perl scalars with the new slicing syntax. However, make sure they contain not more than one element! Otherwise a runtime error will be triggered. First a couple of examples that illustrate proper usage:</p>
+
+<pre><code>  $x = sequence 5, 5;
+  $rg = pdl(1,-1,3);
+  print $x($rg(0):$rg(1):$rg(2),2);
+ [
+  [11 14]
+ ]
+  print $x($rg+1,:$rg(0));
+ [
+  [2 0 4]
+  [7 5 9]
+ ]</code></pre>
+
+<p>The next one raises an error</p>
+
+<pre><code>  print $x($rg+1,:$rg(0:1));
+ multielement ndarray where only one allowed at XXX/Core.pm line 1170.</code></pre>
+
+<p>The problem is caused by using the 2-element ndarray <code>$rg(0:1)</code> as the stop index in the second argument <code>:$rg(0:1)</code> that is interpreted as a range by <code>PDL::NiceSlice</code>. You <i>can</i> use multielement ndarrays as index ndarrays as described above but not in ranges. And <code>PDL::NiceSlice</code> treats any expression with unprotected <code>:</code>&#39;s as a range. <i>Unprotected</i> means as usual <i>&quot;not occurring between matched parentheses&quot;</i>.</p>
+
+<h1 id="IMPLEMENTATION">IMPLEMENTATION</h1>
+
+<p><code>PDL::NiceSlice</code> exploits the ability of Perl to use source filtering (see also <a>perlfilter</a>). A source filter basically filters (or rewrites) your perl code before it is seen by the compiler. <code>PDL::NiceSlice</code> searches through your Perl source code and when it finds the new slicing syntax it rewrites the argument list appropriately and splices a call to the <code>slice</code> method using the modified arg list into your perl code. You can see how this works in the <a>perldl</a> or <a>pdl2</a> shells by switching on reporting (see above how to do that).</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<h2 id="Conditional-operator">Conditional operator</h2>
+
+<p>The conditional operator can&#39;t be used in slice expressions (see above).</p>
+
+<h2 id="The-DATA-file-handle">The <code>DATA</code> file handle</h2>
+
+<p><i>Note</i>: To avoid clobbering the <code>DATA</code> filehandle <code>PDL::NiceSlice</code> switches itself off when encountering the <code>__END__</code> or <code>__DATA__</code> tokens. This should not be a problem for you unless you use <code>SelfLoader</code> to load PDL code including the new slicing from that section. It is even desirable when working with <a href="./PP-Inline.html">Inline::Pdlpp</a>, see below.</p>
+
+<h2 id="Possible-interaction-with-Inline::Pdlpp">Possible interaction with <a href="./PP-Inline.html">Inline::Pdlpp</a></h2>
+
+<p>There is currently an undesired interaction between <code>PDL::NiceSlice</code> and <a href="./PP-Inline.html">Inline::Pdlpp</a>. Since PP code generally contains expressions of the type <code>$var()</code> (to access ndarrays, etc) <code>PDL::NiceSlice</code> recognizes those <i>incorrectly</i> as slice expressions and does its substitutions. This is not a problem if you use the <code>DATA</code> section for your Pdlpp code -- the recommended place for Inline code anyway. In that case <code>PDL::NiceSlice</code> will have switched itself off before encountering any Pdlpp code (see above):</p>
+
+<pre><code>    # use with Inline modules
+  use PDL;
+  use PDL::NiceSlice;
+  use Inline Pdlpp;
+
+  $x = sequence(10);
+  print $x(0:5);
+
+  __END__
+
+  __Pdlpp__
+
+  ... inline stuff</code></pre>
+
+<p>Otherwise switch <code>PDL::NiceSlice</code> explicitly off around the Inline::Pdlpp code:</p>
+
+<pre><code>  use PDL::NiceSlice;
+
+  $x = sequence 10;
+  $x(0:3)++;
+  $x-&gt;inc;
+
+  no PDL::NiceSlice; # switch off before Pdlpp code
+  use Inline Pdlpp =&gt; &quot;Pdlpp source code&quot;;</code></pre>
+
+<p>The cleaner solution is to always stick with the <code>DATA</code> way of including your <code>Inline</code> code as in the first example. That way you keep your nice Perl code at the top and all the ugly Pdlpp stuff etc at the bottom.</p>
+
+<h2 id="Bug-reports">Bug reports</h2>
+
+<p>Feedback and bug reports are welcome. Please include an example that demonstrates the problem. Log bug reports in the PDL issues tracker at <a href="https://github.com/PDLPorters/pdl/issues">https://github.com/PDLPorters/pdl/issues</a> or send them to the pdl-devel mailing list (see <a href="http://pdl.perl.org/?page=mailing-lists">http://pdl.perl.org/?page=mailing-lists</a>).</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 2001, 2002 Christian Soeller. All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as PDL itself (see <a href="http://pdl.perl.org">http://pdl.perl.org</a>).</p>
+
+
+</body>
+
+</html>
+
+

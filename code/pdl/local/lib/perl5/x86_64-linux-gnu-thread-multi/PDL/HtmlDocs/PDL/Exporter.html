@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PDL::Exporter - PDL export control</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#SUMMARY">SUMMARY</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PDL::Exporter - PDL export control</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Implements the standard conventions for import of PDL modules in to the namespace</p>
+
+<p>Hopefully will be extended to allow fine control of which namespace is used.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>use PDL::Exporter;</p>
+
+<pre><code> use PDL::MyModule;       # Import default function list &#39;:Func&#39;
+ use PDL::MyModule &#39;&#39;;    # Import nothing (OO)
+ use PDL::MyModule &#39;...&#39;; # Same behaviour as Exporter</code></pre>
+
+<h1 id="SUMMARY">SUMMARY</h1>
+
+<p><code>PDL::Exporter</code> is a drop-in replacement for the <a href="./Exporter.html">Exporter</a> module. It confers the standard PDL export conventions to your module. Usage is fairly straightforward and best illustrated by an example. The following shows typical usage near the top of a simple PDL module:</p>
+
+<pre><code>   package PDL::MyMod;
+
+   use strict;
+   
+   # For Perl 5.6:
+   use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+   # For more modern Perls:
+   our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+   
+   require PDL::Exporter;
+   
+   @ISA = qw(PDL::Exporter);
+   @EXPORT_OK = qw(inc myfunc); # these will be exported by default
+   %EXPORT_TAGS = (Func=&gt;[@EXPORT_OK],
+                   Internal =&gt; [qw/internfunc1 internfunc2/],
+                  );
+   
+    # ... body of your module
+   
+   1; # end of simple module</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="./Exporter.html">Exporter</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (C) Karl Glazebrook (kgb@aaoepp.aao.gov.au). Some docs by Christian Soeller. All rights reserved. There is no warranty. You are allowed to redistribute this software / documentation under certain conditions. For details, see the file COPYING in the PDL distribution. If this file is separated from the PDL distribution, the copyright notice should be included in the file.</p>
+
+
+</body>
+
+</html>
+
+
