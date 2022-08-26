@@ -113,7 +113,7 @@ print "$name from $house house attacked $rival with the $spell spell\n";
 print "$name has friends: @friends\n";
 ```
 
-Start by loading the ```Getopt::Long`` module. This is the module that allows
+Start by loading the ```Getopt::Long``` module. This is the module that allows
 you to add POSIX style options.
 
 ```perl
