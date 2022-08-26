@@ -4,19 +4,12 @@ use strict;
 use Getopt::Long;
 use experimental 'signatures';
 use Data::Dumper;
-use Switch;
 
 =pod
 
 =head1 NAME 
 
-  say_hello
-
-=head1 SYNOPSIS
-
-  A utility that takes takes as argument names of people as input arguments
-  and says hello. There are also flags that you can set to print to a 
-  file.
+  hogwarts
 
 =head1 USAGE
 
@@ -24,7 +17,8 @@ use Switch;
 
  -s, --spell   favorite spell. 
  -h, --house   the house of the school
- -e, --enemy   The person who the named character will attac
+ -r, --rival   The person who the named character will attack
+ -d, --doc     For instructions on how to get documentation.
 
 =head1 DESCRIPTION
 
@@ -33,6 +27,7 @@ use Switch;
   Harry who is in Gryffindor House and likes to use Expelliarmus. 
   Hermione who is in Gryffindor House and likes Wingardium Leviosa. 
   Voldemort who is in Sytherin House and likes Avada Kedavra. 
+  Snape who is in Sytherin House and likes Serpensortia. 
 
 =cut
 
@@ -42,28 +37,48 @@ if (!$ARGV[0]) {
 
 my $spell = "";
 my $house = "";
-my $enemy = "";
+my $rival = "";
+my $doc;
+my @friends;
 
-GetOptions("spell" => \$spell,
-           "house" => \$house,
-           "enemy=s" => \$enemy);
+GetOptions("spell=s" => \$spell,
+           "house=s" => \$house,
+           "rival=s" => \$rival,
+           "friends=s" => \@friends,
+           "doc"    => \$doc);
+
+if (defined $doc) {
+  print "Get documentation by:\nUSAGE: perldoc hogwarts\n";
+  exit;
+}
+
 
 my $name = $ARGV[0];
 
-switch($name) {
-  case "Harry" {
-    $spell = "Expelliarmus";
-    $house = "Gryffindor";
-  }
-  case "Hermione" {
-    $spell = "Wingardium Leviosa";
-    $house = "Gryffindor";
-  }
-  case "Voldemort" {
-    $spell = "Avada Kedavra";
-    $house = "Slytherin";
-  }
+if ($name eq "Harry") {
+  $spell = $spell?$spell:"Expelliarmus";
+  $house = "Gryffindor";
+  $rival = $rival?$rival:"Malfoy";
+  @friends = @friends?@friends:"Ron Hermione";
+}
+elsif ($name eq "Hermione") {
+  $spell = $spell?$spell:"Wingardium Leviosa";
+  $house = "Gryffindor";
+  $rival = $rival?$rival:"Bellatrix";
+  @friends = @friends?@friends:"Ron Harry";
+}
+elsif ($name eq "Voldemort") {
+  $spell = $spell?$spell:"Avada Kedavra";
+  $house = "Slytherin";
+  $rival = $rival?$rival:"Dumbledore";
+  @friends = @friends?@friends:"Death Eaters";
+}
+elsif ($name eq "Snape") {
+  $spell = $spell?$spell:"Serpensortia";
+  $house = "Slytherin";
+  $rival = $rival?$rival:"James";
+  @friends = @friends?@friends:"Lily";
 }
 
-if 
-print "$name from $house house attacked $enemy with the $spell spell\n";
+print "$name from $house house attacked $rival with the $spell spell\n";
+print "$name has friends: @friends\n";
