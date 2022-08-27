@@ -32,4 +32,4 @@
 25. FFMPEG
 26. BioPerl
 27. MxNet
-28. corelist
+28. corelist --> Done.
