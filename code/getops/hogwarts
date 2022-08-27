@@ -45,7 +45,7 @@ GetOptions("spell=s" => \$spell,
            "house=s" => \$house,
            "rival=s" => \$rival,
            "friends=s" => \@friends,
-           "doc"    => \$doc);
+           "doc"    => \$doc) or exit 1;
 
 if (defined $doc) {
   print "Get documentation by:\nUSAGE: perldoc hogwarts\n";

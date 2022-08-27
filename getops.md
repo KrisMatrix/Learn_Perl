@@ -74,7 +74,7 @@ GetOptions("spell=s" => \$spell,
            "house=s" => \$house,
            "rival=s" => \$rival,
            "friends=s" => \@friends,
-           "doc"    => \$doc);
+           "doc"    => \$doc) or exit 1;
 
 if (defined $doc) {
   print "Get documentation by:\nUSAGE: perldoc hogwarts\n";
@@ -184,5 +184,7 @@ perl hogwarts Harry --friends Ron --friends Hermione -f Ginny
 ```
 
 The produce the same result.
+
+The ```or exit 1``` will exit if a bad option is provided.
 
 The rest of the perl code is merely some if/else, to get some results.
