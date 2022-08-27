@@ -16,6 +16,7 @@
 11. getops --> Done.
 12. Databases
   - DBI
+  - Mojo::Pg --> Done.
   - Redis --> Done.
 13. Perl Data Language (PDL)
 14. RPerl
