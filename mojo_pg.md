@@ -596,3 +596,309 @@ Types of Subqueries:
 
 schemas inside databases are like directories in a filesystem, you use them to sort stuff
 <peerce> we used schemas when we had multiple apps sharing a database.   each app had its own app role/user,  and a schema with the same name.     each app's private tables were in its own schema, while shared stuff was in public
+
+### Mojo::Pg module
+
+Create a  database connection to postgresql.
+
+```perl
+my $db_host = "localhost";
+my $db_port = 5432;
+my $db_user = "someuser";
+my $db_password = "somepassword";
+my $dbname = "somedbname";
+
+my $pg = Mojo::Pg->new("postgresql://$db_user:$db_password\@$db_host:$db_port/$dbname");
+
+```
+
+Delete table if it already exists in the database.
+
+```perl
+
+$db->query("DROP TABLE IF EXISTS episode_details;");
+
+```
+
+Create table in the database.
+
+```perl
+
+$db->query("
+  CREATE TABLE IF NOT EXISTS episode_list (
+    podcast_id serial PRIMARY KEY,    -- unique podcast identifier
+    title TEXT UNIQUE NOT NULL,       -- the episode title
+    season NUMERIC(5) NOT NULL,       -- season number
+    pubDate INT NOT NULL,             -- publish date
+    episode TEXT NOT NULL             -- episode number
+  );
+");
+
+```
+
+Mojo::Pg allows you run sql statements one by one or as a collection. Typically,
+running as a collection is optimized for speed. You can run sql statements as 
+follows:
+
+```perl
+my $db = $pg->db;      #database handler
+my $tx = $db->begin;
+
+...                    # sql statement calls.
+
+$tx->commit();
+
+```
+
+When you do a ```$db->begin;```, it is noting that this is the start of a
+collection of sql statements. It merely prepares the SQL statements but does
+not commit them. When you are done preparing multiple sql statements, you can
+then commit them to make changes into the database together. This allows for 
+faster execution of code.
+
+Here is a full example.
+
+```perl
+#!/usr/bin/perl
+use warnings;
+use strict;
+use Mojo::Pg;
+
+my $db_host = "localhost";
+my $db_port = 5432;
+my $db_user = "someuser";
+my $db_password = "somepassword";
+my $dbname = "somedbname";
+
+my $pg = Mojo::Pg->new(
+  "postgresql://$db_user:$db_password\@$dbserver_host:$db_port/$dbname");
+
+my $db = $pg->db;      #database handler
+my $tx = $db->begin;
+
+# Delete Tables if they exist
+$db->query("DROP TABLE IF EXISTS session_details;");
+$db->query("DROP TABLE IF EXISTS subscription_details;");
+$db->query("DROP TABLE IF EXISTS select_podcasts;");
+$db->query("DROP TABLE IF EXISTS userdata;");
+$db->query("DROP TABLE IF EXISTS episode_details;");    # must be deleted first
+                                                        # because of dependency
+                                                        # to episode_list
+$db->query("DROP TABLE IF EXISTS episode_list;");
+
+print "Deleted episode_list and episode_details\n";
+
+# Create Table if they don't exist
+# github markdown format:
+#
+#| podcast_id | title                               | season | pubDate    | episode |
+#| ---------- | ----------------------------------- | ------ | ---------- | ------- |
+#| 1          | Episode 1 - Kakudmi and Time Travel | 1      | 1597663600 | 1       |
+
+$db->query("
+  CREATE TABLE IF NOT EXISTS episode_list (
+    podcast_id serial PRIMARY KEY,    -- unique podcast identifier
+    title TEXT UNIQUE NOT NULL,       -- the episode title
+    season NUMERIC(5) NOT NULL,       -- season number
+    pubDate INT NOT NULL,             -- publish date
+    episode TEXT NOT NULL             -- episode number
+  );
+");
+
+print "Created episode_list\n";
+
+$db->query("
+  CREATE TABLE IF NOT EXISTS episode_details (
+    podcast_details_id serial PRIMARY KEY,  -- unique identifier
+    alt TEXT NOT NULL,              -- the alt value for podcast <img/>
+    imgSrc TEXT NOT NULL,           -- the src value for podcast <img/>
+    link2Page TEXT NOT NULL,        -- mojo route to podcast page
+    audioSrc TEXT NOT NULL,         -- the src value for podcast <audio/>
+    audioRoute TEXT NOT NULL,       -- mojo route to podcast audio
+    summary TEXT NOT NULL,          -- a summary of the episode
+    artist TEXT NOT NULL,           -- the name of artist (writer) 
+    podcast_id INT,
+    CONSTRAINT fk_episode_list
+      FOREIGN KEY (podcast_id)
+        REFERENCES episode_list(podcast_id) -- id that relates episode_details
+                                          -- to episode_list
+  );
+");
+
+$db->query("
+  DROP TABLE IF EXISTS userdata;
+");
+
+$db->query("
+  CREATE TABLE IF NOT EXISTS userdata (
+    user_id serial PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT NOT NULL,
+    password TEXT NOT NULL,
+    paiduser BOOLEAN,
+    authuser BOOLEAN,
+    authsecret TEXT
+  );
+");
+
+print "Created userdata table\n";
+
+$db->query("
+  CREATE TABLE IF NOT EXISTS select_podcasts (
+    select_podcasts_id serial PRIMARY KEY,
+    podcast_id INT,
+    FOREIGN KEY (podcast_id)
+      REFERENCES episode_list(podcast_id) -- id that relates episode_list
+  );
+");
+
+print "Created select_podcasts table\n";
+
+$db->query("
+  CREATE TABLE IF NOT EXISTS subscription_details (
+    sub_details_id serial PRIMARY KEY,
+    cs_id TEXT,
+    cus_id TEXT,
+    sub_id TEXT,
+    created TEXT,
+    started_at TEXT,
+    canceled_at TEXT,
+    cancel_at TEXT,
+    invoice_id TEXT,
+    price_id TEXT,
+    amount INT,
+    prod_id TEXT,
+    subscription_status TEXT
+  );
+");
+
+print "Created subscription_details table\n";
+
+$db->query("
+  CREATE TABLE IF NOT EXISTS session_details (
+    session_details_id serial PRIMARY KEY,
+    cs_id TEXT,
+    user_id INT,
+    FOREIGN KEY (user_id)
+      REFERENCES userdata(user_id) -- id that relates episode_list
+  );
+");
+print "Created session_details table\n";
+
+$tx->commit;
+
+print "Completed\n";
+
+```
+
+You can also insert data into the database as follows:
+
+```perl
+#!/usr/bin/perl
+use warnings;
+use strict;
+use Mojo::Pg;
+
+open(my $fileH, "<", "episodeList.txt")
+  or die "Could not open episodeList.txt\n";
+
+###############################################################################
+#The format of the data in episodeList.txt is as follows:
+# title: This is what will be below the image, sort of like the caption.
+# alt: Meant for the reader who uses screen readers.
+# imgSrc: Ideally simply the URL of the images to display on top portion of card
+# link2Page: The new page to navigate to when you click on the card.
+# season: The season number
+# pubDate: The date of publishing
+# audioSrc: The location of the audio files in my_app/public/ directory.
+# audioRoute: The route to the audio in MyApp.pm.
+# episode: The pre-fix for the episodeScript files. It will be the same for 
+#  references, amznAff, comments.
+# summary: summary of the episode
+# artist: name of podcast writer
+#
+#Note: We need both audioSrc and audioRoute, because audioSrc is for internal
+# use where the app can grab the data. audioRoute is to create a route for
+# people to get to audio files from browser url.
+###############################################################################
+
+my $id = 0;
+my %record;
+
+while (my $line = <$fileH>) {
+  chomp $line;
+  if ($line =~ m/^#/) {next}    #skip comment lines
+      #For a given episode, the data is packed without blank lines and will be
+      # in dictionary format.
+  while ($line =~ m/^(\w+)\s*:\s*([^#]*)$/) {
+    $record{$id}{$1} = $2;
+    $line = <$fileH>;
+    chomp $line;
+  }
+  $id++;
+}
+close($fileH);
+
+my $db_host = "localhost";
+my $db_port = 5432;
+my $db_user = "someuser";
+my $db_password = "somepassword";
+my $dbname = "somedbname";
+
+my $pg = Mojo::Pg->new(
+  "postgresql://$db_user:$db_password\@$db_host:$db_port/$dbname");
+
+my $size = keys %record;
+print "size = ", $size, "\n";
+
+print "Inserting data into episode_list and episode_details\n";
+
+my $db = $pg->db;
+
+eval {
+  my $tx      = $db->begin;
+  my $ep_size = keys %record;
+  for (my $i = 1; $i <= $size; $i++) {
+    $db->query('
+      INSERT INTO episode_list (
+        title, 
+        season, 
+        pubDate, 
+        episode) 
+      VALUES (?,?,?,?);', $record{$i}{title}, $record{$i}{season},
+      $record{$i}{pubDate}, $record{$i}{episode});
+
+    $db->query('
+      INSERT INTO episode_details (
+        alt, 
+        imgSrc, 
+        link2Page, 
+        audioSrc, 
+        audioRoute, 
+        summary, 
+        artist, 
+        podcast_id
+      ) VALUES (?,?,?,?,?,?,?,?);', $record{$i}{alt}, $record{$i}{imgSrc},
+      $record{$i}{link2Page}, $record{$i}{audioSrc}, $record{$i}{audioRoute},
+      $record{$i}{summary},   $record{$i}{artist},   $i,);
+  }
+  $tx->commit;
+};
+
+if ($@) {
+  print "$@\n";
+}
+
+print "Inserting data into select_podcasts\n";
+my $tx = $db->begin;
+$db->query('INSERT INTO select_podcasts (podcast_id) VALUES (?);', 5);
+$db->query('INSERT INTO select_podcasts (podcast_id) VALUES (?);', 10);
+$db->query('INSERT INTO select_podcasts (podcast_id) VALUES (?);', 18);
+$db->query('INSERT INTO select_podcasts (podcast_id) VALUES (?);', 6);
+$db->query('INSERT INTO select_podcasts (podcast_id) VALUES (?);', 12);
+$db->query('INSERT INTO select_podcasts (podcast_id) VALUES (?);', 11);
+$tx->commit;
+
+print "Complete\n";
+
+```
