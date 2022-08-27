@@ -794,6 +794,17 @@ print "Completed\n";
 You can also insert data into the database as follows:
 
 ```perl
+
+$db->query('
+  INSERT INTO episode_list (title, season, pubDate, episode)
+  VALUES (?,?,?,?);', "title name", "season no",
+  "publish date", "episode name"
+);
+```
+
+Here is a full example.
+
+```perl
 #!/usr/bin/perl
 use warnings;
 use strict;
